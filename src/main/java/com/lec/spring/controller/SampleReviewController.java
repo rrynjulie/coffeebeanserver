@@ -1,11 +1,48 @@
 package com.lec.spring.controller;
 
+import com.lec.spring.domain.SampleReview;
 import com.lec.spring.service.SampleReviewService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
 public class SampleReviewController {
     private final SampleReviewService sampleReviewService;
+
+    // 기본적인 CRUD
+    @CrossOrigin
+    @PostMapping("/sampleReview/write")
+    public ResponseEntity<?> create(@RequestBody SampleReview sampleReview) {
+        return new ResponseEntity<>(sampleReviewService.create(sampleReview), HttpStatus.CREATED);
+    }
+
+    @CrossOrigin
+    @GetMapping("/sampleReview/list")
+    public ResponseEntity<?> readAll() {
+        return new ResponseEntity<>(sampleReviewService.readAll(), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping("/sampleReview/detail/{sampleReviewId}")
+    public ResponseEntity<?> readOne(@PathVariable Long sampleReviewId) {
+        return new ResponseEntity<>(sampleReviewService.readOne(sampleReviewId), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @PutMapping("/sampleReview/update")
+    public ResponseEntity<?> update(@RequestBody SampleReview sampleReview) {
+        return new ResponseEntity<>(sampleReviewService.update(sampleReview), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @DeleteMapping("/sampleReview/delete/{sampleReviewId}")
+    public ResponseEntity<?> delete(@PathVariable Long sampleReviewId) {
+        return new ResponseEntity<>(sampleReviewService.delete(sampleReviewId), HttpStatus.OK);
+    }
+
+    // 추가 기능
+    // TODO
 }
