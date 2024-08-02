@@ -2,47 +2,32 @@ package com.lec.spring.controller;
 
 import com.lec.spring.domain.ChatRoom;
 import com.lec.spring.service.ChatRoomService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequiredArgsConstructor
+import java.util.List;
+
 @RestController
+@RequestMapping("chatRooms")
 public class ChatRoomController {
-    private final ChatRoomService chatRoomService;
 
-    // 기본적인 CRUD
-    @CrossOrigin
-    @PostMapping("/chatRoom/write")
-    public ResponseEntity<?> create(@RequestBody ChatRoom chatRoom) {
-        return new ResponseEntity<>(chatRoomService.create(chatRoom), HttpStatus.CREATED);
+    @Autowired
+    private ChatRoomService chatRoomService;
+
+    // 채팅방 생성 및 저장
+    @PostMapping
+    public ResponseEntity<ChatRoom> createChatRoom(@RequestBody ChatRoom chatRoom) {
+        ChatRoom createChatRoom = chatRoomService.createChatRoom(chatRoom);
+        return ResponseEntity.ok(createChatRoom);
     }
 
-    @CrossOrigin
-    @GetMapping("/chatRoom/list")
-    public ResponseEntity<?> readAll() {
-        return new ResponseEntity<>(chatRoomService.readAll(), HttpStatus.OK);
+    // 사용자가 참여하고 있는 모든 채팅방
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ChatRoom>> ChatRoomsByUserId(@PathVariable Long userId) {
+        List<ChatRoom> chatRooms = chatRoomService.ChatRoomsByUserId(userId);
+        return ResponseEntity.ok(chatRooms);
     }
 
-    @CrossOrigin
-    @GetMapping("/chatRoom/detail/{chatRoomId}")
-    public ResponseEntity<?> readOne(@PathVariable Long chatRoomId) {
-        return new ResponseEntity<>(chatRoomService.readOne(chatRoomId), HttpStatus.OK);
-    }
 
-    @CrossOrigin
-    @PutMapping("/chatRoom/update")
-    public ResponseEntity<?> update(@RequestBody ChatRoom chatRoom) {
-        return new ResponseEntity<>(chatRoomService.update(chatRoom), HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @DeleteMapping("/chatRoom/delete/{chatRoomId}")
-    public ResponseEntity<?> delete(@PathVariable Long chatRoomId) {
-        return new ResponseEntity<>(chatRoomService.delete(chatRoomId), HttpStatus.OK);
-    }
-
-    // 추가 기능
-    // TODO
 }

@@ -22,11 +22,11 @@ public class User {
 
     // 이름
     @Column(nullable = false)
-    private String username;
+    private String userName;
 
     // 닉네임
     @Column(nullable = false)
-    private String nickname;
+    private String nickName;
 
     // 비밀번호
     @Column(nullable = false)
@@ -44,7 +44,7 @@ public class User {
     private String email;
 
     // 가입 날짜
-    private LocalDateTime reg_date;
+    private LocalDateTime regDate;
 
     // 신뢰도
     @Column(nullable = false)
