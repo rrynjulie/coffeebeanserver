@@ -2,46 +2,34 @@ package com.lec.spring.service;
 
 import com.lec.spring.domain.Message;
 import com.lec.spring.repository.MessageRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
 public class MessageService {
-    private final MessageRepository messageRepository;
 
-    // 기본적인 CRUD
-    @Transactional
-    public Message create(Message message) {
+    @Autowired
+    private MessageRepository messageRepository;
+
+    public Message sendMessage(Message message) {
+        message.setSendTime(LocalDateTime.now());
+        message.setIsRead(false);
         return messageRepository.save(message);
     }
 
-    @Transactional(readOnly = true)
-    public Message readOne(Long messageId) {
-        return messageRepository.findById(messageId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
+    public List<Message> MessageByRoomId(Long chatRoomId) {
+        return messageRepository.findByChatRoomId(chatRoomId);
     }
 
-    @Transactional(readOnly = true)
-    public List<Message> readAll() {
-        return messageRepository.findAll();
+    public List<Message> MessageByUserId(Long userId) {
+        return messageRepository.findByUserId(userId);
     }
 
-    @Transactional
-    public Message update(Message message) {
-        Message messageEntity = messageRepository.findById(message.getMessageId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        // TODO
-        return messageEntity;
-    }
-
-    @Transactional
-    public String delete(Long messageId) {
+    public void deleteMessage(Long messageId) {
         messageRepository.deleteById(messageId);
-        return "ok";
     }
 
-    // 추가 기능
-    // TODO
 }

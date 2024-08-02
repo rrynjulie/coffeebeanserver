@@ -19,8 +19,8 @@ public class ChatRoomService {
     }
 
     // 사용자가 참여하고 있는 모든 채팅방 조회
-    public List<ChatRoom> ChatRoomsByUserId(Long userId) {
-        return chatRoomRepository.findByChatRoom(userId);
+    public List<ChatRoom> findByChatRoomId(Long userId) {
+        return chatRoomRepository.findByChatRoomId(userId);
     }
 
 }
