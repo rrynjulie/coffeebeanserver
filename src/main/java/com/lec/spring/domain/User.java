@@ -3,6 +3,7 @@ package com.lec.spring.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -12,13 +13,14 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity(name = "user")
 public class User {
 
     // 회원 ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long userId;
+    private Long userId;
 
     // 이름
     @Column(nullable = false)
