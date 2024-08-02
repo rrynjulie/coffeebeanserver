@@ -1,27 +1,40 @@
 package com.lec.spring.service;
 
+import com.lec.spring.domain.Attachment;
 import com.lec.spring.domain.Post;
+import com.lec.spring.repository.AttachmentRepository;
 import com.lec.spring.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
 public class PostService {
     private final PostRepository postRepository;
 
+    private final AttachmentRepository attachmentRepository;
+
     // 기본적인 CRUD
     @Transactional
-    public Post create(Post post) {
+    public Post create(Post post, Map<String, MultipartFile> files) {
         return postRepository.save(post);
     }
 
     @Transactional(readOnly = true)
     public Post readOne(Long postId) {
-        return postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
+        Post post =  postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
+        if (post != null){
+            List<Attachment> fileList = attachmentRepository.findByPostId(post.getPostId());
+//            setImage(fileList);
+            post.setFileList(fileList);
+        }
+
+        return post;
     }
 
     @Transactional(readOnly = true)
@@ -30,7 +43,7 @@ public class PostService {
     }
 
     @Transactional
-    public Post update(Post post) {
+    public Post update(Post post, Map<String, MultipartFile> files) {
         Post postEntity = postRepository.findById(post.getPostId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
         // TODO
         return postEntity;

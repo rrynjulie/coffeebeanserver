@@ -3,20 +3,26 @@ package com.lec.spring.controller;
 import com.lec.spring.domain.Post;
 import com.lec.spring.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
 public class PostController {
+
     private final PostService postService;
 
     // 기본적인 CRUD
     @CrossOrigin
     @PostMapping("/post/write")
-    public ResponseEntity<?> create(@RequestBody Post post) {
-        return new ResponseEntity<>(postService.create(post), HttpStatus.CREATED);
+    public ResponseEntity<?> create(@RequestBody Post post, @RequestParam Map<String, MultipartFile> files, BindingResult result) {
+        return new ResponseEntity<>(postService.create(post, files), HttpStatus.CREATED);
     }
 
     @CrossOrigin
@@ -33,8 +39,8 @@ public class PostController {
 
     @CrossOrigin
     @PutMapping("/post/update")
-    public ResponseEntity<?> update(@RequestBody Post post) {
-        return new ResponseEntity<>(postService.update(post), HttpStatus.OK);
+    public ResponseEntity<?> update(@RequestBody Post post, @RequestParam Map<String, MultipartFile> files) {
+        return new ResponseEntity<>(postService.update(post, files), HttpStatus.OK);
     }
 
     @CrossOrigin

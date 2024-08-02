@@ -1,9 +1,6 @@
 package com.lec.spring.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,4 +13,19 @@ public class Attachment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long attachmentId;
+
+    @ManyToOne
+    private Post postId;
+    @ManyToOne
+    private Product productId;
+    @ManyToOne
+    private Car carId;
+    @ManyToOne
+    private Property propertyId;
+
+    private String source;
+    private String filename;
+
+    @Transient
+    private boolean isImage;
 }

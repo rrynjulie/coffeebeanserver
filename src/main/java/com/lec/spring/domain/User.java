@@ -5,14 +5,18 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "user")
+@Entity
+@Table(name = "user")
 public class User {
 
     // 회원 ID
@@ -57,5 +61,11 @@ public class User {
     // ---------------------------------------
     // 권한
     private String role; //  "ROLE_USER", "ROLE_USER, ROLE_ADMIN"
+
+    @OneToMany
+    @JoinColumn(name = "user_id"
+    , insertable = false, updatable = false)
+    @ToString.Exclude
+    private List<Post> posts = new ArrayList<>();
 
 }
