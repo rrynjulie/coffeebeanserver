@@ -10,5 +10,5 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 public class UserController {
-    private final UserService userService;
+//    private final UserService userService;
 }
