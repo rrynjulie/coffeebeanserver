@@ -5,10 +5,13 @@ import com.lec.spring.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 public class MessageController {
@@ -24,6 +27,18 @@ public class MessageController {
         return messageService.sendMessage(message);
     }
 
-//    @GetMapping
+    @GetMapping("/api/room/{chatRoomId}")
+    public List<Message> MessageByRoomId(@PathVariable Long chatRoomId) {
+        return messageService.MessageByRoomId(chatRoomId);
+    }
 
+    @GetMapping("/api/user/{userId}")
+    public List<Message> MessageByUserId(@PathVariable Long userId) {
+        return messageService.MessageByUserId(userId);
+    }
+
+    @DeleteMapping("/api/{messageId}")
+    public void deleteMessage(@PathVariable Long messageId) {
+        messageService.deleteMessage(messageId);
+    }
 }

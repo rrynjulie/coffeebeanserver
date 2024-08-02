@@ -21,15 +21,14 @@ public class MessageService {
     }
 
     public List<Message> MessageByRoomId(Long chatRoomId) {
-        return messageRepository.findByChatRoomId(chatRoomId);
+        return messageRepository.findByChatRoomChatRoomId(chatRoomId);
     }
 
     public List<Message> MessageByUserId(Long userId) {
-        return messageRepository.findByUserId(userId);
+        return messageRepository.findByChatRoomUserUserId(userId);
     }
 
     public void deleteMessage(Long messageId) {
         messageRepository.deleteById(messageId);
     }
-
 }
