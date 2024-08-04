@@ -21,7 +21,7 @@ public class PostController {
     // 기본적인 CRUD
     @CrossOrigin
     @PostMapping("/post/write")
-    public ResponseEntity<?> create(@RequestBody Post post, @RequestParam Map<String, MultipartFile> files) {
+    public ResponseEntity<?> create(@RequestBody Post post, @RequestBody Map<String, MultipartFile> files) {
         return new ResponseEntity<>(postService.create(post, files), HttpStatus.CREATED);
     }
 
