@@ -20,8 +20,6 @@ public class Dips {
     private User user;  // 판매자
     @Column(name = "productId")
     private Long productId;  // 상품 ID
-    @Column(name = "carId")
-    private Long carId;  // 중고차 ID
     @Column(name = "propertyId")
     private Long propertyId;  // 부동산 ID
 }
