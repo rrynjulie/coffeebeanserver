@@ -1,7 +1,6 @@
 package com.lec.spring.controller;
 
 import com.lec.spring.domain.Attachment;
-import com.lec.spring.repository.AttachmentRepository;
 import com.lec.spring.service.AttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,62 +17,44 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@RestController  // 데이터 response 하는 컨트롤러
-// @Controller + @ResponseBody
+@RestController
 public class AttachmentController {
 
     @Value("${app.upload.path}")
     private String uploadDir;
 
-    private AttachmentRepository attachmentRepository;
-
-//    @Autowired
-//    public void setAttachmentService(AttachmentService attachmentService) {
-//        this.attachmentService = attachmentService;
-//    }
-
-    // 파일 다운로드
-    // id: 첨부파일의 id
-    // ResponseEntity<T> 를 사용하여
-    // '직접' Response data 를 구성
+    private AttachmentService attachmentService;
 
     @RequestMapping("/board/download")
     public ResponseEntity<?> download(Long id){
         if(id == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST); // 400
 
-        Attachment file = (Attachment) attachmentRepository.findByPostId(id);
+//        Attachment file = (Attachment) attachmentRepository.findByPostId(id);
+//        Attachment file = (Attachment) attachmentRepository.findByPost(id);
+//        Attachment file = (Attachment) attachmentService.findById(id);
+        Attachment file = attachmentService.findById(id);
         if(file == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND); // 404
 
-        String sourceName = file.getSource();  // 원본 이름
-        String fileName = file.getFilename(); // 저장된 파일명
+        String sourceName = file.getSource();
+        String fileName = file.getFilename();
 
-        String path = new File(uploadDir, fileName).getAbsolutePath();  // 저장파일의 절대경로
+        String path = new File(uploadDir, fileName).getAbsolutePath();
 
         try {
-            // 파일 유형(MIME type) 추출
-            String mimeType = Files.probeContentType(Paths.get(path));   // ex) "image/png"
-
-            // 파일 유형이 지정되지 않은경우
+            String mimeType = Files.probeContentType(Paths.get(path));
             if(mimeType == null){
-                mimeType = "application/octet-stream";  // 일련의 byte 스트림 타입.  유형이 알려지지 않은경우 지정
+                mimeType = "application/octet-stream";
             }
 
-            // response body 준비
             Path filePath = Paths.get(path);
-            //  Resource  <- InputStream <- 저장된 파일
             Resource resource = new InputStreamResource(Files.newInputStream(filePath));
 
-            // response header 세팅
             HttpHeaders headers = new HttpHeaders();
-            // ↓ 원본 파일 이름 (sourceName) 으로 다운로드 하게 하기 위한 세팅
-            //   반.드.시 URL 인코딩해야 함
             headers.setContentDisposition(ContentDisposition.builder("attachment").filename(URLEncoder.encode(sourceName, "utf-8")).build());
             headers.setCacheControl("no-cache");
-            headers.setContentType(MediaType.parseMediaType(mimeType));  // 유형 지정
+            headers.setContentType(MediaType.parseMediaType(mimeType));
 
-            // ResponseEntity<> 리턴 (body, header, status)
-            return new ResponseEntity<>(resource, headers, HttpStatus.OK);  // 200
-
+            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(null, null, HttpStatus.CONFLICT);  // 409
         }

@@ -17,21 +17,22 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @ToString(callSuper = true)
-@EqualsAndHashCode()
+//@EqualsAndHashCode(callSuper = true)
 @Entity(name = "post")
 @DynamicInsert
 @DynamicUpdate
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long postId;
+    private Long postId;
 
     @ManyToOne(optional = false)
     @ToString.Exclude
     private User user;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id"
+            , insertable = false, updatable = false)
     @ToString.Exclude
     @Builder.Default
     private List<Attachment> fileList = new ArrayList<>();

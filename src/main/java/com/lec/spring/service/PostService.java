@@ -2,7 +2,6 @@ package com.lec.spring.service;
 
 import com.lec.spring.domain.Attachment;
 import com.lec.spring.domain.Post;
-import com.lec.spring.repository.AttachmentRepository;
 import com.lec.spring.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,7 @@ import java.util.Map;
 public class PostService {
     private final PostRepository postRepository;
 
-    private final AttachmentRepository attachmentRepository;
+    private final AttachmentService attachmentService;
 
     // 기본적인 CRUD
     @Transactional
@@ -29,7 +28,9 @@ public class PostService {
     public Post readOne(Long postId) {
         Post post =  postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
         if (post != null){
-            List<Attachment> fileList = attachmentRepository.findByPostId(post.getPostId());
+//            List<Attachment> fileList = attachmentRepository.findByPostId(post.getPostId());
+//            List<Attachment> fileList = attachmentRepository.findByPost(post.getPostId());
+            List<Attachment> fileList = (List<Attachment>) attachmentService.findById(post.getPostId());
 //            setImage(fileList);
             post.setFileList(fileList);
         }
