@@ -9,7 +9,6 @@ SELECT * FROM authority ORDER BY authorityId DESC;
 SELECT * FROM car ORDER BY carId DESC;
 
 SELECT * FROM chat_room ORDER BY chatRoomId DESC;
-ALTER TABLE chat_room DROP column isJoin;
 
 SELECT * FROM dips ORDER BY dipsId DESC;
 

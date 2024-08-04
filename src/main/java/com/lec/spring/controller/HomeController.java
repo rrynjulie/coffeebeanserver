@@ -17,6 +17,16 @@ public class HomeController {
     // TODO
     // 홈 컨트롤러에 추가 하시고 싶으신 분들은 여기에 추가로 작성 요망
 
+    @GetMapping("/admin")
+    public String admin(){
+        return "admin page";
+    }
+
+    @GetMapping("/member")
+    public String member(){
+        return "member page";
+    }
+
     // 현재 Authentication 보기
     @RequestMapping("/auth")
     public Authentication auth() {
