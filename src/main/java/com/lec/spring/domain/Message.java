@@ -18,9 +18,15 @@ public class Message {
 
     private String messageText;         // 메세지 내용
     private LocalDateTime sendTime;     // 메세지 보낸 시간
+
+    @Column(nullable = false)
     private boolean IsRead;             // 메세지 읽음 여부
 
     @ManyToOne
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;        // ChatRoom 테이블과의 관계
+
+    @ManyToOne
+    @JoinColumn(name = "senderId", referencedColumnName = "userId")
+    private User sender;               // 메세지를 보낸 User
 }

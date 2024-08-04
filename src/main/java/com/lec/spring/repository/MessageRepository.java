@@ -8,8 +8,8 @@ import java.util.List;
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
     // 어떤 유저가 쓴 메세지인지
-    List<Message> findByChatRoomUserUserId(Long userId);
+    List<Message> findBySenderUserId(Long userId);
 
-    // 메세지가 어떤 채팅방에 속해있는지
+    // 채팅방에 어떤 메세지가 속해있는지
     List<Message> findByChatRoomChatRoomId(Long chatRoomId);
 }
