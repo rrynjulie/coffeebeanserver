@@ -1,30 +1,44 @@
 package com.lec.spring.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(callSuper = true)
 @Entity(name = "attachment")
+@DynamicInsert
+@DynamicUpdate
 public class Attachment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long attachmentId;  // 첨부물 ID
-    @Column(name = "postId")
-    private Long postId;  // 게시글 ID
-    @Column(name = "productId")
-    private Long productId;  // 상품 ID
-    @Column(name = "carId")
-    private Long carId;  // 중고차 ID
-    @Column(name = "propertyId")
-    private Long propertyId;  // 부동산 ID
-    @Column(nullable = false)
-    private String source;  // 소스
-    @Column(nullable = false)
-    private String filename;  // 파일 이름
+    private Long attachmentId;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "post_id")
+    @ToString.Exclude
+    private Post post;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "product_id")
+    @ToString.Exclude
+    private Product product;
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "car_id")
+    @ToString.Exclude
+    private Car car;
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "property_id")
+    @ToString.Exclude
+    private Property property;
+
+    private String source;
+    private String filename;
+
+    @Transient
+    private boolean isImage;
 }
