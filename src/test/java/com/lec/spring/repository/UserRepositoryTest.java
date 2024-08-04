@@ -22,11 +22,20 @@ class UserRepositoryTest {
     @Test
     void registerTest() {
         User user1 = User.builder()
-                .userName("user1".toUpperCase())
+                .userName("user1")
                 .nickName("1")
                 .password(passwordEncoder.encode("1234"))
-                .birthday("20000203")
                 .email("1.@mail.com")
+                .regDate(LocalDateTime.now())
+                .reliability(500)
+                .role("ROLE_USER")
+                .build();
+
+        User user2 = User.builder()
+                .userName("user2")
+                .nickName("2")
+                .password(passwordEncoder.encode("1234"))
+                .email("2.@mail.com")
                 .regDate(LocalDateTime.now())
                 .reliability(500)
                 .role("ROLE_USER")
@@ -51,6 +60,6 @@ class UserRepositoryTest {
 //                .build();
 
 
-        userRepository.saveAllAndFlush(List.of(user1));
+        userRepository.saveAllAndFlush(List.of(user1, user2));
     }
 }
