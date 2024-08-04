@@ -22,16 +22,19 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;  // 상품 ID
     @ManyToOne(optional = false)
+    @JoinColumn(name = "userId", nullable = false)
     @ToString.Exclude
     private User user;  // 판매자
+    @Column(nullable = false)
     private String name;  // 상품 이름
     @Column(nullable = false, columnDefinition = "LONGTEXT")
-    private String discription;  // 상품 설명
+    private String description;  // 상품 설명
     @Column(nullable = false)
     private int price;  // 상품 가격
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(nullable = false)
     private LocalDateTime regDate;  // 등록 날짜
+    @Enumerated(value = EnumType.STRING)
     @ColumnDefault(value = "'판매중'")
     @Column(nullable = false)
     private DealingStatus dealingStatus;  // 판매 상태
@@ -41,6 +44,7 @@ public class Product {
     private String category2;  // 카테코리2(여성의류, 남성의류, 스마트폰, 태블릿PC, 케이스/거치대/보호필름, 배터리/충전기/케이블, 침실가구, 거실가구, 주방가구, 기타가구, 반려동물, 키덜트, 핸드메이드/DIY, 악기, 티켓, 상품권/쿠폰)
     @Column
     private String category3;  // 카테코리3
+    @Enumerated(value = EnumType.STRING)
     @ColumnDefault(value = "'중고'")
     @Column(nullable = false)
     private Status status;  // 상품 상태
@@ -52,7 +56,7 @@ public class Product {
     @Column(nullable = false, insertable = false)
     private int viewCount;  // 조회수
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "attachment_id")
+    @JoinColumn(name = "attachmentId")
     @ToString.Exclude
     @Builder.Default   // builder 제공 안 함
     private List<Attachment> fileList = new ArrayList<>();  // 첨부 파일
