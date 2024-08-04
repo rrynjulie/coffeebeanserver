@@ -16,9 +16,17 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long chatRoomId;
 
-    Long isJoin;    // 채팅방 참여 여부
+    Long isJoins;    // 채팅방 참여 여부
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "buyerId", referencedColumnName = "userId")
+    private User user; // User 객체 참조
+
+    @ManyToOne
+    @JoinColumn(name = "sellerId", referencedColumnName = "userId", nullable = true)
+    private Product product;    // 중고상품
+
+//    @ManyToOne
+//    @JoinColumn(name = "sellerId", referencedColumnName = "userId", nullable = true)
+//    private Car car;          // 중고차
 }
