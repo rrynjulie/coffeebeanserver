@@ -2,46 +2,25 @@ package com.lec.spring.service;
 
 import com.lec.spring.domain.ChatRoom;
 import com.lec.spring.repository.ChatRoomRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+
 @Service
 public class ChatRoomService {
-    private final ChatRoomRepository chatRoomRepository;
+    @Autowired
+    private ChatRoomRepository chatRoomRepository;
 
-    // 기본적인 CRUD
-    @Transactional
-    public ChatRoom create(ChatRoom chatRoom) {
+    // 새로운 채팅방 생성 및 데이터 베이스 저장
+    public ChatRoom createChatRoom(ChatRoom chatRoom) {
         return chatRoomRepository.save(chatRoom);
     }
 
-    @Transactional(readOnly = true)
-    public ChatRoom readOne(Long chatRoomId) {
-        return chatRoomRepository.findById(chatRoomId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
+    // 사용자가 참여하고 있는 모든 채팅방 조회
+    public List<ChatRoom> findByChatRoomId(Long userId) {
+        return chatRoomRepository.findByChatRoomId(userId);
     }
 
-    @Transactional(readOnly = true)
-    public List<ChatRoom> readAll() {
-        return chatRoomRepository.findAll();
-    }
-
-    @Transactional
-    public ChatRoom update(ChatRoom chatRoom) {
-        ChatRoom chatRoomEntity = chatRoomRepository.findById(chatRoom.getChatRoomId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        // TODO
-        return chatRoomEntity;
-    }
-
-    @Transactional
-    public String delete(Long chatRoomId) {
-        chatRoomRepository.deleteById(chatRoomId);
-        return "ok";
-    }
-
-    // 추가 기능
-    // TODO
 }

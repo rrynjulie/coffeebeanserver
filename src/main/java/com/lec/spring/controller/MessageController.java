@@ -2,47 +2,43 @@ package com.lec.spring.controller;
 
 import com.lec.spring.domain.Message;
 import com.lec.spring.service.MessageService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
-@RequiredArgsConstructor
+import java.time.LocalDateTime;
+import java.util.List;
+
 @RestController
 public class MessageController {
-    private final MessageService messageService;
 
-    // 기본적인 CRUD
-    @CrossOrigin
-    @PostMapping("/message/write")
-    public ResponseEntity<?> create(@RequestBody Message message) {
-        return new ResponseEntity<>(messageService.create(message), HttpStatus.CREATED);
+    @Autowired
+    private MessageService messageService;
+
+    @MessageMapping("/sendMessage/{chatRoomId}")
+    @SendTo("/topic/public/{chatRoomId}")
+    public Message sendMessage(Message message) {
+        message.setSendTime(LocalDateTime.now());
+        message.setIsRead(false);
+        return messageService.sendMessage(message);
     }
 
-    @CrossOrigin
-    @GetMapping("/message/list")
-    public ResponseEntity<?> readAll() {
-        return new ResponseEntity<>(messageService.readAll(), HttpStatus.OK);
+    @GetMapping("/api/room/{chatRoomId}")
+    public List<Message> MessageByRoomId(@PathVariable Long chatRoomId) {
+        return messageService.MessageByRoomId(chatRoomId);
     }
 
-    @CrossOrigin
-    @GetMapping("/message/detail/{messageId}")
-    public ResponseEntity<?> readOne(@PathVariable Long messageId) {
-        return new ResponseEntity<>(messageService.readOne(messageId), HttpStatus.OK);
+    @GetMapping("/api/user/{userId}")
+    public List<Message> MessageByUserId(@PathVariable Long userId) {
+        return messageService.MessageByUserId(userId);
     }
 
-    @CrossOrigin
-    @PutMapping("/message/update")
-    public ResponseEntity<?> update(@RequestBody Message message) {
-        return new ResponseEntity<>(messageService.update(message), HttpStatus.OK);
+    @DeleteMapping("/api/{messageId}")
+    public void deleteMessage(@PathVariable Long messageId) {
+        messageService.deleteMessage(messageId);
     }
-
-    @CrossOrigin
-    @DeleteMapping("/message/delete/{messageId}")
-    public ResponseEntity<?> delete(@PathVariable Long messageId) {
-        return new ResponseEntity<>(messageService.delete(messageId), HttpStatus.OK);
-    }
-
-    // 추가 기능
-    // TODO
 }

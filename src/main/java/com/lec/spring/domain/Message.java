@@ -1,12 +1,11 @@
 package com.lec.spring.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -15,5 +14,13 @@ import lombok.NoArgsConstructor;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long messageId;
+    private Long messageId;             // 메세지 id
+
+    private String messageText;         // 메세지 내용
+    private LocalDateTime sendTime;     // 메세지 보낸 시간
+    private boolean IsRead;             // 메세지 읽음 여부
+
+    @ManyToOne
+    @JoinColumn(name = "chat_room_id")
+    private ChatRoom chatRoom;        // ChatRoom 테이블과의 관계
 }
