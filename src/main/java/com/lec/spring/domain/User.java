@@ -26,20 +26,16 @@ public class User {
     @Column(nullable = false)
     private String userName;
 
+    // 비밀번호
+    @Column(nullable = false)
+    private String password;
+
     // 닉네임
     @Column(nullable = false)
     private String nickName;
 
-    // 비밀번호
-    @Column(nullable = false)
-    @JsonIgnore
-    private String password;
-
     // 전화번호
-    // private String phonenum;
-
-    // 생년월일
-    private String birthday;
+//     private String phonenum;
 
     //이메일
     @Column(nullable = false)
@@ -56,8 +52,8 @@ public class User {
     // 회원사진
     // TODO
 
-    // ---------------------------------------
+    // -----------------------------------------------------------
     // 권한
-    private String role; //  "ROLE_USER", "ROLE_USER, ROLE_ADMIN"
+    private String role; //  "ROLE_USER", "ROLE_USER,ROLE_ADMIN"
 
 }
