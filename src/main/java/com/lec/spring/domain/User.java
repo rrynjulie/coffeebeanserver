@@ -6,9 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -56,6 +59,13 @@ public class User {
     // 권한
     private String role; //  "ROLE_USER", "ROLE_USER,ROLE_ADMIN"
 
+    @OneToMany
+    @JoinColumn(name = "userId"
+    , insertable = false, updatable = false)
+    @ToString.Exclude
+    private List<Post> posts = new ArrayList<>();
+
+}
 
     // 날짜 자동 저장
     // reliability 자동으로 500 설정
