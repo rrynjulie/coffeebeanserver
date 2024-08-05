@@ -1,6 +1,5 @@
 package com.lec.spring.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -61,11 +60,9 @@ public class User {
 
     @OneToMany
     @JoinColumn(name = "userId"
-    , insertable = false, updatable = false)
+            , insertable = false, updatable = false)
     @ToString.Exclude
     private List<Post> posts = new ArrayList<>();
-
-}
 
     // 날짜 자동 저장
     // reliability 자동으로 500 설정
