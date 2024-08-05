@@ -2,6 +2,7 @@ package com.lec.spring.controller;
 
 import com.lec.spring.domain.SampleReview;
 import com.lec.spring.domain.User;
+import com.lec.spring.domain.UserJoinDTO;
 import com.lec.spring.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,10 +20,15 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public String join(@RequestBody User user) {
+    public String join(@RequestBody UserJoinDTO userJoinDTO) {
+        User user = User.builder()
+                .userName(userJoinDTO.getUserName())
+                .password(userJoinDTO.getPassword())
+                .nickName(userJoinDTO.getNickName())
+                .email(userJoinDTO.getEmail())
+                .build();
         user = userService.join(user);
         if (user == null) return "JOIN FAILED";
         return "JOIN OK : " + user;
     }
-
 }
