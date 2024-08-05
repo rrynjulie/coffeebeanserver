@@ -22,7 +22,6 @@ public class PostService {
     @Transactional
     public Post create(Post post, Long userId) {
         post.setUser(userService.readOne(userId));
-        System.out.println(userId + "---------------------------------------------------------------------------");
         return postRepository.save(post);
     }
 

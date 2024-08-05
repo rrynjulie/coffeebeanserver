@@ -23,7 +23,6 @@ public class PostController {
     // 기본적인 CRUD
     @PostMapping("/post/write/{userId}")
     public ResponseEntity<?> create(@RequestBody Post post, @PathVariable Long userId) {
-        System.out.println("userId = " + userId);
         return new ResponseEntity<>(postService.create(post, userId), HttpStatus.CREATED);
     }
 

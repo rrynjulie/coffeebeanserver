@@ -31,10 +31,6 @@ public class Attachment {
     @JoinColumn(name = "car_id")
     @ToString.Exclude
     private Car car;
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "property_id")
-    @ToString.Exclude
-    private Property property;
 
     private String source;
     private String filename;

@@ -14,9 +14,9 @@ public class PropertyController {
 
     // 기본적인 CRUD
     @CrossOrigin
-    @PostMapping("/property/write")
-    public ResponseEntity<?> create(@RequestBody Property property) {
-        return new ResponseEntity<>(propertyService.create(property), HttpStatus.CREATED);
+    @PostMapping("/property/write/{userId}")
+    public ResponseEntity<?> create(@RequestBody Property property, @PathVariable Long userId) {
+        return new ResponseEntity<>(propertyService.create(property, userId), HttpStatus.CREATED);
     }
 
     @CrossOrigin
