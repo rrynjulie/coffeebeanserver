@@ -30,6 +30,9 @@ public class PrincipalDetails implements UserDetails {
 
         Collection<GrantedAuthority> collect = new ArrayList<>();
 
+        // 권한이 없을때
+        if(user.getRole() == null) return collect;
+
         // user.getRole()은  "ROLE_MEMBER,ROLE_ADMIN" 과 같은 형태
         Arrays.stream( user.getRole().split(","))
                 .forEach(auth -> collect.add(new GrantedAuthority() {
