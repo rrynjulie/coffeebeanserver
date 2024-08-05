@@ -58,12 +58,6 @@ public class User {
     // 권한
     private String role; //  "ROLE_USER", "ROLE_USER,ROLE_ADMIN"
 
-    @OneToMany
-    @JoinColumn(name = "userId"
-            , insertable = false, updatable = false)
-    @ToString.Exclude
-    private List<Post> posts = new ArrayList<>();
-
     // 날짜 자동 저장
     // reliability 자동으로 500 설정
     @PrePersist

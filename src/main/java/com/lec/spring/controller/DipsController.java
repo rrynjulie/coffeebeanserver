@@ -14,27 +14,15 @@ public class DipsController {
 
     // 기본적인 CRUD
     @CrossOrigin
-    @PostMapping("/dips/write")
-    public ResponseEntity<?> create(@RequestBody Dips dips) {
-        return new ResponseEntity<>(dipsService.create(dips), HttpStatus.CREATED);
+    @PostMapping("/dips/write/{userId}")
+    public ResponseEntity<?> create(@RequestBody Dips dips, @PathVariable Long userId) {
+        return new ResponseEntity<>(dipsService.create(dips, userId), HttpStatus.CREATED);
     }
 
     @CrossOrigin
     @GetMapping("/dips/list")
     public ResponseEntity<?> readAll() {
         return new ResponseEntity<>(dipsService.readAll(), HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @GetMapping("/dips/detail/{dipsId}")
-    public ResponseEntity<?> readOne(@PathVariable Long dipsId) {
-        return new ResponseEntity<>(dipsService.readOne(dipsId), HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @PutMapping("/dips/update")
-    public ResponseEntity<?> update(@RequestBody Dips dips) {
-        return new ResponseEntity<>(dipsService.update(dips), HttpStatus.OK);
     }
 
     @CrossOrigin

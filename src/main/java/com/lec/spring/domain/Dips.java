@@ -18,17 +18,17 @@ public class Dips {
     @ToString.Exclude
     private User user;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "propertyId", nullable = true)
     @ToString.Exclude
     private Property property;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "carId", nullable = true)
     @ToString.Exclude
     private Car car;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "productId", nullable = true)
     @ToString.Exclude
     private Product product;
