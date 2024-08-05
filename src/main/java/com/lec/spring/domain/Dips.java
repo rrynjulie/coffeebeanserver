@@ -19,11 +19,6 @@ public class Dips {
     private User user;
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "propertyId", nullable = true)
-    @ToString.Exclude
-    private Property property;
-
-    @ManyToOne(optional = true)
     @JoinColumn(name = "carId", nullable = true)
     @ToString.Exclude
     private Car car;
