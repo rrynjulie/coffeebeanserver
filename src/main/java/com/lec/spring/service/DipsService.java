@@ -12,28 +12,18 @@ import java.util.List;
 @Service
 public class DipsService {
     private final DipsRepository dipsRepository;
+    private final UserService userService;
 
     // 기본적인 CRUD
     @Transactional
-    public Dips create(Dips dips) {
+    public Dips create(Dips dips, Long userId) {
+        dips.setUser(userService.readOne(userId));
         return dipsRepository.save(dips);
-    }
-
-    @Transactional(readOnly = true)
-    public Dips readOne(Long dipsId) {
-        return dipsRepository.findById(dipsId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
     }
 
     @Transactional(readOnly = true)
     public List<Dips> readAll() {
         return dipsRepository.findAll();
-    }
-
-    @Transactional
-    public Dips update(Dips dips) {
-        Dips dipsEntity = dipsRepository.findById(dips.getDipsId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        // TODO
-        return dipsEntity;
     }
 
     @Transactional

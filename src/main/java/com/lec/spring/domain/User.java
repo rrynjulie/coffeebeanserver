@@ -1,14 +1,16 @@
 package com.lec.spring.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -56,4 +58,13 @@ public class User {
     // 권한
     private String role; //  "ROLE_USER", "ROLE_USER,ROLE_ADMIN"
 
+    // 날짜 자동 저장
+    // reliability 자동으로 500 설정
+    @PrePersist
+    protected void onCreate() {
+        this.regDate = LocalDateTime.now();
+        if (this.reliability == 0) { // reliability 값이 설정되지 않은 경우 기본값 500을 설정
+            this.reliability = 500;
+        }
+    }
 }

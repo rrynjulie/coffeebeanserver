@@ -42,6 +42,11 @@ public class AttachmentService {
         return "ok";
     }
 
+
+    public Attachment findById(Long id) {
+        return attachmentRepository.findById(id).orElse(null);
+    }
+
     // 추가 기능
     // TODO
 }
