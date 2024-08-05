@@ -29,5 +29,10 @@ public class ChatRoomController {
         return ResponseEntity.ok(chatRooms);
     }
 
-
+    // 사용자가 참여하고 있는 모든 채팅방과 마지막 메시지
+    @GetMapping("/user/{userId}/with-last-message")
+    public ResponseEntity<List<ChatRoom>> findChatRoomsWithLastMessage(@PathVariable Long userId) {
+        List<ChatRoom> chatRooms = chatRoomService.findChatRoomsWithLastMessage(userId);
+        return ResponseEntity.ok(chatRooms);
+    }
 }

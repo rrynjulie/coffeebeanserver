@@ -39,6 +39,11 @@ public class MessageController {
         return messageService.sendMessage(message);
     }
 
+    @PostMapping("/messages/read/{chatRoomId}/{userId}")
+    public void markMessagesAsRead(@PathVariable Long chatRoomId, @PathVariable Long userId) {
+        messageService.markMessagesAsRead(chatRoomId, userId);
+    }
+
     @GetMapping("/messages/{chatRoomId}")
     public List<Message> getMessagesByChatRoomId(@PathVariable Long chatRoomId) {
         return messageService.MessageByRoomId(chatRoomId);
