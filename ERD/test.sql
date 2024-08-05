@@ -11,6 +11,8 @@ SELECT * FROM car ORDER BY carId DESC;
 SELECT * FROM chat_room ORDER BY chatRoomId DESC;
 ALTER TABLE chat_room DROP column isJoin;
 
+SELECT * FROM dealing_type ORDER BY dealingTypeId DESC;
+
 SELECT * FROM dips ORDER BY dipsId DESC;
 
 SELECT * FROM message ORDER BY messageId DESC;

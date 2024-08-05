@@ -1,5 +1,6 @@
 package com.lec.spring.service;
 
+import com.lec.spring.domain.DealingType;
 import com.lec.spring.domain.Property;
 import com.lec.spring.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +13,16 @@ import java.util.List;
 @Service
 public class PropertyService {
     private final PropertyRepository propertyRepository;
+    private final UserService userService;
 
     // 기본적인 CRUD
     @Transactional
-    public Property create(Property property) {
+    public Property create(Property property, Long userId) {
+        property.setUser(userService.readOne(userId));
+        if(property.getDealingTypes() != null) {
+            for(DealingType dealingType : property.getDealingTypes())
+                dealingType.setProperty(property);
+        }
         return propertyRepository.save(property);
     }
 
