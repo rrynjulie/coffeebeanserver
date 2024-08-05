@@ -1,11 +1,13 @@
 package com.lec.spring.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -17,6 +19,8 @@ public class Message {
     private Long messageId;             // 메세지 id
 
     private String messageText;         // 메세지 내용
+
+    @JsonFormat(pattern = "a HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime sendTime;     // 메세지 보낸 시간
 
     @Column(nullable = false)
