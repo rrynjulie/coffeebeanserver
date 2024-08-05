@@ -14,9 +14,10 @@ public class ReviewController {
 
     // 기본적인 CRUD
     @CrossOrigin
-    @PostMapping("/review/write")
-    public ResponseEntity<?> create(@RequestBody Review review) {
-        return new ResponseEntity<>(reviewService.create(review), HttpStatus.CREATED);
+    @PostMapping("/review/write/{chatRoomId}/")
+    public ResponseEntity<?> create(@RequestBody Review review, @PathVariable Long chatRoomId, @PathVariable int isBuyer) {
+        boolean isBuyerReview = isBuyer == 1;
+        return new ResponseEntity<>(reviewService.create(review, chatRoomId, isBuyerReview), HttpStatus.CREATED);
     }
 
     @CrossOrigin

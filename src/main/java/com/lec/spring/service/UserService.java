@@ -72,6 +72,9 @@ public class UserService {
     public User findByUsername(String username){
         return userRepository.findByUserName(username.toUpperCase());
     }
+    public User findByUserId(Long userId){
+        return userRepository.findByUserId(userId);
+    }
 
 
     //  로그인 끝 ------------------------------------------------
