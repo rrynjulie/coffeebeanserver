@@ -19,16 +19,17 @@ public class Attachment {
     private Long attachmentId;
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "postId")
     @ToString.Exclude
     private Post post;
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "productId")
     @ToString.Exclude
     private Product product;
+
     @ManyToOne(optional = true)
-    @JoinColumn(name = "car_id")
+    @JoinColumn(name = "carId")
     @ToString.Exclude
     private Car car;
 
