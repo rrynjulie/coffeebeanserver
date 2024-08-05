@@ -4,10 +4,10 @@ import com.lec.spring.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 // Outh2 있으면 implemets 추가로 해줄것
 public class PrincipalDetails implements UserDetails {
@@ -58,6 +58,21 @@ public class PrincipalDetails implements UserDetails {
         return user.getUserName();
     }
 
+    public String getNickname() {
+        return user.getNickName();
+    }
+
+    public String getEmail() {
+        return user.getEmail();
+    }
+
+    public LocalDateTime getRegDate() {
+        return user.getRegDate();
+    }
+    public Integer getReliability() {
+        return user.getReliability();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -77,4 +92,7 @@ public class PrincipalDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
+
 }
