@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -19,8 +20,13 @@ public class ChatRoomService {
     }
 
     // 사용자가 참여하고 있는 모든 채팅방 조회
-    public List<ChatRoom> findByChatRoomId(Long userId) {
-        return chatRoomRepository.findByChatRoomId(userId);
+    public List<ChatRoom> findByUserId(Long userId) {
+        return chatRoomRepository.findByBuyerIdUserIdOrSellerIdUserId(userId, userId);
+    }
+
+    // ChatRoom ID로 조회
+    public Optional<ChatRoom> findById(Long chatRoomId) {
+        return chatRoomRepository.findById(chatRoomId);
     }
 
 }

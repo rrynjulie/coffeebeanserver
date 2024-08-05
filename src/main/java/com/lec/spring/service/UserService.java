@@ -64,7 +64,7 @@ public class UserService {
 
         user.setUserName(user.getUserName().toUpperCase());
         user.setPassword(passwordEncoder.encode(password));
-        user.setRole("ROLE_MEMBER");  // 기본적으로 MEMBER
+        user.setRole("ROLE_USER");
         return userRepository.save(user);
     }
 

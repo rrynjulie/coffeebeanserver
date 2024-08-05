@@ -14,9 +14,9 @@ public class ProductController {
     private final ProductService productService;
 
     // 기본적인 CRUD
-    @PostMapping("/product/write/{userId}")
-    public ResponseEntity<?> create(@RequestBody Product product, @PathVariable Long userId) {
-        return new ResponseEntity<>(productService.create(product, userId), HttpStatus.CREATED);
+    @PostMapping("/product/write")
+    public ResponseEntity<?> create(@RequestBody Product product) {
+        return new ResponseEntity<>(productService.create(product), HttpStatus.CREATED);
     }
 
     @GetMapping("/product/list")

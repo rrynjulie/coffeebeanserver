@@ -12,20 +12,16 @@ import java.util.List;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
-    private final UserService userService;
 
     // 기본적인 CRUD
     @Transactional
-    public Product create(Product product, Long userId) {
-        product.setUser(userService.readOne(userId));
+    public Product create(Product product) {
         return productRepository.save(product);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Product readOne(Long productId) {
-        Product productEntity = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        productEntity.setViewCount(productEntity.getViewCount() + 1);
-        return productRepository.save(productEntity);
+        return productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
     }
 
     @Transactional(readOnly = true)
@@ -36,15 +32,7 @@ public class ProductService {
     @Transactional
     public Product update(Product product) {
         Product productEntity = productRepository.findById(product.getProductId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        productEntity.setName(product.getName());
-        productEntity.setDescription(product.getDescription());
-        productEntity.setPrice(product.getPrice());
-        productEntity.setCategory1(product.getCategory1());
-        productEntity.setCategory2(product.getCategory2());
-        productEntity.setCategory3(product.getCategory3());
-        productEntity.setStatus(product.getStatus());
-        productEntity.setDealingType(product.getDealingType());
-        productEntity.setDesiredArea(product.getDesiredArea());
+        // TODO
         return productEntity;
     }
 

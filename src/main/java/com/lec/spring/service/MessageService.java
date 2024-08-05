@@ -25,10 +25,11 @@ public class MessageService {
     }
 
     public List<Message> MessageByUserId(Long userId) {
-        return messageRepository.findByChatRoomUserUserId(userId);
+        return messageRepository.findBySenderUserId(userId);
     }
 
     public void deleteMessage(Long messageId) {
         messageRepository.deleteById(messageId);
     }
+
 }
