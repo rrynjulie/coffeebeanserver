@@ -24,8 +24,8 @@ public class ChatRoomController {
 
     // 사용자가 참여하고 있는 모든 채팅방
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<ChatRoom>> findByChatRoomId(@PathVariable Long userId) {
-        List<ChatRoom> chatRooms = chatRoomService.findByChatRoomId(userId);
+    public ResponseEntity<List<ChatRoom>> findByUserId(@PathVariable Long userId) {
+        List<ChatRoom> chatRooms = chatRoomService.findByUserId(userId);
         return ResponseEntity.ok(chatRooms);
     }
 
