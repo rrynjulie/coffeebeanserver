@@ -15,26 +15,20 @@ import java.util.Map;
 @Service
 public class PostService {
     private final PostRepository postRepository;
-
+    private final UserService userService;
     private final AttachmentService attachmentService;
 
     // 기본적인 CRUD
     @Transactional
-    public Post create(Post post, Map<String, MultipartFile> files) {
+    public Post create(Post post, Long userId) {
+        post.setUser(userService.readOne(userId));
+        System.out.println(userId + "---------------------------------------------------------------------------");
         return postRepository.save(post);
     }
 
     @Transactional(readOnly = true)
     public Post readOne(Long postId) {
         Post post =  postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        if (post != null){
-//            List<Attachment> fileList = attachmentRepository.findByPostId(post.getPostId());
-//            List<Attachment> fileList = attachmentRepository.findByPost(post.getPostId());
-            List<Attachment> fileList = (List<Attachment>) attachmentService.findById(post.getPostId());
-//            setImage(fileList);
-            post.setFileList(fileList);
-        }
-
         return post;
     }
 
@@ -44,9 +38,11 @@ public class PostService {
     }
 
     @Transactional
-    public Post update(Post post, Map<String, MultipartFile> files) {
+    public Post update(Post post) {
         Post postEntity = postRepository.findById(post.getPostId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        // TODO
+        postEntity.setType(post.getType());
+        postEntity.setTitle(post.getTitle());
+        postEntity.setContent(post.getContent());
         return postEntity;
     }
 

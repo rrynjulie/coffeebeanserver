@@ -60,7 +60,7 @@ public class User {
     private String role; //  "ROLE_USER", "ROLE_USER,ROLE_ADMIN"
 
     @OneToMany
-    @JoinColumn(name = "user_id"
+    @JoinColumn(name = "userId"
     , insertable = false, updatable = false)
     @ToString.Exclude
     private List<Post> posts = new ArrayList<>();
