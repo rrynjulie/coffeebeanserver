@@ -4,6 +4,7 @@ package com.lec.spring.config;
 // 스프링 시큐리티에 필요한 bean을 추가해 주는
 // config 클래스 파일을 추가해 줘야 합니다.
 
+import com.lec.spring.jwt.JWTUtil;
 import com.lec.spring.jwt.LoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,9 +23,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final JWTUtil jwtUtil;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration) {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
         this.authenticationConfiguration = authenticationConfiguration;
+        this.jwtUtil = jwtUtil;
     }
 
     @Bean
@@ -67,7 +70,7 @@ public class SecurityConfig {
 
         // 필터 추가 LoginFilter()는 AuthenticationManager 인자를 받음
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration)),
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
                         UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -1,5 +1,6 @@
 package com.lec.spring.jwt;
 
+import com.lec.spring.config.PrincipalDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,16 +9,23 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
 
-    public LoginFilter(AuthenticationManager authenticationManager) {
+    private final JWTUtil jwtUtil;
+
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
     }
 
     // 로그인 인증을 시도할때 호출된다
@@ -46,7 +54,37 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         System.out.println("로그인 성공시 호출되는 LoginFilter.successfulAuthentication() 호출: 인증 성공!");
         System.out.println("\tAuthentication: " + authResult);
 
-        super.successfulAuthentication(request, response, chain, authResult);
+        PrincipalDetails userDetails = (PrincipalDetails) authResult.getPrincipal();
+        // jwt에 담을 내용
+
+        // 유저 아이디
+        Long userId = userDetails.getUser().getUserId();
+
+        // 유저 이름
+        String userName = userDetails.getUsername();
+
+        // 유저 닉네임
+        String nickName = userDetails.getNickname();
+
+        // 유저 이메일
+        String email = userDetails.getEmail();
+
+        // 유저 등록일
+        LocalDateTime regDate = userDetails.getRegDate();
+        String regDate2 = regDate.toString();
+
+        // 유저 신뢰도
+        Integer reliability = userDetails.getReliability();
+
+        // 권한
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        String role = authorities.stream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .collect(Collectors.joining(","));
+
+        String token = jwtUtil.createJwt(userId, userName, nickName, email, regDate2, reliability, role, 30 * 60 * 1000L );
+
+        response.addHeader("Authorization", "Bearer " + token);
     }
 
     // 로그인 실패시 실행하는 메소드

@@ -56,4 +56,14 @@ public class User {
     // 권한
     private String role; //  "ROLE_USER", "ROLE_USER,ROLE_ADMIN"
 
+
+    // 날짜 자동 저장
+    // reliability 자동으로 500 설정
+    @PrePersist
+    protected void onCreate() {
+        this.regDate = LocalDateTime.now();
+        if (this.reliability == 0) { // reliability 값이 설정되지 않은 경우 기본값 500을 설정
+            this.reliability = 500;
+        }
+    }
 }
