@@ -1,19 +1,35 @@
 package com.lec.spring.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity(name = "dips")
 public class Dips {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long dipsId;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "userId", nullable = false)
+    @ToString.Exclude
+    private User user;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "propertyId", nullable = true)
+    @ToString.Exclude
+    private Property property;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "carId", nullable = true)
+    @ToString.Exclude
+    private Car car;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "productId", nullable = true)
+    @ToString.Exclude
+    private Product product;
 }
