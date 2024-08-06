@@ -71,7 +71,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // 유저 등록일
         LocalDateTime regDate = userDetails.getRegDate();
-        String regDate2 = regDate.toString();
+        String regDate2 = regDate.toString ();
 
         // 유저 신뢰도
         Integer reliability = userDetails.getReliability();

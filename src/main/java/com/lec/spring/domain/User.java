@@ -1,5 +1,6 @@
 package com.lec.spring.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,7 @@ public class User {
 
     // 비밀번호
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     // 닉네임
