@@ -56,7 +56,7 @@ public class Car {
     private String category2;  // 브랜드(제네시스, 현대, 기아, 쉐보레(GM대우), 르노삼성, 쌍용)
 
     @Enumerated(value = EnumType.STRING)
-    @ColumnDefault(value = "'USED'")
+    @ColumnDefault(value = "'중고'")
     @Column(nullable = false)
     private Status status;  // 중고차 여부
 
