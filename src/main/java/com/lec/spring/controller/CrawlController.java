@@ -1,5 +1,6 @@
 package com.lec.spring.controller;
 
+import com.lec.spring.service.CrawlingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CrawlController {
 
     @Autowired
-    private com.lec.spring.Service.CrawlingService crawlingService;
+    private CrawlingService crawlingService;
 
     @GetMapping("/crawlproduct")
     public String crawlproduct() {
