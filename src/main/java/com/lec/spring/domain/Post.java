@@ -23,7 +23,7 @@ public class Post {
     private Long postId;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "user_userId", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     @ToString.Exclude
     private User user;
 
