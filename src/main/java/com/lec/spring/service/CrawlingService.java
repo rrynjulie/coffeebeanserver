@@ -1,4 +1,4 @@
-package com.lec.spring.Service;
+package com.lec.spring.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
