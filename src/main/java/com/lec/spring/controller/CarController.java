@@ -14,9 +14,9 @@ public class CarController {
 
     // 기본적인 CRUD
     @CrossOrigin
-    @PostMapping("/car/write")
-    public ResponseEntity<?> create(@RequestBody Car car) {
-        return new ResponseEntity<>(carService.create(car), HttpStatus.CREATED);
+    @PostMapping("/car/write/{userId}")
+    public ResponseEntity<?> create(@RequestBody Car car, @PathVariable Long userId) {
+        return new ResponseEntity<>(carService.create(car, userId), HttpStatus.CREATED);
     }
 
     @CrossOrigin
