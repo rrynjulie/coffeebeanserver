@@ -21,6 +21,7 @@ import java.io.*;
 import java.net.SocketException;
 import java.time.LocalDateTime;
 import java.util.Iterator;
+import java.util.Random;
 
 import static java.lang.Integer.parseInt;
 
@@ -52,6 +53,8 @@ public class CrawlingService {
 
     private static final String STATE_FILE = "crawl_state.txt";
 
+    private final Random random = new Random();
+
     public void saveAllProducts() {
         int startCategoryIndex = 0;
         int startPage = 1;
@@ -60,8 +63,8 @@ public class CrawlingService {
         File stateFile = new File(STATE_FILE);
         if (stateFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(stateFile))) {
-                startCategoryIndex = parseInt(reader.readLine());
-                startPage = parseInt(reader.readLine());
+                startCategoryIndex = Integer.parseInt(reader.readLine());
+                startPage = Integer.parseInt(reader.readLine());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -179,7 +182,7 @@ public class CrawlingService {
             int price = 0;
             if (!priceText.isEmpty()) {
                 try {
-                    price = parseInt(priceText);
+                    price = Integer.parseInt(priceText);
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                     price = 0; // 기본값 설정
@@ -210,7 +213,9 @@ public class CrawlingService {
             // 저장
             Product product = new Product();
 
-            User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("User not found"));
+            long randomUserId = random.nextInt(50) + 1; // 매번 호출할 때마다 랜덤 값 생성
+            User user = userRepository.findById(randomUserId)
+                    .orElseThrow(() -> new RuntimeException("User with ID " + randomUserId + " not found"));
             product.setUser(user);
 
             product.setName(name);

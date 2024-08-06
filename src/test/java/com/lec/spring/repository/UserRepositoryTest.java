@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,7 +60,26 @@ class UserRepositoryTest {
 //                .reliability(500)
 //                .build();
 
-
         userRepository.saveAllAndFlush(List.of(user1));
+    }
+
+    @Test
+    void registerTest2() {
+        List<User> users = new ArrayList<>();
+
+        for (int i = 10; i < 60; i++) {
+            User user = User.builder()
+                    .userName("user" + i)
+                    .nickName("nickname" + i)
+                    .password(passwordEncoder.encode("1234"))
+                    .email("user" + i + "@mail.com")
+                    .regDate(LocalDateTime.now())
+                    .reliability(500)
+                    .role("ROLE_USER")
+                    .build();
+            users.add(user);
+        }
+
+        userRepository.saveAllAndFlush(users);
     }
 }
