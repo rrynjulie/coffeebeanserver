@@ -50,22 +50,26 @@ public class Car {
     private String carOption;  // 차량 옵션
 
     @Column(nullable = false)
-    private String category1;  // 차종(국산차, 수입차)
+    private String category1;  // 제조국(국산차, 수입차)
 
     @Column(nullable = false)
-    private String category2;  // 브랜드(제네시스, 현대, 기아, 쉐보레(GM대우), 르노삼성, 쌍용)
+    private String category2;  // 제조사(제네시스, 현대, 기아, 쉐보레(대우), 르노코리아, 벤츠, BMW, 아우디, 테슬라, 포르쉐)
+
 
     @Enumerated(value = EnumType.STRING)
     @ColumnDefault(value = "'중고'")
     @Column(nullable = false)
     private Status status;  // 중고차 여부
 
+    @Column
+    private Integer modelYear;  // 연식(0000년)
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column
-    private Integer modelYear;  // 연식
+    private LocalDate carRegDate;  // 차량 등록일
 
     @Column
-    private LocalDate carRegDate;  // 차량 등록일
+    private String type;  // 차량 분류(준/대형차, 준/중형차, 경차/소형차, 승합/화물차, SUV/RV, 기타)
 
     @Column
     private Double distance;  // 주행 거리
@@ -74,10 +78,10 @@ public class Car {
     private Integer displacement;  // 배기량
 
     @Column
-    private String fuel;  // 연료
+    private String fuel;  // 연료(가솔린(휘발유), 디젤(경유), LPG, CNG(천연가스), 전기, 수소전기, 태양광, 하이브리드)
 
     @Column
-    private String transmission;  // 변속기
+    private String transmission;  // 변속기(자동(A/T), 수동(M/T)
 
     @Column
     private Integer insuranceRisk;  // 보험사고 이력 횟수
