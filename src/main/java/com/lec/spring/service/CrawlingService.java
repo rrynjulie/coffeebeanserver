@@ -41,10 +41,10 @@ public class CrawlingService {
 
     private static final int[] CATEGORY_IDS = {
             111,
-//            112, 139, 140,
-//            143, 144, 180, 181,
-//            182, 185, 208, 209,
-//            210, 211, 224, 225
+            112, 139, 140,
+            143, 144, 180, 181,
+            182, 185, 208, 209,
+            210, 211, 224, 225
     };
 
     private static final int MAX_RETRIES = 3; // 최대 재시도 횟수
@@ -237,9 +237,11 @@ public class CrawlingService {
 
                 if (!mediaUrl.isEmpty() && !productMediaSeq.isEmpty()) {
                     Attachment attachment = new Attachment();
+
                     attachment.setProduct(product);
                     attachment.setFilename(productMediaSeq);
                     attachment.setSource(mediaUrl);
+
 
                     attachmentRepository.save(attachment);
 
