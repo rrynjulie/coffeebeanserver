@@ -98,7 +98,7 @@ public class Car {
     private int viewCount;  // 조회수
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "attachmentId")
+    @JoinColumn(name = "carId")
     @ToString.Exclude
     @Builder.Default   // builder 제공 안 함
     private List<Attachment> fileList = new ArrayList<>();  // 첨부 파일

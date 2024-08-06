@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ChatRoomService chatRoomService;
+    private final UserService userService;
 
     // 기본적인 CRUD
     @Transactional
@@ -28,20 +29,18 @@ public class ReviewService {
         if (!chatRoom.getDealComplete()) {
             throw new IllegalArgumentException("거래가 완료되지 않았습니다.");
         }
+        User writer = userService.findByUserId(writerId);
 
         review.setChatRoom(chatRoom);
         review.setRegDate(LocalDateTime.now());
+        review.setWriter(writer);
 
-        if (chatRoom.getSellerId().equals(writerId)) {
-            review.setWriter(chatRoom.getSellerId());
-            System.out.println("-".repeat(40));
-            System.out.println(chatRoom.getSellerId());
-            System.out.println("-".repeat(40));
-            System.out.println(chatRoom.getBuyerId());
+        if (chatRoom.getSellerId().getUserId().equals(writerId)) {
             review.setRecipient(chatRoom.getBuyerId());
-        } else if (chatRoom.getBuyerId().equals(writerId)){
-            review.setWriter(chatRoom.getBuyerId());
+        } else if (chatRoom.getBuyerId().getUserId().equals(writerId)){
             review.setRecipient(chatRoom.getSellerId());
+        } else {
+            throw new IllegalArgumentException("작성자는 채팅방의 구매자 또는 판매자여야 합니다.");
         }
 
         return reviewRepository.save(review);
@@ -53,16 +52,15 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public List<Review> readAll() {
-        return reviewRepository.findAll();
+    public List<Review> readWriterReviewAll(Long writerId) {
+        return reviewRepository.findByWriterUserId(writerId);
+    }
+    @Transactional(readOnly = true)
+    public List<Review> readRecipientReviewAll(Long recipientId) {
+        return reviewRepository.findByRecipientUserId(recipientId);
     }
 
-    @Transactional
-    public Review update(Review review) {
-        Review reviewEntity = reviewRepository.findById(review.getReviewId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        reviewEntity.setContent(review.getContent());
-        return reviewEntity;
-    }
+
 
     @Transactional
     public String delete(Long reviewId) {
