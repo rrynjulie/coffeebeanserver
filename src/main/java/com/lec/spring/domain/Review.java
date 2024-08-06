@@ -23,21 +23,18 @@ public class Review {
     private ChatRoom chatRoom;
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "buyerId", nullable = true)
+    @JoinColumn(name = "writerId", nullable = true)
     @ToString.Exclude
-    private User buyerId;
+    private User writer;
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "sellerId", nullable = true)
+    @JoinColumn(name = "recipientId", nullable = true)
     @ToString.Exclude
-    private User sellerId;
+    private User recipient;
 
     @Column(nullable = false)
     private String content;
 
     @Column(nullable = false)
     private LocalDateTime regDate;
-
-    private Boolean isBuyerReview;
-
 }

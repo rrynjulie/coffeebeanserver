@@ -24,10 +24,9 @@ public class ChatRoom {
     @JoinColumn(name = "sellerId", referencedColumnName = "userId", nullable = true)
     private User sellerId; // User 객체 참조
 
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
-    private Boolean dealComplete;
+    private boolean dealComplete;
 
-//    public ChatRoom() {
-//        this.dealComplete = false;
-//    }
+    public boolean getDealComplete() {
+        return true;
+    }
 }

@@ -37,7 +37,7 @@ public class Car {
 
     private LocalDateTime regDate;  // 등록 날짜
 
-    private String option;
+    private String carOption;   // option 은 mysql 에서 명령어로 사용되고 있다고 해서 carOption 으로 column 명 변경했어요 재혁 씨 ㅎㅎ
 
     private String category;  // 브랜드
 

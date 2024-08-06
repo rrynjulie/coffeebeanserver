@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -20,8 +22,7 @@ public class ReviewService {
 
     // 기본적인 CRUD
     @Transactional
-    public Review create(Review review, Long chatRoomId, boolean isBuyer) {
-
+    public Review create(Review review, Long chatRoomId, Long writerId) {
         ChatRoom chatRoom = chatRoomService.findById(chatRoomId).orElseThrow(() -> new IllegalArgumentException("해당 채팅이 존재하지 않습니다."));
 
         if (!chatRoom.getDealComplete()) {
@@ -30,26 +31,26 @@ public class ReviewService {
 
         review.setChatRoom(chatRoom);
         review.setRegDate(LocalDateTime.now());
-        review.setIsBuyerReview(isBuyer);
 
-        if (isBuyer) {
-            review.setBuyerId(chatRoom.getBuyerId());
-            review.setSellerId(chatRoom.getSellerId());
-        } else {
-            review.setSellerId(chatRoom.getSellerId());
-            review.setBuyerId(chatRoom.getBuyerId());
+        if (chatRoom.getSellerId().equals(writerId)) {
+            review.setWriter(chatRoom.getSellerId());
+            System.out.println("-".repeat(40));
+            System.out.println(chatRoom.getSellerId());
+            System.out.println("-".repeat(40));
+            System.out.println(chatRoom.getBuyerId());
+            review.setRecipient(chatRoom.getBuyerId());
+        } else if (chatRoom.getBuyerId().equals(writerId)){
+            review.setWriter(chatRoom.getBuyerId());
+            review.setRecipient(chatRoom.getSellerId());
         }
 
         return reviewRepository.save(review);
-
     }
 
     @Transactional(readOnly = true)
-    public Review readOne(Long reviewId) {
-        return reviewRepository.findById(reviewId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
+    public List<Review> readOne(ChatRoom chatRoom, User user) {
+        return reviewRepository.findByChatRoomAndWriter(chatRoom, user);
     }
-
-
 
     @Transactional(readOnly = true)
     public List<Review> readAll() {
