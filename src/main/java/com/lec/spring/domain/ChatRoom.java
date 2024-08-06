@@ -33,4 +33,10 @@ public class ChatRoom {
     @Transient
     @JsonFormat(pattern = "MM월 dd일", timezone = "Asia/Seoul")
     private LocalDateTime lastSendTime;     // 마지막 메세지 보낸 시간
+
+    private boolean dealComplete;
+
+    public boolean getDealComplete() {
+        return true;
+    }
 }

@@ -29,9 +29,6 @@ public class AttachmentController {
     public ResponseEntity<?> download(Long id){
         if(id == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST); // 400
 
-//        Attachment file = (Attachment) attachmentRepository.findByPostId(id);
-//        Attachment file = (Attachment) attachmentRepository.findByPost(id);
-//        Attachment file = (Attachment) attachmentService.findById(id);
         Attachment file = attachmentService.findById(id);
         if(file == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND); // 404
 
