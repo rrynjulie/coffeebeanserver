@@ -55,7 +55,7 @@ public class Product {
     private String category3;  // 카테고리3
 
     @Enumerated(value = EnumType.STRING)
-    @ColumnDefault(value = "'중고'")ㄴ
+    @ColumnDefault(value = "'중고'")
     @Column(nullable = false)
     private Status status;  // 상품 상태
 
