@@ -1,6 +1,6 @@
 package com.lec.spring.domain.enums;
 
 public enum Status {
-    USED,
-    NEW
+    중고,
+    새상품
 }
