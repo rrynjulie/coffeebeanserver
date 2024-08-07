@@ -46,11 +46,14 @@ public class ReviewService {
             throw new IllegalArgumentException("작성자는 채팅방의 구매자 또는 판매자여야 합니다.");
         }
 
-        sampleReview.setUser(review.getWriter());
-        sampleReview.setReview(review);
+        Review savedReview = reviewRepository.save(review);
+
+        sampleReview.setUser(savedReview.getRecipient());
+        sampleReview.setReview(savedReview);
         sampleReviewService.create(sampleReview);
 
-        return reviewRepository.save(review);
+        return savedReview;
+//        return reviewRepository.save(review);
     }
 
     @Transactional(readOnly = true)

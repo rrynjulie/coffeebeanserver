@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin
@@ -22,11 +24,29 @@ public class ReviewController {
     private final ChatRoomService chatRoomService;
 
     // 기본적인 CRUD
+//    @PostMapping("/write/{chatRoomId}/{writerId}")
+//    public ResponseEntity<?> create(@RequestBody Review review, @PathVariable Long chatRoomId, @PathVariable Long writerId, @RequestBody SampleReview sampleReview) {
+//        return new ResponseEntity<>(reviewService.create(review, chatRoomId, writerId, sampleReview), HttpStatus.CREATED);
+//    }
     @PostMapping("/write/{chatRoomId}/{writerId}")
-    public ResponseEntity<?> create(@RequestBody Review review, @PathVariable Long chatRoomId, @PathVariable Long writerId, @RequestBody SampleReview sampleReview) {
+    public ResponseEntity<?> createReview(
+            @PathVariable("chatRoomId") Long chatRoomId,
+            @PathVariable("writerId") Long writerId,
+            @RequestBody Map<String, Object> reviewData) {
 
-        return new ResponseEntity<>(reviewService.create(review, chatRoomId, writerId, sampleReview), HttpStatus.CREATED);
+        Review review = new Review();
+        review.setContent((String) reviewData.get("reviewContent"));
+
+        SampleReview sampleReview = new SampleReview();
+        sampleReview.setManner((Integer) reviewData.get("manner"));
+        sampleReview.setResponse((Integer) reviewData.get("response"));
+        sampleReview.setTime((Integer) reviewData.get("time"));
+        sampleReview.setBadManner((Integer) reviewData.get("badManner"));
+
+        Review createdReview = reviewService.create(review, chatRoomId, writerId, sampleReview);
+        return new ResponseEntity<>(createdReview, HttpStatus.CREATED);
     }
+
 
     @GetMapping("/list/{chatRoomId}/{writerId}")
     public ResponseEntity<?> readAllByUserId(@PathVariable Long chatRoomId, @PathVariable Long writerId) {

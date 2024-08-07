@@ -1,5 +1,6 @@
 package com.lec.spring.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,9 +19,11 @@ public class SampleReview {
     @ManyToOne(optional = false)
     @JoinColumn(name = "userId", nullable = false)
     @ToString.Exclude
+    @JsonBackReference
     private User user;
 
     @OneToOne(optional = false)
+    @JsonBackReference
     private Review review;
 
     @Column(nullable = false)

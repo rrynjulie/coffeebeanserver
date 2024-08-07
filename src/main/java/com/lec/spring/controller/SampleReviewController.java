@@ -20,17 +20,8 @@ public class SampleReviewController {
     }
 
     @CrossOrigin
-    @GetMapping("/sampleReview/list")
-    public ResponseEntity<?> readAll() {
-        return new ResponseEntity<>(sampleReviewService.readAll(), HttpStatus.OK);
-    }
-
-    @CrossOrigin
     @DeleteMapping("/sampleReview/delete/{sampleReviewId}")
     public ResponseEntity<?> delete(@PathVariable Long sampleReviewId) {
         return new ResponseEntity<>(sampleReviewService.delete(sampleReviewId), HttpStatus.OK);
     }
-
-    // 추가 기능
-    // TODO
 }

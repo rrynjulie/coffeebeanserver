@@ -166,9 +166,8 @@ public class PostService {
             p.setContent(post.getContent());
             p = postRepository.saveAndFlush(p);
 
-//            Post savedPost = postRepository.save(post);
-//            addFiles(files, savedPost);
-            addFiles(files, p);
+            Post savedPost = postRepository.save(post);
+            addFiles(files, savedPost);
 
             if (delfile != null){
                 for (Long fileId : delfile){
@@ -179,6 +178,7 @@ public class PostService {
                     }
                 }
             }
+
             result = 1;
         }
         return result;
