@@ -43,4 +43,5 @@ public class ChatRoom {
 
     @Transient
     private Long unreadMessage;       // 안읽은 메세지 개수
+
 }
