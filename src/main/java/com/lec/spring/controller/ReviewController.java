@@ -2,6 +2,7 @@ package com.lec.spring.controller;
 
 import com.lec.spring.domain.ChatRoom;
 import com.lec.spring.domain.Review;
+import com.lec.spring.domain.SampleReview;
 import com.lec.spring.domain.User;
 import com.lec.spring.service.ChatRoomService;
 import com.lec.spring.service.ReviewService;
@@ -22,8 +23,9 @@ public class ReviewController {
 
     // 기본적인 CRUD
     @PostMapping("/write/{chatRoomId}/{writerId}")
-    public ResponseEntity<?> create(@RequestBody Review review, @PathVariable Long chatRoomId, @PathVariable Long writerId) {
-        return new ResponseEntity<>(reviewService.create(review, chatRoomId, writerId), HttpStatus.CREATED);
+    public ResponseEntity<?> create(@RequestBody Review review, @PathVariable Long chatRoomId, @PathVariable Long writerId, @RequestBody SampleReview sampleReview) {
+
+        return new ResponseEntity<>(reviewService.create(review, chatRoomId, writerId, sampleReview), HttpStatus.CREATED);
     }
 
     @GetMapping("/list/{chatRoomId}/{writerId}")

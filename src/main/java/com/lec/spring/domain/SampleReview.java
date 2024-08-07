@@ -1,12 +1,10 @@
 package com.lec.spring.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
@@ -16,4 +14,24 @@ public class SampleReview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long sampleReviewId;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "userId", nullable = false)
+    @ToString.Exclude
+    private User user;
+
+    @OneToOne(optional = false)
+    private Review review;
+
+    @Column(nullable = false)
+    private int manner;
+
+    @Column(nullable = false)
+    private int response;
+
+    @Column(nullable = false)
+    private int time;
+
+    @Column(nullable = false)
+    private int badManner;
 }

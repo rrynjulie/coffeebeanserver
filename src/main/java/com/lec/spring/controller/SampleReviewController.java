@@ -26,18 +26,6 @@ public class SampleReviewController {
     }
 
     @CrossOrigin
-    @GetMapping("/sampleReview/detail/{sampleReviewId}")
-    public ResponseEntity<?> readOne(@PathVariable Long sampleReviewId) {
-        return new ResponseEntity<>(sampleReviewService.readOne(sampleReviewId), HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @PutMapping("/sampleReview/update")
-    public ResponseEntity<?> update(@RequestBody SampleReview sampleReview) {
-        return new ResponseEntity<>(sampleReviewService.update(sampleReview), HttpStatus.OK);
-    }
-
-    @CrossOrigin
     @DeleteMapping("/sampleReview/delete/{sampleReviewId}")
     public ResponseEntity<?> delete(@PathVariable Long sampleReviewId) {
         return new ResponseEntity<>(sampleReviewService.delete(sampleReviewId), HttpStatus.OK);

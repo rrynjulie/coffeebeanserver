@@ -20,20 +20,8 @@ public class SampleReviewService {
     }
 
     @Transactional(readOnly = true)
-    public SampleReview readOne(Long sampleReviewId) {
-        return sampleReviewRepository.findById(sampleReviewId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-    }
-
-    @Transactional(readOnly = true)
     public List<SampleReview> readAll() {
         return sampleReviewRepository.findAll();
-    }
-
-    @Transactional
-    public SampleReview update(SampleReview sampleReview) {
-        SampleReview sampleReviewEntity = sampleReviewRepository.findById(sampleReview.getSampleReviewId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        // TODO
-        return sampleReviewEntity;
     }
 
     @Transactional
