@@ -48,7 +48,8 @@ public class CarService {
         carEntity.setDisplacement(car.getDisplacement());
         carEntity.setFuel(car.getFuel());
         carEntity.setTransmission(car.getTransmission());
-        carEntity.setInsuranceRisk(car.getInsuranceRisk());
+        carEntity.setInsuranceVictim(car.getInsuranceVictim());
+        carEntity.setInsuranceInjurer(car.getInsuranceInjurer());
         carEntity.setSpecialUse(car.getSpecialUse());
         carEntity.setOwnerChange(car.getOwnerChange());
         return carEntity;
