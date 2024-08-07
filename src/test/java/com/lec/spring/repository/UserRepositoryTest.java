@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,24 +23,24 @@ class UserRepositoryTest {
     @Test
     void registerTest() {
         User user1 = User.builder()
-                .userName("user1")
-                .nickName("1")
+                .userName("admin3")
+                .nickName("admin3")
                 .password(passwordEncoder.encode("1234"))
-                .email("1.@mail.com")
+                .email("admin3.@mail.com")
                 .regDate(LocalDateTime.now())
                 .reliability(500)
-                .role("ROLE_USER")
+                .role("ROLE_USER,ROLE_ADMIN")
                 .build();
 
-        User user2 = User.builder()
-                .userName("user2")
-                .nickName("2")
-                .password(passwordEncoder.encode("1234"))
-                .email("2.@mail.com")
-                .regDate(LocalDateTime.now())
-                .reliability(500)
-                .role("ROLE_USER")
-                .build();
+//        User user2 = User.builder()
+//                .userName("user2")
+//                .nickName("2")
+//                .password(passwordEncoder.encode("1234"))
+//                .email("2.@mail.com")
+//                .regDate(LocalDateTime.now())
+//                .reliability(500)
+//                .role("ROLE_USER")
+//                .build();
 
 //        User user2 = User.builder()
 //                .userName("user2".toUpperCase())
@@ -59,7 +60,26 @@ class UserRepositoryTest {
 //                .reliability(500)
 //                .build();
 
+        userRepository.saveAllAndFlush(List.of(user1));
+    }
 
-        userRepository.saveAllAndFlush(List.of(user1, user2));
+    @Test
+    void registerTest2() {
+        List<User> users = new ArrayList<>();
+
+        for (int i = 10; i < 60; i++) {
+            User user = User.builder()
+                    .userName("user" + i)
+                    .nickName("nickname" + i)
+                    .password(passwordEncoder.encode("1234"))
+                    .email("user" + i + "@mail.com")
+                    .regDate(LocalDateTime.now())
+                    .reliability(500)
+                    .role("ROLE_USER")
+                    .build();
+            users.add(user);
+        }
+
+        userRepository.saveAllAndFlush(users);
     }
 }

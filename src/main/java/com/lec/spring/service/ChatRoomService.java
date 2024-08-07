@@ -2,6 +2,7 @@ package com.lec.spring.service;
 
 import com.lec.spring.domain.ChatRoom;
 import com.lec.spring.domain.Message;
+import com.lec.spring.domain.User;
 import com.lec.spring.repository.ChatRoomRepository;
 import com.lec.spring.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,4 +53,9 @@ public class ChatRoomService {
         }
         return chatRooms;
     }
+    // review 사용
+    public ChatRoom findByChatRoomId(Long chatRoomId){
+        return chatRoomRepository.findByChatRoomId(chatRoomId);
+    }
+
 }

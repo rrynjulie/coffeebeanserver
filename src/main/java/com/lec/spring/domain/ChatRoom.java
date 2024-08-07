@@ -35,6 +35,12 @@ public class ChatRoom {
     @JsonFormat(pattern = "MM월 dd일 a HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime lastSendTime;     // 마지막 메세지 보낸 시간
 
+    private boolean dealComplete;
+
+    public boolean getDealComplete() {
+        return true;
+    }
+
     @Transient
     private Long unreadMessage;       // 안읽은 메세지 개수
 }

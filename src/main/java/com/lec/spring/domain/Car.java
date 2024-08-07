@@ -1,18 +1,23 @@
 package com.lec.spring.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lec.spring.domain.enums.DealingStatus;
+import com.lec.spring.domain.enums.SpecialUse;
 import com.lec.spring.domain.enums.Status;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity(name = "car")
 public class Car {
     @Id
@@ -33,15 +38,71 @@ public class Car {
     @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String introduce;  // 중고차 소개
 
+    @Enumerated(value = EnumType.STRING)
+    @ColumnDefault(value = "'판매중'")
+    @Column(nullable = false)
     private DealingStatus dealingStatus;  // 거래 상태
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(nullable = false)
     private LocalDateTime regDate;  // 등록 날짜
 
-    private String option;
+    @Column(nullable = false)
+    private String category1;  // 제조국(국산차, 수입차)
 
-    private String category;  // 브랜드
+    @Column(nullable = false)
+    private String category2;  // 제조사(제네시스, 현대, 기아, 쉐보레/대우,  르노코리아, 벤츠, BMW, 아우디, 테슬라, 포르쉐)
 
+
+    @Enumerated(value = EnumType.STRING)
+    @ColumnDefault(value = "'중고'")
+    @Column(nullable = false)
     private Status status;  // 중고차 여부
 
-    private Integer modelYear;  //
+    @Column
+    private Integer modelYear;  // 연식(0000년)
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Column
+    private LocalDate carRegDate;  // 차량 등록일
+
+    @Column
+    private Double distance;  // 주행 거리
+
+    @Column
+    private Integer displacement;  // 배기량
+
+    @Column
+    private String fuel;  // 연료(가솔린, 디젤, LPG, CNG, 전기, 하이브리드)
+
+    @Column
+    private String transmission;  // 변속기(자동, 수동, CVT, 듀얼클러치)
+
+    @Column
+    private Integer insuranceVictim;  // 보험사고(피해) 이력 횟수
+
+    @Column
+    private Integer insuranceInjurer;  // 보험사고(가해) 이력 횟수
+
+    @Column
+    private Integer ownerChange;  // 소유자 변경 이력 횟수
+
+    @ColumnDefault(value = "0")
+    @Column(nullable = false, insertable = false)
+    private int viewCount;  // 조회수
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "carId")
+    @ToString.Exclude
+    @Builder.Default   // builder 제공 안 함
+    private List<Attachment> fileList = new ArrayList<>();  // 첨부 파일
+
+    @PrePersist
+    protected void onCreate() {  // 등록 날짜 초기화
+        this.regDate = LocalDateTime.now();
+    }
+
+    public void addFiles(Attachment... files) {  // 첨부파일 추가
+        Collections.addAll(fileList, files);
+    }
 }

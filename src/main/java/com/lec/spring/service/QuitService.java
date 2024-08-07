@@ -12,10 +12,12 @@ import java.util.List;
 @Service
 public class QuitService {
     private final QuitRepository quitRepository;
+    private final UserService userService;
 
     // 기본적인 CRUD
     @Transactional
-    public Quit create(Quit quit) {
+    public Quit create(Quit quit, Long userId) {
+        quit.setUser(userService.readOne(userId));
         return quitRepository.save(quit);
     }
 
@@ -32,7 +34,11 @@ public class QuitService {
     @Transactional
     public Quit update(Quit quit) {
         Quit quitEntity = quitRepository.findById(quit.getQuitId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        // TODO
+        quitEntity.setBadManners(quit.getBadManners());
+        quitEntity.setLowFrequency(quit.getLowFrequency());
+        quitEntity.setBadService(quit.getBadService());
+        quitEntity.setEventUse(quit.getEventUse());
+        quitEntity.setEtc(quit.getEtc());
         return quitEntity;
     }
 
