@@ -47,23 +47,22 @@ public class Car {
     @Column(nullable = false)
     private LocalDateTime regDate;  // 등록 날짜
 
-    private String carOption;  // 차량 옵션
+    @Column(nullable = false)
+    private String category1;  // 제조국(국산차, 수입차)
 
     @Column(nullable = false)
-    private String category1;  // 차종(국산차, 수입차)
+    private String category2;  // 제조사(제네시스, 현대, 기아, 쉐보레/대우,  르노코리아, 벤츠, BMW, 아우디, 테슬라, 포르쉐)
 
-    @Column(nullable = false)
-    private String category2;  // 브랜드(제네시스, 현대, 기아, 쉐보레(GM대우), 르노삼성, 쌍용)
 
     @Enumerated(value = EnumType.STRING)
     @ColumnDefault(value = "'중고'")
     @Column(nullable = false)
     private Status status;  // 중고차 여부
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column
-    private Integer modelYear;  // 연식
+    private Integer modelYear;  // 연식(0000년)
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column
     private LocalDate carRegDate;  // 차량 등록일
 
@@ -74,13 +73,16 @@ public class Car {
     private Integer displacement;  // 배기량
 
     @Column
-    private String fuel;  // 연료
+    private String fuel;  // 연료(가솔린, 디젤, LPG, CNG, 전기, 하이브리드)
 
     @Column
-    private String transmission;  // 변속기
+    private String transmission;  // 변속기(자동, 수동, CVT, 듀얼클러치)
 
     @Column
-    private Integer insuranceRisk;  // 보험사고 이력 횟수
+    private Integer insuranceVictim;  // 보험사고(피해) 이력 횟수
+
+    @Column
+    private Integer insuranceInjurer;  // 보험사고(가해) 이력 횟수
 
     @Enumerated(value = EnumType.STRING)
     @Column
@@ -94,7 +96,7 @@ public class Car {
     private int viewCount;  // 조회수
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "attachmentId")
+    @JoinColumn(name = "carId")
     @ToString.Exclude
     @Builder.Default   // builder 제공 안 함
     private List<Attachment> fileList = new ArrayList<>();  // 첨부 파일
