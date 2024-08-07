@@ -29,4 +29,5 @@ SELECT * FROM review ORDER BY reviewId DESC;
 
 SELECT * FROM sample_review ORDER BY sampleReviewId DESC;
 
-
+DROP TABLE attachment;
+DROP TABLE post;
