@@ -28,3 +28,6 @@ SELECT * FROM quit ORDER BY quitId DESC;
 SELECT * FROM review ORDER BY reviewId DESC;
 
 SELECT * FROM sample_review ORDER BY sampleReviewId DESC;
+
+DROP TABLE attachment;
+DROP TABLE post;

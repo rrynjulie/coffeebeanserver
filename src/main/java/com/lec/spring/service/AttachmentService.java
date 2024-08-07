@@ -1,8 +1,10 @@
 package com.lec.spring.service;
 
 import com.lec.spring.domain.Attachment;
+import com.lec.spring.domain.Post;
 import com.lec.spring.repository.AttachmentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class AttachmentService {
-    private final AttachmentRepository attachmentRepository;
+    private AttachmentRepository attachmentRepository;
 
     // 기본적인 CRUD
     @Transactional
@@ -42,6 +44,10 @@ public class AttachmentService {
         return "ok";
     }
 
+    @Autowired
+    public void setAttachmentRepository(AttachmentRepository attachmentRepository){
+        this.attachmentRepository = attachmentRepository;
+    }
 
     public Attachment findById(Long id) {
         return attachmentRepository.findById(id).orElse(null);
