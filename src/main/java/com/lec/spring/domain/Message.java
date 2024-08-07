@@ -26,6 +26,9 @@ public class Message {
     @Column(nullable = false)
     private boolean IsRead;             // 메세지 읽음 여부
 
+    @Transient
+    private boolean lastIsRead;         // 마지막 메세지 읽음 여부
+
     @ManyToOne
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;        // ChatRoom 테이블과의 관계

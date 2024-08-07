@@ -2,13 +2,11 @@ package com.lec.spring.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lec.spring.domain.enums.DealingStatus;
-import com.lec.spring.domain.enums.SpecialUse;
 import com.lec.spring.domain.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,9 +60,8 @@ public class Car {
     @Column
     private Integer modelYear;  // 연식(0000년)
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column
-    private LocalDate carRegDate;  // 차량 등록일
+    private String carNum;  // 차량 번호
 
     @Column
     private Double distance;  // 주행 거리
@@ -83,10 +80,6 @@ public class Car {
 
     @Column
     private Integer insuranceInjurer;  // 보험사고(가해) 이력 횟수
-
-    @Enumerated(value = EnumType.STRING)
-    @Column
-    private SpecialUse specialUse;  // 자동차 특수 용도 이력 여부
 
     @Column
     private Integer ownerChange;  // 소유자 변경 이력 횟수
