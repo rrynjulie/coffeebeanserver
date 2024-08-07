@@ -38,13 +38,17 @@ public class ChatRoomService {
     // 채팅방 목록과 각 채팅방의 마지막 메시지를 가져오는 메소드
     public List<ChatRoom> findChatRoomsWithLastMessage(Long userId) {
         List<ChatRoom> chatRooms = findByUserId(userId);
+
+        // a
         for (ChatRoom chatRoom : chatRooms) {
             Message lastMessage = messageRepository.findLastMessageByChatRoomId(chatRoom.getChatRoomId());
             chatRoom.setLastMessage(lastMessage != null ? lastMessage.getMessageText() : "대화 내용이 없습니다.");
-        }
-        for (ChatRoom chatRoom : chatRooms) {
+
             Message lastSendTime = messageRepository.findLastMessageByChatRoomId(chatRoom.getChatRoomId());
-            chatRoom.setLastSendTime(lastSendTime != null ? lastSendTime.getSendTime() : LocalDateTime.parse("시간을 불러오지 못했습니다."));
+            chatRoom.setLastSendTime(lastSendTime != null ? lastSendTime.getSendTime() : null);
+
+            Long unreadMessage = messageRepository.unreadMessage(chatRoom.getChatRoomId(), userId); // 수정된 부분
+            chatRoom.setUnreadMessage(unreadMessage != null ? unreadMessage : 0L);
         }
         return chatRooms;
     }
