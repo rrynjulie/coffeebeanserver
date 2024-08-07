@@ -50,7 +50,6 @@ public class CarService {
         carEntity.setTransmission(car.getTransmission());
         carEntity.setInsuranceVictim(car.getInsuranceVictim());
         carEntity.setInsuranceInjurer(car.getInsuranceInjurer());
-        carEntity.setSpecialUse(car.getSpecialUse());
         carEntity.setOwnerChange(car.getOwnerChange());
         return carEntity;
     }

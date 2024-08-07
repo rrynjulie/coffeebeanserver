@@ -84,10 +84,6 @@ public class Car {
     @Column
     private Integer insuranceInjurer;  // 보험사고(가해) 이력 횟수
 
-    @Enumerated(value = EnumType.STRING)
-    @Column
-    private SpecialUse specialUse;  // 자동차 특수 용도 이력 여부
-
     @Column
     private Integer ownerChange;  // 소유자 변경 이력 횟수
 
