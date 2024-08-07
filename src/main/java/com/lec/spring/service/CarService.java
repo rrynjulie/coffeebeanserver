@@ -43,7 +43,7 @@ public class CarService {
         carEntity.setCategory2(car.getCategory2());
         carEntity.setStatus(car.getStatus());
         carEntity.setModelYear(car.getModelYear());
-        carEntity.setCarRegDate(car.getCarRegDate());
+        carEntity.setCarNum(car.getCarNum());
         carEntity.setDistance(car.getDistance());
         carEntity.setDisplacement(car.getDisplacement());
         carEntity.setFuel(car.getFuel());
