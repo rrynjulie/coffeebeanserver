@@ -37,4 +37,8 @@ public class Review {
 
     @Column(nullable = false)
     private LocalDateTime regDate;
+
+    @OneToOne(mappedBy = "review")
+    @ToString.Exclude
+    private SampleReview sampleReview;
 }

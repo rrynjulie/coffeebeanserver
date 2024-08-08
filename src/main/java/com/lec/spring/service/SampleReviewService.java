@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -19,29 +21,21 @@ public class SampleReviewService {
         return sampleReviewRepository.save(sampleReview);
     }
 
-    @Transactional(readOnly = true)
-    public SampleReview readOne(Long sampleReviewId) {
-        return sampleReviewRepository.findById(sampleReviewId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-    }
-
-    @Transactional(readOnly = true)
-    public List<SampleReview> readAll() {
-        return sampleReviewRepository.findAll();
-    }
-
-    @Transactional
-    public SampleReview update(SampleReview sampleReview) {
-        SampleReview sampleReviewEntity = sampleReviewRepository.findById(sampleReview.getSampleReviewId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        // TODO
-        return sampleReviewEntity;
-    }
-
     @Transactional
     public String delete(Long sampleReviewId) {
         sampleReviewRepository.deleteById(sampleReviewId);
         return "ok";
     }
 
-    // 추가 기능
-    // TODO
+    public Map<String, Integer> getSampleReviewCountsByUserId(Long userId) {
+        List<SampleReview> reviews = sampleReviewRepository.findByUser_UserId(userId);
+
+        Map<String, Integer> counts = new HashMap<>();
+        counts.put("mannerCount", (int) reviews.stream().filter(r -> r.getManner() == 1).count());
+        counts.put("responseCount", (int) reviews.stream().filter(r -> r.getResponse() == 1).count());
+        counts.put("timeCount", (int) reviews.stream().filter(r -> r.getTime() == 1).count());
+        counts.put("badMannerCount", (int) reviews.stream().filter(r -> r.getBadManner() == 1).count());
+
+        return counts;
+    }
 }
