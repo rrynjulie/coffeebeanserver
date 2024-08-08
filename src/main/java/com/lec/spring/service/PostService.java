@@ -26,112 +26,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Service
 public class PostService {
-
-    @Value("${app.upload.path}")
-    private String uploadDir;
-
     private final PostRepository postRepository;
+    private final AttachmentService attachmentService;
     private final UserService userService;
-    private final AttachmentRepository attachmentRepository;
-
-    private void addFiles(Map<String, MultipartFile> files, Post post) {
-        if (files == null) return;
-        for (Map.Entry<String, MultipartFile> e : files.entrySet()) {
-            System.out.println("Processing file: " + e.getKey());
-//            if (!e.getKey().startsWith("upfile")) continue;     // name="upfile##" 인 경우에만 첨부파일 등록
-            Attachment file = upload(e.getValue());   // 파일 물리적으로 저장
-            if (file != null) {
-                file.setPost(post);
-                attachmentRepository.saveAndFlush(file);
-            }
-        }
-    }
-
-    private Attachment upload(MultipartFile multipartFile) {
-        Attachment attachment = null;
-
-        String originalFilename = multipartFile.getOriginalFilename();
-        if (originalFilename == null || originalFilename.isEmpty()) return null;
-
-        String source = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        String fileName = source;
-
-        File file = new File(uploadDir, fileName);
-        if (file.exists()) {
-
-            int pos = fileName.lastIndexOf(".");
-            if (pos > -1) {
-                String name = fileName.substring(0, pos);
-                String ext = fileName.substring(pos + 1);
-
-                fileName = name + "_" + System.currentTimeMillis() + "." + ext;
-
-            } else {
-                fileName += "_" + System.currentTimeMillis();
-            }
-        }
-        System.out.println("fileName: " + fileName);
-
-        Path copyOfLocation = Paths.get(new File(uploadDir, fileName).getAbsolutePath());
-        System.out.println(copyOfLocation);
-
-        try {
-            Files.copy(
-                    multipartFile.getInputStream(),
-                    copyOfLocation,
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        attachment = Attachment.builder()
-                .filename(fileName)
-                .source(source)
-                .build();
-
-        return attachment;
-    }
-
-    private void setImage(List<Attachment> fileList) {
-        String realPath = new File(uploadDir).getAbsolutePath();
-
-        for (Attachment attachment : fileList) {
-            BufferedImage imgData = null;
-            File f = new File(realPath, attachment.getFilename());
-
-            try {
-                imgData = ImageIO.read(f);
-                if (imgData != null) attachment.setImage(true);
-
-            } catch (IOException e) {
-                System.out.println("파일이 존재하지 않습니다.");
-            }
-        }
-    }
-
-    private void delFile(Attachment file) {
-        String saveDirectory = new File(uploadDir).getAbsolutePath();
-
-        File f = new File(saveDirectory, file.getFilename());
-        if (f.exists()) {
-            if (f.delete()) {
-                System.out.println("파일 삭제 성공");
-            } else {
-                System.out.println("파일 삭제 실패 ");
-            }
-        } else {
-            System.out.println("파일이 존재하지 않습니다.");
-        }
-    }
 
     // 기본적인 CRUD
     @Transactional
     public int create(Post post, Long userId, Map<String, MultipartFile> files) {
         post.setUser(userService.readOne(userId));
         post = postRepository.saveAndFlush(post);
-        addFiles(files, post);
-
+        attachmentService.addFiles(files, post);
         return 1;
     }
 
@@ -139,8 +43,8 @@ public class PostService {
     public Post readOne(Long postId) {
         Post post =  postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
         if (post != null){
-            List<Attachment> fileList = attachmentRepository.findByPost(post);
-            setImage(fileList);
+            List<Attachment> fileList = attachmentService.findByPost(post);
+            attachmentService.setImage(fileList);
             post.setFileList(fileList);
         }
         return post;
@@ -166,19 +70,19 @@ public class PostService {
             p.setContent(post.getContent());
             p = postRepository.saveAndFlush(p);
 
-            Post savedPost = postRepository.save(post);
-            addFiles(files, savedPost);
+//            Post savedPost = postRepository.save(post);
+//            addFiles(files, savedPost);
+            attachmentService.addFiles(files, p);
 
             if (delfile != null){
                 for (Long fileId : delfile){
-                    Attachment file = attachmentRepository.findById(fileId).orElse(null);
+                    Attachment file = attachmentService.readOne(fileId);
                     if (file != null){
-                        delFile(file);
-                        attachmentRepository.delete(file);
+                        attachmentService.delFile(file);
+                        attachmentService.delete(fileId);
                     }
                 }
             }
-
             result = 1;
         }
         return result;
