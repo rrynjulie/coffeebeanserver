@@ -1,24 +1,30 @@
 package com.lec.spring.service;
 
+import com.lec.spring.domain.Attachment;
 import com.lec.spring.domain.Product;
 import com.lec.spring.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
     private final UserService userService;
+    private final AttachmentService attachmentService;
 
     // 기본적인 CRUD
     @Transactional
-    public Product create(Product product, Long userId) {
+    public int create(Product product, Long userId, Map<String, MultipartFile> files) {
         product.setUser(userService.readOne(userId));
-        return productRepository.save(product);
+        product = productRepository.saveAndFlush(product);
+        attachmentService.addFiles(files, product);
+        return 1;
     }
 
     @Transactional
@@ -34,8 +40,9 @@ public class ProductService {
     }
 
     @Transactional
-    public Product update(Product product) {
-        Product productEntity = productRepository.findById(product.getProductId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
+    public int update(Product product, Long productId, Map<String, MultipartFile> files, Long[] delfile) {
+        Product productEntity = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
+
         productEntity.setName(product.getName());
         productEntity.setDescription(product.getDescription());
         productEntity.setPrice(product.getPrice());
@@ -45,7 +52,21 @@ public class ProductService {
         productEntity.setStatus(product.getStatus());
         productEntity.setDealingType(product.getDealingType());
         productEntity.setDesiredArea(product.getDesiredArea());
-        return productEntity;
+
+        productEntity = productRepository.saveAndFlush(productEntity);
+        attachmentService.addFiles(files, productEntity);
+
+        if(delfile != null) {
+            for(Long fileId : delfile) {
+                Attachment file = attachmentService.readOne(fileId);
+                if(file != null) {
+                    attachmentService.delFile(file);
+                    attachmentService.delete(fileId);
+                }
+            }
+        }
+
+        return 1;
     }
 
     @Transactional
