@@ -130,131 +130,136 @@ public class CrawlingService {
     }
 
     public void saveProductDetails(String url) throws IOException {
-        Document doc = Jsoup.connect(url)
-                .timeout(TIMEOUT)
-                .get();
-        Elements links = doc.select("a.relative.group.box-border"); // 링크가 담긴 HTML 요소 선택자
-
-        for (Element productElement : links) {
-            String productLink = productElement.attr("href");
-            String productUrl = BASE_URL + productLink;
-
-            // 딜레이
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-
-            Document productDoc = Jsoup.connect(productUrl)
+        try {
+            Document doc = Jsoup.connect(url)
                     .timeout(TIMEOUT)
                     .get();
+            Elements links = doc.select("a.relative.group.box-border"); // 링크가 담긴 HTML 요소 선택자
 
-            // JSON 부분
-            Elements scriptTags = productDoc.select("script#__NEXT_DATA__");
-            if (scriptTags.isEmpty()) {
-                System.out.println("No <script> tag with id '__NEXT_DATA__' found.");
-                continue;
-            }
+            for (Element productElement : links) {
+                String productLink = productElement.attr("href");
+                String productUrl = BASE_URL + productLink;
 
-            String jsonText = scriptTags.first().html();
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(jsonText);
-
-            // JSON 데이터의 경로를 따라 원하는 데이터를 추출합니다.
-            JsonNode productMediaNode = rootNode.path("props").path("pageProps").path("dehydratedState")
-                    .path("queries").get(0).path("state").path("data")
-                    .path("data").path("productMedia");
-
-            if (productMediaNode.isMissingNode()) {
-                System.out.println("productMedia node is missing.");
-                continue;
-            }
-
-            // 상품 이름
-            String name = productDoc.select("div.flex.items-center.justify-between.mb-1 h1").text();
-
-            // 상품 설명
-            String description = productDoc.select("div[name=product-description] article > p").text();
-
-            // 가격
-            String priceText = productDoc.select("div.flex.items-center.mb-2 > div.font-bold").text().replaceAll("[^\\d]", "");
-            int price = 0;
-            if (!priceText.isEmpty()) {
+                // 딜레이
                 try {
-                    price = Integer.parseInt(priceText);
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                    price = 0; // 기본값 설정
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
-            }
 
-            // 필수 필드가 비어있다면 다음 링크로 넘어가기
-            if (name == null || name.isEmpty() || price == 0) {
-                System.out.println("삭제되거나 없는 게시글  " + productUrl);
-                continue;
-            }
+                Document productDoc = Jsoup.connect(productUrl)
+                        .timeout(TIMEOUT)
+                        .get();
 
-            // 카테고리 1, 2, 3
-            Elements categories = productDoc.select("div.flex.items-center.w-full.chawkbazarBreadcrumb ol li a");
-            String category1 = categories.size() > 1 ? categories.get(1).text() : "";
-            String category2 = categories.size() > 2 ? categories.get(2).text() : "";
-            String category3 = categories.size() > 3 ? categories.get(3).text() : "";
-
-            // 상태
-            String status = productDoc.select("ul.box-border.flex.text-center.border li:nth-child(1) button").text();
-
-            // 거래 방식
-            String dealingType = productDoc.select("ul.box-border.flex.text-center.border li:nth-child(2) button").text();
-
-            // 거래 희망 지역
-            String area = productDoc.select("div[name=product-description] button.inline-flex.gap-1.text-xs.text-jnblack.items-center").text();
-
-            // 저장
-            Product product = new Product();
-
-            long randomUserId = random.nextInt(50) + 1; // 매번 호출할 때마다 랜덤 값 생성
-            User user = userRepository.findById(randomUserId)
-                    .orElseThrow(() -> new RuntimeException("User with ID " + randomUserId + " not found"));
-            product.setUser(user);
-
-            product.setName(name);
-            product.setDescription(description);
-            product.setPrice(price);
-            product.setRegDate(LocalDateTime.now());
-            product.setDealingStatus(DealingStatus.valueOf("판매중"));
-            product.setCategory1(category1);
-            product.setCategory2(category2);
-            product.setCategory3(category3);
-            product.setStatus(Status.valueOf(status));
-            product.setDealingType(dealingType);
-            product.setDesiredArea(area);
-            product.setViewCount(10);
-
-            productRepository.save(product);
-
-            // Attachment 저장
-            Iterator<JsonNode> mediaIterator = productMediaNode.elements();
-            while (mediaIterator.hasNext()) {
-                JsonNode mediaNode = mediaIterator.next();
-                String mediaUrl = mediaNode.path("mediaUrl").asText();
-                String productMediaSeq = mediaNode.path("productMediaSeq").asText();
-
-                if (!mediaUrl.isEmpty() && !productMediaSeq.isEmpty()) {
-                    Attachment attachment = new Attachment();
-
-                    attachment.setProduct(product);
-                    attachment.setFilename(productMediaSeq);
-                    attachment.setSource(mediaUrl);
-
-
-                    attachmentRepository.save(attachment);
-
-                    System.out.println("Attachment 저장 " + attachment);
+                // JSON 부분
+                Elements scriptTags = productDoc.select("script#__NEXT_DATA__");
+                if (scriptTags.isEmpty()) {
+                    System.out.println("No <script> tag with id '__NEXT_DATA__' found.");
+                    continue;
                 }
-            }
 
-            System.out.println(product);
+                String jsonText = scriptTags.first().html();
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode rootNode = objectMapper.readTree(jsonText);
+
+                // JSON 데이터의 경로를 따라 원하는 데이터를 추출합니다.
+                JsonNode productMediaNode = rootNode.path("props").path("pageProps").path("dehydratedState")
+                        .path("queries").get(0).path("state").path("data")
+                        .path("data").path("productMedia");
+
+                if (productMediaNode.isMissingNode()) {
+                    System.out.println("productMedia node is missing.");
+                    continue;
+                }
+
+                // 상품 이름
+                String name = productDoc.select("div.flex.items-center.justify-between.mb-1 h1").text();
+
+                // 상품 설명
+                String description = productDoc.select("div[name=product-description] article > p").text();
+
+                // 가격
+                String priceText = productDoc.select("div.flex.items-center.mb-2 > div.font-bold").text().replaceAll("[^\\d]", "");
+                int price = 0;
+                if (!priceText.isEmpty()) {
+                    try {
+                        price = Integer.parseInt(priceText);
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        price = 0; // 기본값 설정
+                    }
+                }
+
+                // 필수 필드가 비어있다면 다음 링크로 넘어가기
+                if (name == null || name.isEmpty() || price == 0) {
+                    System.out.println("삭제되거나 없는 게시글  " + productUrl);
+                    continue;
+                }
+
+                // 카테고리 1, 2, 3
+                Elements categories = productDoc.select("div.flex.items-center.w-full.chawkbazarBreadcrumb ol li a");
+                String category1 = categories.size() > 1 ? categories.get(1).text() : "";
+                String category2 = categories.size() > 2 ? categories.get(2).text() : "";
+                String category3 = categories.size() > 3 ? categories.get(3).text() : "";
+
+                // 상태
+                String status = productDoc.select("ul.box-border.flex.text-center.border li:nth-child(1) button").text();
+
+                // 거래 방식
+                String dealingType = productDoc.select("ul.box-border.flex.text-center.border li:nth-child(2) button").text();
+
+                // 거래 희망 지역
+                String area = productDoc.select("div[name=product-description] button.inline-flex.gap-1.text-xs.text-jnblack.items-center").text();
+
+                // 저장
+                Product product = new Product();
+
+                long randomUserId = random.nextInt(50) + 1; // 매번 호출할 때마다 랜덤 값 생성
+                User user = userRepository.findById(randomUserId)
+                        .orElseThrow(() -> new RuntimeException("User with ID " + randomUserId + " not found"));
+                product.setUser(user);
+
+                product.setName(name);
+                product.setDescription(description);
+                product.setPrice(price);
+                product.setRegDate(LocalDateTime.now());
+                product.setDealingStatus(DealingStatus.valueOf("판매중"));
+                product.setCategory1(category1);
+                product.setCategory2(category2);
+                product.setCategory3(category3);
+                product.setStatus(Status.valueOf(status));
+                product.setDealingType(dealingType);
+                product.setDesiredArea(area);
+                product.setViewCount(10);
+
+                productRepository.save(product);
+
+                // Attachment 저장
+                Iterator<JsonNode> mediaIterator = productMediaNode.elements();
+                while (mediaIterator.hasNext()) {
+                    JsonNode mediaNode = mediaIterator.next();
+                    String mediaUrl = mediaNode.path("mediaUrl").asText();
+                    String productMediaSeq = mediaNode.path("productMediaSeq").asText();
+
+                    if (!mediaUrl.isEmpty() && !productMediaSeq.isEmpty()) {
+                        Attachment attachment = new Attachment();
+
+                        attachment.setProduct(product);
+                        attachment.setFilename(productMediaSeq);
+                        attachment.setSource(mediaUrl);
+
+
+                        attachmentRepository.save(attachment);
+
+                        System.out.println("Attachment 저장 " + attachment);
+                    }
+                }
+
+                System.out.println(product);
+            }
+        }catch (IOException e){
+            System.out.println("저장실패");
+            throw e;
         }
     }
 }
