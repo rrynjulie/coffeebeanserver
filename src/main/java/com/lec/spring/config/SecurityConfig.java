@@ -28,7 +28,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Configuration // bean으로 생성해 준다
-@EnableWebSecurity(debug = true)
+//@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Value("${cors.allowed-origins}")
@@ -111,7 +112,7 @@ public class SecurityConfig {
 
                                 configuration.setExposedHeaders(List.of("Authorization"));
 
-                                return null;
+                                return configuration;
                             }
                         }));
         return http.build();
