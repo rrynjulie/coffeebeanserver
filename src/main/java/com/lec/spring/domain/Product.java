@@ -1,6 +1,7 @@
 package com.lec.spring.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lec.spring.domain.enums.DealingStatus;
 import com.lec.spring.domain.enums.Status;
 import jakarta.persistence.*;
@@ -69,9 +70,9 @@ public class Product {
     @Column(nullable = false, insertable = false)
     private int viewCount;  // 조회수
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "attachmentId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     @ToString.Exclude
+    @JsonManagedReference
     @Builder.Default   // builder 제공 안 함
     private List<Attachment> fileList = new ArrayList<>();  // 첨부 파일
 

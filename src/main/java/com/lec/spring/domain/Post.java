@@ -1,6 +1,7 @@
 package com.lec.spring.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,20 +24,21 @@ public class Post {
     private Long postId;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "user_userId", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     @ToString.Exclude
     private User user;
 
-//    @OneToMany(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "postId"
-//            , insertable = false, updatable = false)
-//    @ToString.Exclude
-//    @Builder.Default
-//    private List<Attachment> fileList = new ArrayList<>();
-//
-//    public void addFiles(Attachment... files) {
-//        Collections.addAll(fileList, files);
-//    }
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
+    @ToString.Exclude
+    @JsonManagedReference
+    @Builder.Default
+    private List<Attachment> fileList = new ArrayList<>();
+
+    public void addFiles(Attachment... files) {
+        for (Attachment file : files) {
+            Collections.addAll(fileList, files);
+        }
+    }
 
     @Column(nullable = false)
     private String type;

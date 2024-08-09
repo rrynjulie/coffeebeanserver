@@ -28,3 +28,8 @@ SELECT * FROM quit ORDER BY quitId DESC;
 SELECT * FROM review ORDER BY reviewId DESC;
 
 SELECT * FROM sample_review ORDER BY sampleReviewId DESC;
+
+SHOW COLUMNS FROM car WHERE Field = 'status';
+
+INSERT INTO product (userId, name, description, price, dealingStatus, category1, category2, category3, status, dealingType, desiredArea, regDate)
+VALUES (3, '아이폰15Pro', '상태 좋은 아이폰입니다. 아내 건데 사용하지 않는 것 같아 싸게 내놓습니다!', 20000, '판매중', '모바일/태블릿', '스마트폰', '애플', '중고', '직거래', '한남동', now());

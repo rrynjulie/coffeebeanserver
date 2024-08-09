@@ -14,9 +14,9 @@ public class QuitController {
 
     // 기본적인 CRUD
     @CrossOrigin
-    @PostMapping("/quit/write")
-    public ResponseEntity<?> create(@RequestBody Quit quit) {
-        return new ResponseEntity<>(quitService.create(quit), HttpStatus.CREATED);
+    @PostMapping("/quit/write/{userId}")
+    public ResponseEntity<?> create(@RequestBody Quit quit, @PathVariable Long userId) {
+        return new ResponseEntity<>(quitService.create(quit, userId), HttpStatus.CREATED);
     }
 
     @CrossOrigin

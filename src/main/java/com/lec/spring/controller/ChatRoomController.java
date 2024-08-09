@@ -35,4 +35,11 @@ public class ChatRoomController {
         List<ChatRoom> chatRooms = chatRoomService.findChatRoomsWithLastMessage(userId);
         return ResponseEntity.ok(chatRooms);
     }
+
+    @PostMapping("/leave/{chatRoomId}/{userId}")
+    public ResponseEntity<Void> leaveChatRoom(@PathVariable Long chatRoomId,
+                                              @PathVariable Long userId) {
+        chatRoomService.leaveChatRoom(chatRoomId, userId);
+        return ResponseEntity.ok().build();
+    }
 }
