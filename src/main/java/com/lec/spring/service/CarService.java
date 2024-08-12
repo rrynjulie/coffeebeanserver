@@ -23,11 +23,11 @@ public class CarService {
 
     // 기본적인 CRUD
     @Transactional
-    public int create(Car car, Long userId, Map<String, MultipartFile> files) {
+    public long create(Car car, Long userId, Map<String, MultipartFile> files) {
         car.setUser(userService.readOne(userId));
         car = carRepository.saveAndFlush(car);
         attachmentService.addFiles(files, car);
-        return 1;
+        return car.getCarId();
     }
 
     @Transactional
@@ -43,7 +43,7 @@ public class CarService {
     }
 
     @Transactional
-    public int update(Car car, Long carId, Map<String, MultipartFile> files, Long[] delfile) {
+    public long update(Car car, Long carId, Map<String, MultipartFile> files, Long[] delfile) {
         Car carEntity = carRepository.findById(car.getCarId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
 
         carEntity.setName(car.getName());
@@ -75,7 +75,7 @@ public class CarService {
             }
         }
 
-        return 1;
+        return carId;
     }
 
     @Transactional

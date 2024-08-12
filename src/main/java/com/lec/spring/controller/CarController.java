@@ -23,7 +23,7 @@ public class CarController {
 
     // 기본적인 CRUD
     @PostMapping("/car/write/{userId}")
-    public ResponseEntity<?> create(
+    public ResponseEntity<Long> create(
             @RequestParam("name") String name,
             @RequestParam("price") int price,
             @RequestParam("introduce") String introduce,
@@ -80,7 +80,7 @@ public class CarController {
     }
 
     @PutMapping("/car/update/{carId}")
-    public ResponseEntity<?> update(
+    public ResponseEntity<Long> update(
             @RequestParam("name") String name,
             @RequestParam("price") int price,
             @RequestParam("introduce") String introduce,
