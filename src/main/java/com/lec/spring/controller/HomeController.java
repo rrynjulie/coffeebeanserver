@@ -25,9 +25,9 @@ public class HomeController {
         return "admin page";
     }
 
-    @GetMapping("/member")
-    public String member(){
-        return "member page";
+    @GetMapping("/User")
+    public String User(){
+        return "user page";
     }
 
     // 현재 Authentication 보기
