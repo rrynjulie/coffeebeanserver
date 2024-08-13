@@ -3,6 +3,7 @@ package com.lec.spring.controller;
 import com.lec.spring.domain.Car;
 import com.lec.spring.domain.enums.DealingStatus;
 import com.lec.spring.domain.enums.Status;
+import com.lec.spring.repository.CarRepository;
 import com.lec.spring.service.CarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -17,10 +19,11 @@ import java.util.Map;
 @CrossOrigin
 public class CarController {
     private final CarService carService;
+    private final CarRepository carRepository;
 
     // 기본적인 CRUD
     @PostMapping("/car/write/{userId}")
-    public ResponseEntity<?> create(
+    public ResponseEntity<Long> create(
             @RequestParam("name") String name,
             @RequestParam("price") int price,
             @RequestParam("introduce") String introduce,
@@ -71,8 +74,13 @@ public class CarController {
         return new ResponseEntity<>(carService.readOne(carId), HttpStatus.OK);
     }
 
+    @GetMapping("/car/category2/{category2}")
+    public List<Car> getRandomCarsByCategory2(@PathVariable String category2) {
+        return carService.getRandomCarsByCategory2(category2);
+    }
+
     @PutMapping("/car/update/{carId}")
-    public ResponseEntity<?> update(
+    public ResponseEntity<Long> update(
             @RequestParam("name") String name,
             @RequestParam("price") int price,
             @RequestParam("introduce") String introduce,

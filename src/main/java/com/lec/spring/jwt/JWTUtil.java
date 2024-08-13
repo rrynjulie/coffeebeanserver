@@ -10,6 +10,7 @@ package com.lec.spring.jwt;
 // reliability
 
 // 자바에 있는 암호화 된 시크릿 키
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -140,5 +141,20 @@ public class JWTUtil {
                 .getPayload()
                 .getExpiration()
                 .before(new Date());
+    }
+
+    // jwt 검증 메서드
+    public boolean validateToken(String token){
+        try{
+            System.out.println("Validating JWT : " + token);
+            Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (JwtException e) {
+            System.err.println("Invalid JWT: " + e.getMessage());
+            return false;
+        }
     }
 }

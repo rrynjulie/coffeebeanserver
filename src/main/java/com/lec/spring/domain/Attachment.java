@@ -39,7 +39,4 @@ public class Attachment {
 
     private String source;
     private String filename;
-
-    @Transient
-    private boolean isImage;
 }

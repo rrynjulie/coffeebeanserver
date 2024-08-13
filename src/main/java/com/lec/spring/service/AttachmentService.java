@@ -1,5 +1,7 @@
 package com.lec.spring.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.lec.spring.domain.Attachment;
 import com.lec.spring.domain.Car;
 import com.lec.spring.domain.Post;
@@ -30,6 +32,17 @@ public class AttachmentService {
     private AttachmentRepository attachmentRepository;
     @Value("${app.upload.path}")
     private String uploadDir;
+    @Autowired
+    private AmazonS3 amazonS3;
+    @Value("${cloud.aws.s3.bucketName}")
+    private String bucketName;
+    @Value("${cloud.aws.s3.endpointUrl}")
+    private String endpointUrl;
+
+    @Autowired
+    public AttachmentService(AttachmentRepository attachmentRepository) {
+        this.attachmentRepository = attachmentRepository;
+    }
 
     // 기본적인 CRUD
     @Transactional
@@ -48,21 +61,9 @@ public class AttachmentService {
     }
 
     @Transactional
-    public Attachment update(Attachment attachment) {
-        Attachment attachmentEntity = attachmentRepository.findById(attachment.getAttachmentId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        // TODO
-        return attachmentEntity;
-    }
-
-    @Transactional
     public String delete(Long attachmentId) {
         attachmentRepository.deleteById(attachmentId);
         return "ok";
-    }
-
-    @Autowired
-    public void setAttachmentRepository(AttachmentRepository attachmentRepository){
-        this.attachmentRepository = attachmentRepository;
     }
 
     public List<Attachment> findByPost(Post post) {
@@ -96,8 +97,8 @@ public class AttachmentService {
         String originalFilename = multipartFile.getOriginalFilename();
         if (originalFilename == null || originalFilename.isEmpty()) return null;
 
-        String source = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        String fileName = source;
+        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        String source = endpointUrl + "/" + fileName;
 
         File file = new File(uploadDir, fileName);
         if (file.exists()) {
@@ -133,6 +134,9 @@ public class AttachmentService {
                 .source(source)
                 .build();
 
+        amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file));
+        file.delete();
+
         return attachment;
     }
 
@@ -145,8 +149,6 @@ public class AttachmentService {
 
             try {
                 imgData = ImageIO.read(f);
-                if (imgData != null) attachment.setImage(true);
-
             } catch (IOException e) {
                 System.out.println("파일이 존재하지 않습니다.");
             }

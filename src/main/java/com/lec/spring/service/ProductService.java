@@ -20,11 +20,11 @@ public class ProductService {
 
     // 기본적인 CRUD
     @Transactional
-    public int create(Product product, Long userId, Map<String, MultipartFile> files) {
+    public long create(Product product, Long userId, Map<String, MultipartFile> files) {
         product.setUser(userService.readOne(userId));
         product = productRepository.saveAndFlush(product);
         attachmentService.addFiles(files, product);
-        return 1;
+        return product.getProductId();
     }
 
     @Transactional
@@ -40,7 +40,7 @@ public class ProductService {
     }
 
     @Transactional
-    public int update(Product product, Long productId, Map<String, MultipartFile> files, Long[] delfile) {
+    public long update(Product product, Long productId, Map<String, MultipartFile> files, Long[] delfile) {
         Product productEntity = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
 
         productEntity.setName(product.getName());
@@ -66,7 +66,7 @@ public class ProductService {
             }
         }
 
-        return 1;
+        return productId;
     }
 
     @Transactional

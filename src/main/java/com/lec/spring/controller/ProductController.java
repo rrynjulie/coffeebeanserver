@@ -25,7 +25,7 @@ public class ProductController {
 //    }
 
     @PostMapping("/product/write/{userId}")
-    public ResponseEntity<Integer> create(
+    public ResponseEntity<Long> create(
             @RequestParam("name") String name,
             @RequestParam("description") String description,
             @RequestParam("price") int price,
@@ -65,7 +65,7 @@ public class ProductController {
     }
 
     @PutMapping("/product/update/{productId}")
-    public ResponseEntity<Integer> update(
+    public ResponseEntity<Long> update(
             @RequestParam("name") String name,
             @RequestParam("description") String description,
             @RequestParam("price") int price,
