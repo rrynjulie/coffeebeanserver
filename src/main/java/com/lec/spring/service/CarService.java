@@ -2,14 +2,17 @@ package com.lec.spring.service;
 
 import com.lec.spring.domain.Attachment;
 import com.lec.spring.domain.Car;
+import com.lec.spring.domain.enums.DealingStatus;
 import com.lec.spring.repository.CarRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -20,11 +23,11 @@ public class CarService {
 
     // 기본적인 CRUD
     @Transactional
-    public int create(Car car, Long userId, Map<String, MultipartFile> files) {
+    public long create(Car car, Long userId, Map<String, MultipartFile> files) {
         car.setUser(userService.readOne(userId));
         car = carRepository.saveAndFlush(car);
         attachmentService.addFiles(files, car);
-        return 1;
+        return car.getCarId();
     }
 
     @Transactional
@@ -40,7 +43,7 @@ public class CarService {
     }
 
     @Transactional
-    public int update(Car car, Long carId, Map<String, MultipartFile> files, Long[] delfile) {
+    public long update(Car car, Long carId, Map<String, MultipartFile> files, Long[] delfile) {
         Car carEntity = carRepository.findById(car.getCarId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
 
         carEntity.setName(car.getName());
@@ -72,13 +75,25 @@ public class CarService {
             }
         }
 
-        return 1;
+        return carId;
     }
 
     @Transactional
     public String delete(Long carId) {
         carRepository.deleteById(carId);
         return "ok";
+    }
+
+    @Transactional
+    public List<Car> getRandomCarsByCategory2(String category2) {
+        List<Car> cars = carRepository.findCarByCategory2AndDealingStatus(category2, DealingStatus.판매중);
+        if (cars.size() <= 5) {
+            return cars;
+        }
+
+        // 리스트를 무작위로 섞고 5개 선택
+        Collections.shuffle(cars);
+        return cars.stream().limit(5).collect(Collectors.toList());
     }
 
     // 추가 기능

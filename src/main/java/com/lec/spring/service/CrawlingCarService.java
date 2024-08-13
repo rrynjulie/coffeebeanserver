@@ -44,10 +44,11 @@ public class CrawlingCarService {
     private static final String[] GUBUN = {"K", "I"}; //국산차, 외제차
     private static final int[][] MAKER_IDS = {
             {49, 1010, 3, 8, 26, 31}, // 현대, 제네시스, 기아, 쉐보레/대우, 르노코리아(삼성), KG모빌리티(쌍용)
+
             {21, 43, 1, 41, 16, 22, 11, 1006, 12} // 벤츠, 포르쉐, BMW, 페라리, 롤스로이스, 벤틀리, 람보르기니, 테슬라, 랜드로버
     };
     private static final String[][] MAKER_NAMES = {
-            {"현대", "제네시스", "기아", "쉐보레/대우", "르노코리아(삼성)", "KG모빌리티(쌍용)"},
+            {"현대", "제네시스", "기아", "쉐보레", "르노코리아(삼성)", "KG모빌리티(쌍용)"},
             {"벤츠", "포르쉐", "BMW", "페라리", "롤스로이스", "벤틀리", "람보르기니", "테슬라", "랜드로버"}
     };
 
@@ -290,30 +291,26 @@ public class CrawlingCarService {
                 System.out.println(car);
 
                 // 이미지 URL 추출 및 저장
-                Elements imgElements = carDoc.select("ul.gallery li a img");
+                Elements imgElements = carDoc.select("#imgPos li a");
                 for (Element imgElement : imgElements) {
-                    String imgUrl = imgElement.attr("src");
+                    String imgUrl = imgElement.attr("href");
                     String imgName = imgElement.attr("alt");
 
-                    if (!imgUrl.isEmpty()) {
-                        Attachment attachment = new Attachment();
-
-                        attachment.setCar(car);
-
-                        // imgUrl이 상대 URL이라면, 절대 URL로 변환
-                        if (!imgUrl.startsWith("http")) {
-                            imgUrl = "https:" + imgUrl;
-                        }
-
-                        if("차량 썸네일 사진".equals(imgName)){
-                            attachment.setSource(imgUrl);
-                            attachment.setFilename(imgName);
-                            attachmentRepository.save(attachment);
-                        }
+                    // URL이 상대 경로일 경우 절대 경로로 변경
+                    if (imgUrl.startsWith("//")) {
+                        imgUrl = "https:" + imgUrl;
                     }
 
-
+                    // URL이 유효한 경우만 처리합니다.
+                    if (!imgUrl.isEmpty()) {
+                        Attachment attachment = new Attachment();
+                        attachment.setCar(car);
+                        attachment.setSource(imgUrl);
+                        attachment.setFilename(imgName);
+                        attachmentRepository.save(attachment);
+                    }
                 }
+
             }
         }catch (IOException e){
             System.out.println("저장실패");
