@@ -4,6 +4,7 @@ import com.lec.spring.domain.Attachment;
 import com.lec.spring.domain.Product;
 import com.lec.spring.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,5 +77,12 @@ public class ProductService {
     }
 
     // 추가 기능
-    // TODO
+    @Transactional(readOnly = true)
+    public List<Product> readAllByUserSorted(Long userId, int sortType) {
+        Sort sort;
+        if(sortType == 1) sort = Sort.by(Sort.Order.desc("regDate"));
+        else if(sortType == 2) sort = Sort.by(Sort.Order.asc("price"));
+        else sort = Sort.by(Sort.Order.desc("price"));
+        return productRepository.findByUser_userId(userId, sort);
+    }
 }

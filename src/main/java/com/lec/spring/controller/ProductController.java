@@ -100,5 +100,8 @@ public class ProductController {
     }
 
     // 추가 기능
-    // TODO
+    @GetMapping("/product/sortedlist/{userId}/{sortedType}")
+    public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId, @PathVariable int sortedType) {
+        return new ResponseEntity<>(productService.readAllByUserSorted(userId, sortedType), HttpStatus.OK);
+    }
 }
