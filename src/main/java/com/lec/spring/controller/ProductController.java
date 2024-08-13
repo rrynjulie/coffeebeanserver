@@ -36,7 +36,7 @@ public class ProductController {
             @RequestParam("status") Status status,
             @RequestParam("dealingType") String dealingType,
             @RequestParam("desiredArea") String desiredArea,
-            @RequestParam Map<String, MultipartFile> files,
+            @RequestParam("files") MultipartFile[] files,
             @PathVariable Long userId
     ) {
         Product productEntity = Product.builder()
@@ -76,7 +76,7 @@ public class ProductController {
             @RequestParam("status") Status status,
             @RequestParam("dealingType") String dealingType,
             @RequestParam("desiredArea") String desiredArea,
-            @RequestParam Map<String, MultipartFile> files,
+            @RequestParam("files") MultipartFile[] files,
             @RequestParam(value = "delfile", required = false) Long[] delfile,
             @PathVariable Long productId
     ) {

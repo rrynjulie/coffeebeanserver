@@ -40,7 +40,7 @@ public class CarController {
             @RequestParam(value = "insuranceVictim", required = false) Integer insuranceVictim,
             @RequestParam(value = "insuranceInjurer", required = false) Integer insuranceInjurer,
             @RequestParam(value = "ownerChange", required = false) Integer ownerChange,
-            @RequestParam Map<String, MultipartFile> files,
+            @RequestParam("files") MultipartFile[] files,
             @PathVariable Long userId
     ) {
         Car carEntity = Car.builder()
@@ -97,7 +97,7 @@ public class CarController {
             @RequestParam(value = "insuranceVictim", required = false) Integer insuranceVictim,
             @RequestParam(value = "insuranceInjurer", required = false) Integer insuranceInjurer,
             @RequestParam(value = "ownerChange", required = false) Integer ownerChange,
-            @RequestParam Map<String, MultipartFile> files,
+            @RequestParam("files") MultipartFile[] files,
             @RequestParam(value = "delfile", required = false) Long[] delfile,
             @PathVariable Long carId
     ) {
