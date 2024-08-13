@@ -89,11 +89,8 @@ public class PostService {
     }
 
     @Transactional
-    public String delete(Long postId) {
+    public int delete(Long postId) {
         postRepository.deleteById(postId);
-        return "ok";
+        return 1;
     }
-
-    // 추가 기능
-    // TODO
 }

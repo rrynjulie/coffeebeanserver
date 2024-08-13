@@ -79,6 +79,4 @@ public class PostController {
         return new ResponseEntity<>(postService.delete(postId), HttpStatus.OK);
     }
 
-    // 추가 기능
-    // TODO
 }
