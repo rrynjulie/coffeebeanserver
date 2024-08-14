@@ -32,7 +32,7 @@ public class PostService {
 
     // 기본적인 CRUD
     @Transactional
-    public int create(Post post, Long userId, Map<String, MultipartFile> files) {
+    public int create(Post post, Long userId, MultipartFile[] files) {
         post.setUser(userService.readOne(userId));
         post = postRepository.saveAndFlush(post);
         attachmentService.addFiles(files, post);
@@ -56,7 +56,7 @@ public class PostService {
     }
 
     @Transactional
-    public int update(Post post, Long postId, Map<String, MultipartFile> files, Long[] delfile) {
+    public int update(Post post, Long postId, MultipartFile[] files, Long[] delfile) {
 //    public int update(Post post, Long postId, Map<String, MultipartFile> files) {
         int result = 0;
 
