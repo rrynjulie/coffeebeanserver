@@ -128,6 +128,15 @@ public class CarController {
     }
 
     // 추가 기능
+    @GetMapping("/car/filter")
+    public ResponseEntity<List<Car>> filterCars(
+            @RequestParam(required = false) String category1,
+            @RequestParam(required = false) String category2
+    ) {
+        List<Car> cars = carService.getFilteredCars(category1, category2);
+        return new ResponseEntity<>(cars, HttpStatus.OK);
+    }
+
     @GetMapping("/car/sortedlist/{userId}/{sortedType}")
     public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId, @PathVariable int sortedType) {
         return new ResponseEntity<>(carService.readAllByUserSorted(userId, sortedType), HttpStatus.OK);

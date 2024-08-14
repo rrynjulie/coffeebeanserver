@@ -98,6 +98,16 @@ public class CarService {
         return cars.stream().limit(5).collect(Collectors.toList());
     }
 
+    @Transactional
+    public List<Car> getFilteredCars(String category1, String category2) {
+        if(category1 != null && category2 != null) {
+            return carRepository.findCarByCategory1AndCategory2(category1, category2);
+        } else if (category1 != null) {
+            return carRepository.findCarByCategory1(category1);
+        }else
+            return carRepository.findAll();
+    }
+
     @Transactional(readOnly = true)
     public List<Car> readAllByUserSorted(Long userId, int sortType) {
         Sort sort;
