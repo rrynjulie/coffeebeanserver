@@ -128,5 +128,8 @@ public class CarController {
     }
 
     // 추가 기능
-    // TODO
+    @GetMapping("/car/sortedlist/{userId}/{sortedType}")
+    public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId, @PathVariable int sortedType) {
+        return new ResponseEntity<>(carService.readAllByUserSorted(userId, sortedType), HttpStatus.OK);
+    }
 }
