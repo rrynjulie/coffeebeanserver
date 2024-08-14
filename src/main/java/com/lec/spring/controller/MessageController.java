@@ -5,6 +5,7 @@ import com.lec.spring.domain.Message;
 import com.lec.spring.service.ChatRoomService;
 import com.lec.spring.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -58,4 +59,11 @@ public class MessageController {
     public void deleteMessage(@PathVariable Long messageId) {
         messageService.deleteMessage(messageId);
     }
+
+    @GetMapping("/leave/{chatRoomId}")
+    public ResponseEntity<Long> leaveMessage(@PathVariable Long chatRoomId) {
+        Long isJoin = chatRoomService.leaveMessage(chatRoomId);
+        return ResponseEntity.ok(isJoin);
+    }
+
 }

@@ -37,7 +37,7 @@ public class ProductController {
             @RequestParam("status") Status status,
             @RequestParam("dealingType") String dealingType,
             @RequestParam("desiredArea") String desiredArea,
-            @RequestParam Map<String, MultipartFile> files,
+            @RequestParam("files") MultipartFile[] files,
             @PathVariable Long userId
     ) {
         Product productEntity = Product.builder()
@@ -86,7 +86,7 @@ public class ProductController {
             @RequestParam("status") Status status,
             @RequestParam("dealingType") String dealingType,
             @RequestParam("desiredArea") String desiredArea,
-            @RequestParam Map<String, MultipartFile> files,
+            @RequestParam("files") MultipartFile[] files,
             @RequestParam(value = "delfile", required = false) Long[] delfile,
             @PathVariable Long productId
     ) {
@@ -110,5 +110,8 @@ public class ProductController {
     }
 
     // 추가 기능
-    // TODO
+    @GetMapping("/product/sortedlist/{userId}/{sortedType}")
+    public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId, @PathVariable int sortedType) {
+        return new ResponseEntity<>(productService.readAllByUserSorted(userId, sortedType), HttpStatus.OK);
+    }
 }

@@ -72,7 +72,7 @@ class UserRepositoryTest {
                     .userName("user" + i)
                     .nickName("nickname" + i)
                     .password(passwordEncoder.encode("1234"))
-                    .email("user" + i + "@mail.com")
+                    .email("user" + i + "@gmail.com")
                     .regDate(LocalDateTime.now())
                     .reliability(500)
                     .role("ROLE_USER")

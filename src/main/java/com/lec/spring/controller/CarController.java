@@ -40,7 +40,7 @@ public class CarController {
             @RequestParam(value = "insuranceVictim", required = false) Integer insuranceVictim,
             @RequestParam(value = "insuranceInjurer", required = false) Integer insuranceInjurer,
             @RequestParam(value = "ownerChange", required = false) Integer ownerChange,
-            @RequestParam Map<String, MultipartFile> files,
+            @RequestParam("files") MultipartFile[] files,
             @PathVariable Long userId
     ) {
         Car carEntity = Car.builder()
@@ -97,7 +97,7 @@ public class CarController {
             @RequestParam(value = "insuranceVictim", required = false) Integer insuranceVictim,
             @RequestParam(value = "insuranceInjurer", required = false) Integer insuranceInjurer,
             @RequestParam(value = "ownerChange", required = false) Integer ownerChange,
-            @RequestParam Map<String, MultipartFile> files,
+            @RequestParam("files") MultipartFile[] files,
             @RequestParam(value = "delfile", required = false) Long[] delfile,
             @PathVariable Long carId
     ) {
@@ -128,5 +128,17 @@ public class CarController {
     }
 
     // 추가 기능
-    // TODO
+    @GetMapping("/car/filter")
+    public ResponseEntity<List<Car>> filterCars(
+            @RequestParam(required = false) String category1,
+            @RequestParam(required = false) String category2
+    ) {
+        List<Car> cars = carService.getFilteredCars(category1, category2);
+        return new ResponseEntity<>(cars, HttpStatus.OK);
+    }
+
+    @GetMapping("/car/sortedlist/{userId}/{sortedType}")
+    public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId, @PathVariable int sortedType) {
+        return new ResponseEntity<>(carService.readAllByUserSorted(userId, sortedType), HttpStatus.OK);
+    }
 }

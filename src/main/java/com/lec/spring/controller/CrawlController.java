@@ -27,5 +27,4 @@ public class CrawlController {
         return "중고차 상세 정보 크롤링 완료";
     }
 
-
 }

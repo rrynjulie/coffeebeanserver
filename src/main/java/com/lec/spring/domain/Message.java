@@ -20,7 +20,7 @@ public class Message {
 
     private String messageText;         // 메세지 내용
 
-    @JsonFormat(pattern = "a HH:mm", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime sendTime;     // 메세지 보낸 시간
 
     @Column(nullable = false)
