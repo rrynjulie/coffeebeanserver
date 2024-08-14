@@ -4,6 +4,7 @@ import com.lec.spring.domain.Attachment;
 import com.lec.spring.domain.Product;
 import com.lec.spring.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,11 +21,11 @@ public class ProductService {
 
     // 기본적인 CRUD
     @Transactional
-    public int create(Product product, Long userId, Map<String, MultipartFile> files) {
+    public long create(Product product, Long userId, MultipartFile[] files) {
         product.setUser(userService.readOne(userId));
         product = productRepository.saveAndFlush(product);
         attachmentService.addFiles(files, product);
-        return 1;
+        return product.getProductId();
     }
 
     @Transactional
@@ -40,7 +41,7 @@ public class ProductService {
     }
 
     @Transactional
-    public int update(Product product, Long productId, Map<String, MultipartFile> files, Long[] delfile) {
+    public long update(Product product, Long productId, MultipartFile[] files, Long[] delfile) {
         Product productEntity = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
 
         productEntity.setName(product.getName());
@@ -66,7 +67,7 @@ public class ProductService {
             }
         }
 
-        return 1;
+        return productId;
     }
 
     @Transactional
@@ -76,5 +77,12 @@ public class ProductService {
     }
 
     // 추가 기능
-    // TODO
+    @Transactional(readOnly = true)
+    public List<Product> readAllByUserSorted(Long userId, int sortType) {
+        Sort sort;
+        if(sortType == 1) sort = Sort.by(Sort.Order.desc("regDate"));
+        else if(sortType == 2) sort = Sort.by(Sort.Order.asc("price"));
+        else sort = Sort.by(Sort.Order.desc("price"));
+        return productRepository.findByUser_userId(userId, sort);
+    }
 }

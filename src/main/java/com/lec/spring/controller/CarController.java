@@ -23,7 +23,7 @@ public class CarController {
 
     // 기본적인 CRUD
     @PostMapping("/car/write/{userId}")
-    public ResponseEntity<?> create(
+    public ResponseEntity<Long> create(
             @RequestParam("name") String name,
             @RequestParam("price") int price,
             @RequestParam("introduce") String introduce,
@@ -40,7 +40,7 @@ public class CarController {
             @RequestParam(value = "insuranceVictim", required = false) Integer insuranceVictim,
             @RequestParam(value = "insuranceInjurer", required = false) Integer insuranceInjurer,
             @RequestParam(value = "ownerChange", required = false) Integer ownerChange,
-            @RequestParam Map<String, MultipartFile> files,
+            @RequestParam("files") MultipartFile[] files,
             @PathVariable Long userId
     ) {
         Car carEntity = Car.builder()
@@ -80,7 +80,7 @@ public class CarController {
     }
 
     @PutMapping("/car/update/{carId}")
-    public ResponseEntity<?> update(
+    public ResponseEntity<Long> update(
             @RequestParam("name") String name,
             @RequestParam("price") int price,
             @RequestParam("introduce") String introduce,
@@ -97,7 +97,7 @@ public class CarController {
             @RequestParam(value = "insuranceVictim", required = false) Integer insuranceVictim,
             @RequestParam(value = "insuranceInjurer", required = false) Integer insuranceInjurer,
             @RequestParam(value = "ownerChange", required = false) Integer ownerChange,
-            @RequestParam Map<String, MultipartFile> files,
+            @RequestParam("files") MultipartFile[] files,
             @RequestParam(value = "delfile", required = false) Long[] delfile,
             @PathVariable Long carId
     ) {

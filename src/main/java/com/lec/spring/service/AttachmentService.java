@@ -1,5 +1,7 @@
 package com.lec.spring.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.lec.spring.domain.Attachment;
 import com.lec.spring.domain.Car;
 import com.lec.spring.domain.Post;
@@ -30,6 +32,17 @@ public class AttachmentService {
     private AttachmentRepository attachmentRepository;
     @Value("${app.upload.path}")
     private String uploadDir;
+    @Autowired
+    private AmazonS3 amazonS3;
+    @Value("${cloud.aws.s3.bucketName}")
+    private String bucketName;
+    @Value("${cloud.aws.s3.endpointUrl}")
+    private String endpointUrl;
+
+    @Autowired
+    public AttachmentService(AttachmentRepository attachmentRepository) {
+        this.attachmentRepository = attachmentRepository;
+    }
 
     // 기본적인 CRUD
     @Transactional
@@ -48,21 +61,9 @@ public class AttachmentService {
     }
 
     @Transactional
-    public Attachment update(Attachment attachment) {
-        Attachment attachmentEntity = attachmentRepository.findById(attachment.getAttachmentId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        // TODO
-        return attachmentEntity;
-    }
-
-    @Transactional
     public String delete(Long attachmentId) {
         attachmentRepository.deleteById(attachmentId);
         return "ok";
-    }
-
-    @Autowired
-    public void setAttachmentRepository(AttachmentRepository attachmentRepository){
-        this.attachmentRepository = attachmentRepository;
     }
 
     public List<Attachment> findByPost(Post post) {
@@ -70,11 +71,11 @@ public class AttachmentService {
     }
 
     // 추가 기능
-    public <T> void addFiles(Map<String, MultipartFile> files, T entity) {
+    public <T> void addFiles(MultipartFile[] files, T entity) {
         if (files == null) return;
-        for (Map.Entry<String, MultipartFile> e : files.entrySet()) {
+        for (MultipartFile multipartFile : files) {
 //            if (!e.getKey().startsWith("upfile")) continue;     // name="upfile##" 인 경우에만 첨부파일 등록
-            Attachment file = upload(e.getValue());   // 파일 물리적으로 저장
+            Attachment file = upload(multipartFile);   // 파일 물리적으로 저장
             if (file != null) {
                 if(entity instanceof Car) {
                     file.setCar((Car) entity);
@@ -96,8 +97,8 @@ public class AttachmentService {
         String originalFilename = multipartFile.getOriginalFilename();
         if (originalFilename == null || originalFilename.isEmpty()) return null;
 
-        String source = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        String fileName = source;
+        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        String source = endpointUrl + "/" + fileName;
 
         File file = new File(uploadDir, fileName);
         if (file.exists()) {
@@ -112,6 +113,7 @@ public class AttachmentService {
             } else {
                 fileName += "_" + System.currentTimeMillis();
             }
+            file = new File(uploadDir, fileName);
         }
         System.out.println("fileName: " + fileName);
 
@@ -124,6 +126,8 @@ public class AttachmentService {
                     copyOfLocation,
                     StandardCopyOption.REPLACE_EXISTING
             );
+            amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file));
+        file.delete();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -132,6 +136,7 @@ public class AttachmentService {
                 .filename(fileName)
                 .source(source)
                 .build();
+
 
         return attachment;
     }
@@ -145,8 +150,6 @@ public class AttachmentService {
 
             try {
                 imgData = ImageIO.read(f);
-                if (imgData != null) attachment.setImage(true);
-
             } catch (IOException e) {
                 System.out.println("파일이 존재하지 않습니다.");
             }
