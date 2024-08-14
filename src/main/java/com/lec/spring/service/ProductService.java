@@ -77,4 +77,11 @@ public class ProductService {
 
     // 추가 기능
     // TODO
+    public List<Product> getProductsByCategory(String category1, String category2, String category3){
+        return productRepository.findAll().stream()
+                .filter(product -> (category1 == null || product.getCategory1().equals(category1)) &&
+                        (category2 == null || product.getCategory2().equals(category2)) &&
+                        (category3) == null || product.getCategory3().equals(category3))
+                .toList();
+    }
 }
