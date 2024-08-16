@@ -137,8 +137,19 @@ public class CarController {
         return new ResponseEntity<>(cars, HttpStatus.OK);
     }
 
-    @GetMapping("/car/sortedlist/{userId}/{sortedType}")
-    public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId, @PathVariable int sortedType) {
-        return new ResponseEntity<>(carService.readAllByUserSorted(userId, sortedType), HttpStatus.OK);
+    @GetMapping("/car/sortedlist/{userId}/{sortedType}/{dealingStatus}")
+    public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId,
+                                                 @PathVariable int sortedType,
+                                                 @PathVariable String dealingStatus
+    ) {
+        return new ResponseEntity<>(carService.readAllByUserSorted(userId, sortedType, dealingStatus), HttpStatus.OK);
+    }
+
+    @PutMapping("/car/update/status/{carId}")
+    public ResponseEntity<?> updateDealingStatus(
+            @RequestParam("dealingStatus") DealingStatus dealingStatus,
+            @PathVariable Long carId
+    ) {
+        return new ResponseEntity<>(carService.updateDealingStatus(carId, dealingStatus), HttpStatus.OK);
     }
 }

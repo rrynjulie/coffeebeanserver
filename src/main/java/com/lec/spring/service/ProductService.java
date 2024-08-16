@@ -2,6 +2,7 @@ package com.lec.spring.service;
 
 import com.lec.spring.domain.Attachment;
 import com.lec.spring.domain.Product;
+import com.lec.spring.domain.enums.DealingStatus;
 import com.lec.spring.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -11,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -78,11 +80,25 @@ public class ProductService {
 
     // 추가 기능
     @Transactional(readOnly = true)
-    public List<Product> readAllByUserSorted(Long userId, int sortType) {
+    public List<Product> readAllByUserSorted(Long userId, int sortType, String dealingStatus) {
         Sort sort;
         if(sortType == 1) sort = Sort.by(Sort.Order.desc("regDate"));
         else if(sortType == 2) sort = Sort.by(Sort.Order.asc("price"));
         else sort = Sort.by(Sort.Order.desc("price"));
-        return productRepository.findByUser_userId(userId, sort);
+        List<Product> productList = productRepository.findByUser_userId(userId, sort);
+
+        if(dealingStatus.equals("전체")) return productList;
+        DealingStatus tempDS = DealingStatus.valueOf(dealingStatus);
+        return productList
+                .stream()
+                .filter(product -> product.getDealingStatus().equals(tempDS))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public Product updateDealingStatus(Long productId, DealingStatus dealingStatus) {
+        Product productEntity = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
+        productEntity.setDealingStatus(dealingStatus);
+        return productRepository.saveAndFlush(productEntity);
     }
 }

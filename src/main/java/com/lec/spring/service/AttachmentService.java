@@ -127,7 +127,7 @@ public class AttachmentService {
                     StandardCopyOption.REPLACE_EXISTING
             );
             amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file));
-        file.delete();
+            file.delete();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

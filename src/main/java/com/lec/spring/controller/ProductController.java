@@ -69,7 +69,6 @@ public class ProductController {
             @RequestParam("name") String name,
             @RequestParam("description") String description,
             @RequestParam("price") int price,
-//            @RequestParam("dealingStatus") DealingStatus dealingStatus,
             @RequestParam("category1") String category1,
             @RequestParam("category2") String category2,
             @RequestParam("category3") String category3,
@@ -100,8 +99,18 @@ public class ProductController {
     }
 
     // 추가 기능
-    @GetMapping("/product/sortedlist/{userId}/{sortedType}")
-    public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId, @PathVariable int sortedType) {
-        return new ResponseEntity<>(productService.readAllByUserSorted(userId, sortedType), HttpStatus.OK);
+    @GetMapping("/product/sortedlist/{userId}/{sortedType}/{dealingStatus}")
+    public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId,
+                                                 @PathVariable int sortedType,
+                                                 @PathVariable String dealingStatus) {
+        return new ResponseEntity<>(productService.readAllByUserSorted(userId, sortedType, dealingStatus), HttpStatus.OK);
+    }
+
+    @PutMapping("/product/update/status/{productId}")
+    public ResponseEntity<?> updateDealingStatus(
+            @RequestParam("dealingStatus") DealingStatus dealingStatus,
+            @PathVariable Long productId
+    ) {
+        return new ResponseEntity<>(productService.updateDealingStatus(productId, dealingStatus), HttpStatus.OK);
     }
 }
