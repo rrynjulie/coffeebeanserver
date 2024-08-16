@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -58,6 +59,15 @@ public class ProductController {
     public ResponseEntity<?> readAll() {
         return new ResponseEntity<>(productService.readAll(), HttpStatus.OK);
     }
+
+    @GetMapping("/product/category")
+    public List<Product> getProducts(
+            @RequestParam(required = false) String category1,
+            @RequestParam(required = false) String category2,
+            @RequestParam(required = false) String category3) {
+        return productService.getProductsByCategory(category1,category2,category3);
+    }
+
 
     @GetMapping("/product/detail/{productId}")
     public ResponseEntity<?> readOne(@PathVariable Long productId) {
