@@ -32,5 +32,8 @@ public class DipsController {
     }
 
     // 추가 기능
-    // TODO
+//    @GetMapping("/dips/{entityType}/sortedlist/{userId}/{sortedType}")
+//    public ResponseEntity<?> readByUserId(@PathVariable String entityType, @PathVariable Long userId, @PathVariable int sortedType) {
+//        return new ResponseEntity<>(dipsService.readByUserId(userId, entityType, sortedType), HttpStatus.OK);
+//    }
 }
