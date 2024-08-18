@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -93,4 +92,42 @@ public class ProductService {
         else sort = Sort.by(Sort.Order.desc("price"));
         return productRepository.findByUser_userId(userId, sort);
     }
+
+    public Map<String, Object> getPriceInfoByCategory2(String category2) {
+        List<Product> products = productRepository.findByCategory2(category2);
+
+        // 가격 리스트
+        List<Double> prices = new ArrayList<>();
+        for (Product product : products) {
+            // 가격을 int에서 Double로 변환
+            prices.add((double) product.getPrice());
+        }
+
+        // 평균, 최소, 최대 가격 계산
+        double averagePrice = prices.stream()
+                .mapToDouble(Double::doubleValue)
+                .average()
+                .orElse(0.0);
+
+        double minPrice = prices.stream()
+                .mapToDouble(Double::doubleValue)
+                .min()
+                .orElse(0.0);
+
+        double maxPrice = prices.stream()
+                .mapToDouble(Double::doubleValue)
+                .max()
+                .orElse(0.0);
+
+        // 결과를 Map으로 반환
+        Map<String, Object> priceInfo = new HashMap<>();
+        priceInfo.put("prices", prices);
+        priceInfo.put("averagePrice", averagePrice);
+        priceInfo.put("minPrice", minPrice);
+        priceInfo.put("maxPrice", maxPrice);
+        priceInfo.put("productCount", products.size());
+
+        return priceInfo;
+    }
+
 }

@@ -114,4 +114,12 @@ public class ProductController {
     public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId, @PathVariable int sortedType) {
         return new ResponseEntity<>(productService.readAllByUserSorted(userId, sortedType), HttpStatus.OK);
     }
+
+    @GetMapping("/product/priceInfo")
+    public Map<String, Object> getPriceInfoByCategory2(@RequestParam String category2){
+        return productService.getPriceInfoByCategory2(category2);
+    }
+
+
+
 }
