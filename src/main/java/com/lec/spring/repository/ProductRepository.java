@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByUser_userId(Long userId, Sort sort);
+    List<Product> findByCategory2(String category2);
 
 //    List<Product> findTop10ByOrderByViewCountDesc(DealingStatus dealingStatus);
     List<Product> findTop10ByDealingStatusOrderByViewCountDesc(DealingStatus dealingStatus);

@@ -127,6 +127,7 @@ public class CarController {
         return new ResponseEntity<>(carService.delete(carId), HttpStatus.OK);
     }
 
+    // 추가 기능
     @GetMapping("/car/filter")
     public ResponseEntity<List<Car>> filterCars(
             @RequestParam(required = false) String category1,
@@ -136,8 +137,19 @@ public class CarController {
         return new ResponseEntity<>(cars, HttpStatus.OK);
     }
 
+    @GetMapping("/car/sortedlist/{userId}/{sortedType}/{dealingStatus}")
+    public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId,
+                                                 @PathVariable int sortedType,
+                                                 @PathVariable String dealingStatus
+    ) {
+        return new ResponseEntity<>(carService.readAllByUserSorted(userId, sortedType, dealingStatus), HttpStatus.OK);
+    }
 
-    // 추가 기능
-    // TODO
-
+    @PutMapping("/car/update/status/{carId}")
+    public ResponseEntity<?> updateDealingStatus(
+            @RequestParam("dealingStatus") DealingStatus dealingStatus,
+            @PathVariable Long carId
+    ) {
+        return new ResponseEntity<>(carService.updateDealingStatus(carId, dealingStatus), HttpStatus.OK);
+    }
 }

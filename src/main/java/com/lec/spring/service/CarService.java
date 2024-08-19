@@ -5,6 +5,7 @@ import com.lec.spring.domain.Car;
 import com.lec.spring.domain.enums.DealingStatus;
 import com.lec.spring.repository.CarRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -84,6 +85,7 @@ public class CarService {
         return "ok";
     }
 
+    // 추가 기능
     @Transactional
     public List<Car> getRandomCarsByCategory2(String category2) {
         List<Car> cars = carRepository.findCarByCategory2AndDealingStatus(category2, DealingStatus.판매중);
@@ -106,6 +108,26 @@ public class CarService {
             return carRepository.findAll();
     }
 
-    // 추가 기능
-    // TODO
+    @Transactional(readOnly = true)
+    public List<Car> readAllByUserSorted(Long userId, int sortType, String dealingStatus) {
+        Sort sort;
+        if(sortType == 1) sort = Sort.by(Sort.Order.desc("regDate"));
+        else if(sortType == 2) sort = Sort.by(Sort.Order.asc("price"));
+        else sort = Sort.by(Sort.Order.desc("price"));
+        List<Car> carList = carRepository.findByUser_userId(userId, sort);
+
+        if(dealingStatus.equals("전체")) return carList;
+        DealingStatus tempDS = DealingStatus.valueOf(dealingStatus);
+        return carList
+                .stream()
+                .filter(car -> car.getDealingStatus().equals(tempDS))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public Car updateDealingStatus(Long carId, DealingStatus dealingStatus) {
+        Car carEntity = carRepository.findById(carId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
+        carEntity.setDealingStatus(dealingStatus);
+        return carRepository.saveAndFlush(carEntity);
+    }
 }

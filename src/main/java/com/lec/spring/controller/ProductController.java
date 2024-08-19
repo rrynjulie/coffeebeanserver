@@ -60,6 +60,15 @@ public class ProductController {
         return new ResponseEntity<>(productService.readAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/product/category")
+    public List<Product> getProducts(
+            @RequestParam(required = false) String category1,
+            @RequestParam(required = false) String category2,
+            @RequestParam(required = false) String category3) {
+        return productService.getProductsByCategory(category1,category2,category3);
+    }
+
+
     @GetMapping("/product/detail/{productId}")
     public ResponseEntity<?> readOne(@PathVariable Long productId) {
         return new ResponseEntity<>(productService.readOne(productId), HttpStatus.OK);
@@ -70,7 +79,6 @@ public class ProductController {
             @RequestParam("name") String name,
             @RequestParam("description") String description,
             @RequestParam("price") int price,
-//            @RequestParam("dealingStatus") DealingStatus dealingStatus,
             @RequestParam("category1") String category1,
             @RequestParam("category2") String category2,
             @RequestParam("category3") String category3,
@@ -101,10 +109,28 @@ public class ProductController {
     }
 
     // 추가 기능
-    @GetMapping("/product/sortedlist/{userId}/{sortedType}")
-    public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId, @PathVariable int sortedType) {
-        return new ResponseEntity<>(productService.readAllByUserSorted(userId, sortedType), HttpStatus.OK);
+    @GetMapping("/product/sortedlist/{userId}/{sortedType}/{dealingStatus}")
+    public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId,
+                                                 @PathVariable int sortedType,
+                                                 @PathVariable String dealingStatus) {
+        return new ResponseEntity<>(productService.readAllByUserSorted(userId, sortedType, dealingStatus), HttpStatus.OK);
     }
+
+    @PutMapping("/product/update/status/{productId}")
+    public ResponseEntity<?> updateDealingStatus(
+            @RequestParam("dealingStatus") DealingStatus dealingStatus,
+            @PathVariable Long productId
+    ) {
+        return new ResponseEntity<>(productService.updateDealingStatus(productId, dealingStatus), HttpStatus.OK);
+    }
+
+    @GetMapping("/product/priceInfo")
+    public Map<String, Object> getPriceInfoByCategory2(@RequestParam String category2){
+        return productService.getPriceInfoByCategory2(category2);
+    }
+
+
+
 
 
     //실시간 인기 중고상품(조회수 TOP10)
