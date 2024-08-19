@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface DipsRepository extends JpaRepository<Dips, Long> {
-    List<Dips> findByUser_userId(Long userId, Pageable pageable);
+    List<Dips> findByUser_userId(Long userId);
 }
