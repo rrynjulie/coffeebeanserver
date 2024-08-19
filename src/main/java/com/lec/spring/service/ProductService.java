@@ -122,8 +122,8 @@ public class ProductService {
         return productRepository.saveAndFlush(productEntity);
     }
 
-    public Map<String, Object> getPriceInfoByCategory2(String category2) {
-        List<Product> products = productRepository.findByCategory2(category2);
+    public Map<String, Object> getPriceInfoCategory(String category1, String category2, String category3) {
+        List<Product> products = productRepository.findProductsByCategories(category1 ,category2, category3);
 
         // 가격 리스트
         List<Double> prices = new ArrayList<>();
@@ -133,20 +133,9 @@ public class ProductService {
         }
 
         // 평균, 최소, 최대 가격 계산
-        double averagePrice = prices.stream()
-                .mapToDouble(Double::doubleValue)
-                .average()
-                .orElse(0.0);
-
-        double minPrice = prices.stream()
-                .mapToDouble(Double::doubleValue)
-                .min()
-                .orElse(0.0);
-
-        double maxPrice = prices.stream()
-                .mapToDouble(Double::doubleValue)
-                .max()
-                .orElse(0.0);
+        double averagePrice = prices.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+        double minPrice = prices.stream().mapToDouble(Double::doubleValue).min().orElse(0.0);
+        double maxPrice = prices.stream().mapToDouble(Double::doubleValue).max().orElse(0.0);
 
         // 결과를 Map으로 반환
         Map<String, Object> priceInfo = new HashMap<>();
@@ -158,4 +147,38 @@ public class ProductService {
 
         return priceInfo;
     }
+
+//    public Map<String, Object> getPriceInfoByCategories(String category1, String category2, String category3) {
+//        List<Product> products;
+//        if (category1 != null && category2 != null && category3 != null) {
+//            products = productRepository.findByCategory1AndCategory2AndCategory3(category1, category2, category3);
+//        } else if (category1 != null && category2 != null) {
+//            products = productRepository.findByCategory1AndCategory2AndCategory3(category1, category2, null);
+//        } else if (category1 != null) {
+//            products = productRepository.findByCategory1AndCategory2AndCategory3(category1, null, null);
+//        } else {
+//            products = productRepository.findByCategory1AndCategory2AndCategory3(null, null, null);
+//        }
+//
+//        // 가격 리스트
+//        List<Double> prices = products.stream()
+//                .map(product -> (double) product.getPrice())
+//                .toList();
+//
+//        // 평균, 최소, 최대 가격 계산
+//        double averagePrice = prices.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+//        double minPrice = prices.stream().mapToDouble(Double::doubleValue).min().orElse(0.0);
+//        double maxPrice = prices.stream().mapToDouble(Double::doubleValue).max().orElse(0.0);
+//
+//        // 결과를 Map으로 반환
+//        Map<String, Object> priceInfo = new HashMap<>();
+//        priceInfo.put("prices", prices);
+//        priceInfo.put("averagePrice", averagePrice);
+//        priceInfo.put("minPrice", minPrice);
+//        priceInfo.put("maxPrice", maxPrice);
+//        priceInfo.put("productCount", products.size());
+//
+//        return priceInfo;
+//    }
+
 }
