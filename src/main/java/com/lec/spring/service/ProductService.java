@@ -2,6 +2,7 @@ package com.lec.spring.service;
 
 import com.lec.spring.domain.Attachment;
 import com.lec.spring.domain.Product;
+import com.lec.spring.domain.enums.DealingStatus;
 import com.lec.spring.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -85,4 +86,16 @@ public class ProductService {
         else sort = Sort.by(Sort.Order.desc("price"));
         return productRepository.findByUser_userId(userId, sort);
     }
+
+    @Transactional
+    public List<Product> getTop10ByViewCnt() {
+        return productRepository.findTop10ByDealingStatusOrderByViewCountDesc(DealingStatus.판매중);
+    }
+
+    @Transactional
+    public List<Product> getTop10ByRegDate() {
+        return productRepository.findTop10ByDealingStatusOrderByRegDateDesc(DealingStatus.판매중);
+    }
+
+
 }

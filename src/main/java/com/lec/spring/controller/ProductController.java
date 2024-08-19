@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -104,4 +105,23 @@ public class ProductController {
     public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId, @PathVariable int sortedType) {
         return new ResponseEntity<>(productService.readAllByUserSorted(userId, sortedType), HttpStatus.OK);
     }
+
+
+    //실시간 인기 중고상품(조회수 TOP10)
+    @GetMapping("/product/top10")
+    public ResponseEntity<List<Product>> productTop10() {
+        List<Product> topproduct = productService.getTop10ByViewCnt();
+        return new ResponseEntity<>(topproduct, HttpStatus.OK);
+    }
+
+    //최근에 등록된 상품
+    @GetMapping("/product/top10regDate")
+    public ResponseEntity<List<Product>> productRecentTop10() {
+        List<Product> top10regDate = productService.getTop10ByRegDate();
+        return new ResponseEntity<>(top10regDate, HttpStatus.OK);
+    }
+
+
+
+
 }
