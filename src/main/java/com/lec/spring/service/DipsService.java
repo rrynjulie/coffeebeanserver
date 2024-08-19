@@ -39,15 +39,18 @@ public class DipsService {
         List<Dips> dipsList = dipsRepository.findByUser_userId(userId);
         List<Product> productList = new ArrayList<>();
         List<Car> carList = new ArrayList<>();
-        DealingStatus tempDS = DealingStatus.valueOf(dealingStatus);
 
         if(entityType.equals("product")) {  // 중고 물품일때
             dipsList.forEach(dips -> {
                 if(dips.getProduct() != null) productList.add(dips.getProduct());
             });
             if(sortType == 1) productList.sort(Comparator.comparing(Product::getRegDate).reversed());  // 등록일시 내림차순
-            else if(sortType == 2)productList.sort(Comparator.comparing(Product::getPrice));  // 가격 오름차순
+            else if(sortType == 2) productList.sort(Comparator.comparing(Product::getPrice));  // 가격 오름차순
             else productList.sort(Comparator.comparing(Product::getPrice).reversed());  // 가격 내림차순
+
+            if(dealingStatus.equals("전체")) return productList;
+            DealingStatus tempDS = DealingStatus.valueOf(dealingStatus);
+
             return productList
                     .stream()
                     .filter(product -> product.getDealingStatus().equals(tempDS))
@@ -57,8 +60,12 @@ public class DipsService {
                 if(dips.getCar() != null) carList.add(dips.getCar());
             });
             if(sortType == 1) carList.sort(Comparator.comparing(Car::getRegDate).reversed());  // 등록일시 내림차순
-            else if(sortType == 2)carList.sort(Comparator.comparing(Car::getPrice));  // 가격 오름차순
+            else if(sortType == 2) carList.sort(Comparator.comparing(Car::getPrice));  // 가격 오름차순
             else carList.sort(Comparator.comparing(Car::getPrice).reversed());  // 가격 내림차순
+
+            if(dealingStatus.equals("전체")) return carList;
+            DealingStatus tempDS = DealingStatus.valueOf(dealingStatus);
+
             return carList
                     .stream()
                     .filter(car -> car.getDealingStatus().equals(tempDS))
