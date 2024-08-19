@@ -32,4 +32,5 @@ public class Email {
         this.email = email;
         this.emailStatus = false;
     }
+
 }
