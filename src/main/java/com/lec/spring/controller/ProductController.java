@@ -85,7 +85,7 @@ public class ProductController {
             @RequestParam("status") Status status,
             @RequestParam("dealingType") String dealingType,
             @RequestParam("desiredArea") String desiredArea,
-            @RequestParam("files") MultipartFile[] files,
+            @RequestParam(value = "files", required = false) MultipartFile[] files,
             @RequestParam(value = "delfile", required = false) Long[] delfile,
             @PathVariable Long productId
     ) {
@@ -125,9 +125,23 @@ public class ProductController {
     }
 
     @GetMapping("/product/priceInfo")
-    public Map<String, Object> getPriceInfoByCategory2(@RequestParam String category2){
-        return productService.getPriceInfoByCategory2(category2);
+    public Map<String, Object> getPriceInfoByCategory(
+            @RequestParam(required = false) String category1,
+            @RequestParam(required = false) String category2,
+            @RequestParam(required = false) String category3) {
+
+        return productService.getPriceInfoCategory(category1, category2, category3);
     }
+
+//    @GetMapping("/product/priceInfo")
+//    public Map<String, Object> getPriceInfo(
+//            @RequestParam(required = false) String category1,
+//            @RequestParam(required = false) String category2,
+//            @RequestParam(required = false) String category3) {
+//
+//        return productService.getPriceInfoByCategories(category1, category2, category3);
+//    }
+
 
 
 
