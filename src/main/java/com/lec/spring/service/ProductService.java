@@ -2,6 +2,7 @@ package com.lec.spring.service;
 
 import com.lec.spring.domain.Attachment;
 import com.lec.spring.domain.Product;
+import com.lec.spring.domain.User;
 import com.lec.spring.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -75,6 +76,4 @@ public class ProductService {
         return "ok";
     }
 
-    // 추가 기능
-    // TODO
 }

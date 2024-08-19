@@ -1,17 +1,19 @@
 package com.lec.spring.controller;
 
-import com.lec.spring.domain.ChatRoom;
-import com.lec.spring.domain.Review;
-import com.lec.spring.domain.SampleReview;
-import com.lec.spring.domain.User;
+import com.lec.spring.domain.*;
 import com.lec.spring.service.ChatRoomService;
+import com.lec.spring.service.ProductService;
 import com.lec.spring.service.ReviewService;
 import com.lec.spring.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -47,17 +49,39 @@ public class ReviewController {
         return new ResponseEntity<>(createdReview, HttpStatus.CREATED);
     }
 
-
-    @GetMapping("/list/{chatRoomId}/{writerId}")
-    public ResponseEntity<?> readAllByUserId(@PathVariable Long chatRoomId, @PathVariable Long writerId) {
+    @GetMapping("/detail/{chatRoomId}/{writerId}")
+    public ResponseEntity<?> readByWriterIdAndChatRoomId(@PathVariable Long chatRoomId, @PathVariable Long writerId) {
         ChatRoom chatRoom = chatRoomService.findByChatRoomId(chatRoomId);
-        User user = userService.findByUserId(writerId);
-        return new ResponseEntity<>(reviewService.readOne(chatRoom, user), HttpStatus.OK);
+        User writer = userService.findByUserId(writerId);
+
+        Review review = reviewService.findReviewByChatRoomAndWriter(chatRoom, writer);
+        Product product = reviewService.findProductByChatRoomId(chatRoomId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("review", review);
+        response.put("product", product);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
     @GetMapping("/list/writer/{userId}")
     public ResponseEntity<?> readWriterReviewAll(@PathVariable Long userId){
-        return new ResponseEntity<>(reviewService.readWriterReviewAll(userId), HttpStatus.OK);
+        List<Review> reviews = reviewService.readWriterReviewAll(userId);
+        List<Map<String, Object>> reviewProductList = new ArrayList<>();
+
+        for (Review review : reviews) {
+            ChatRoom chatRoom = reviewService.findChatRoomByReviewId(review.getReviewId());
+            Product product = chatRoomService.findProductByChatRoomId(chatRoom.getChatRoomId());
+
+            Map<String, Object> reviewProductMap = new HashMap<>();
+            reviewProductMap.put("review", review);
+            reviewProductMap.put("product", product);
+
+            reviewProductList.add(reviewProductMap);
+        }
+
+        return new ResponseEntity<>(reviewProductList, HttpStatus.OK);
     }
 
     @GetMapping("/list/recipient/{userId}")

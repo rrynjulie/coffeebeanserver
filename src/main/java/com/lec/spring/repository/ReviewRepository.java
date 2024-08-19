@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    List<Review> findByChatRoomAndWriter(ChatRoom chatRoom, User writer);
+    Review findByChatRoomAndWriter(ChatRoom chatRoom, User writer);
     List<Review> findByWriterUserId(Long writerId);
     List<Review> findByRecipientUserId(Long recipientId);
+    ChatRoom findChatRoomByReviewId(Long chatRoomId);
 }
