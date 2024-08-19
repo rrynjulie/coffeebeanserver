@@ -31,7 +31,7 @@ public class PostController {
     public ResponseEntity<Integer> create(@RequestParam("type") String type,
                                        @RequestParam("title") String title,
                                        @RequestParam("content") String content,
-                                       @RequestParam Map<String, MultipartFile> files,
+                                       @RequestParam("files") MultipartFile[] files,
                                        @PathVariable Long userId) {
         Post post = Post.builder()
                 .type(type)
@@ -61,7 +61,7 @@ public class PostController {
     public ResponseEntity<Integer> update(@RequestParam("type") String type,
                                        @RequestParam("title") String title,
                                        @RequestParam("content") String content,
-                                       @RequestParam Map<String, MultipartFile> files,
+                                          @RequestParam("files") MultipartFile[] files,
                                        @RequestParam(value = "delfile", required = false) Long[] delfile,
                                        @PathVariable Long postId) {
         Post post = Post.builder()
@@ -79,6 +79,4 @@ public class PostController {
         return new ResponseEntity<>(postService.delete(postId), HttpStatus.OK);
     }
 
-    // 추가 기능
-    // TODO
 }

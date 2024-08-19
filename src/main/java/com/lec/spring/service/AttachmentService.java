@@ -71,11 +71,11 @@ public class AttachmentService {
     }
 
     // 추가 기능
-    public <T> void addFiles(Map<String, MultipartFile> files, T entity) {
+    public <T> void addFiles(MultipartFile[] files, T entity) {
         if (files == null) return;
-        for (Map.Entry<String, MultipartFile> e : files.entrySet()) {
+        for (MultipartFile multipartFile : files) {
 //            if (!e.getKey().startsWith("upfile")) continue;     // name="upfile##" 인 경우에만 첨부파일 등록
-            Attachment file = upload(e.getValue());   // 파일 물리적으로 저장
+            Attachment file = upload(multipartFile);   // 파일 물리적으로 저장
             if (file != null) {
                 if(entity instanceof Car) {
                     file.setCar((Car) entity);
@@ -113,6 +113,7 @@ public class AttachmentService {
             } else {
                 fileName += "_" + System.currentTimeMillis();
             }
+            file = new File(uploadDir, fileName);
         }
         System.out.println("fileName: " + fileName);
 
@@ -125,6 +126,8 @@ public class AttachmentService {
                     copyOfLocation,
                     StandardCopyOption.REPLACE_EXISTING
             );
+            amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file));
+            file.delete();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -134,8 +137,6 @@ public class AttachmentService {
                 .source(source)
                 .build();
 
-        amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file));
-        file.delete();
 
         return attachment;
     }
