@@ -133,9 +133,6 @@ public class ProductService {
     }
 
 
-
-    public Map<String, Object> getPriceInfoByCategory2(String category2) {
-        List<Product> products = productRepository.findByCategory2(category2);
     public Map<String, Object> getPriceInfoCategory(String category1, String category2, String category3) {
         List<Product> products = productRepository.findProductsByCategories(category1 ,category2, category3);
 
