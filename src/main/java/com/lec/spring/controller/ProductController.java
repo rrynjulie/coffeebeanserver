@@ -60,15 +60,6 @@ public class ProductController {
         return new ResponseEntity<>(productService.readAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/product/category")
-    public List<Product> getProducts(
-            @RequestParam(required = false) String category1,
-            @RequestParam(required = false) String category2,
-            @RequestParam(required = false) String category3) {
-        return productService.getProductsByCategory(category1,category2,category3);
-    }
-
-
     @GetMapping("/product/detail/{productId}")
     public ResponseEntity<?> readOne(@PathVariable Long productId) {
         return new ResponseEntity<>(productService.readOne(productId), HttpStatus.OK);
@@ -109,6 +100,14 @@ public class ProductController {
     }
 
     // 추가 기능
+
+    // 헤더에서 사용하는 검색 결과 불러오는 메소드
+    @GetMapping("/product/list/{keyword}")
+    public ResponseEntity<?> readAllByKeyword(@PathVariable String keyword) {
+        return new ResponseEntity<>(productService.readAllByKeyword(keyword), HttpStatus.OK);
+    }
+
+    // 마이페이지에서 사용하는 모든 필터 한 번에 걸러주는 매소드
     @GetMapping("/product/sortedlist/{userId}/{sortedType}/{dealingStatus}")
     public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId,
                                                  @PathVariable int sortedType,
@@ -116,6 +115,7 @@ public class ProductController {
         return new ResponseEntity<>(productService.readAllByUserSorted(userId, sortedType, dealingStatus), HttpStatus.OK);
     }
 
+    // 중고 물품 상세 페이지에서 사용하는 판매 상태 변경해주는 메소드
     @PutMapping("/product/update/status/{productId}")
     public ResponseEntity<?> updateDealingStatus(
             @RequestParam("dealingStatus") DealingStatus dealingStatus,
@@ -129,6 +129,13 @@ public class ProductController {
         return productService.getPriceInfoByCategory2(category2);
     }
 
+    @GetMapping("/product/category")
+    public List<Product> getProducts(
+            @RequestParam(required = false) String category1,
+            @RequestParam(required = false) String category2,
+            @RequestParam(required = false) String category3) {
+        return productService.getProductsByCategory(category1,category2,category3);
+    }
 
 
 

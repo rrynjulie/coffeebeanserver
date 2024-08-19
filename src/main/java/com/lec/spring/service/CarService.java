@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -108,6 +107,18 @@ public class CarService {
             return carRepository.findAll();
     }
 
+    // 헤더에서 사용하는 검색 결과 불러오는 메소드
+    @Transactional(readOnly = true)
+    public List<Car> readAllByKeyword(String keyword) {
+        List<Car> carList =  carRepository
+                .findAll()
+                .stream()
+                .filter(car -> car.getName().contains(keyword))
+                .collect(Collectors.toList());
+        return carList;
+    }
+
+    // 마이페이지에서 사용하는 모든 필터 한 번에 걸러주는 메소드
     @Transactional(readOnly = true)
     public List<Car> readAllByUserSorted(Long userId, int sortType, String dealingStatus) {
         Sort sort;
@@ -124,6 +135,7 @@ public class CarService {
                 .collect(Collectors.toList());
     }
 
+    // 중고차 상세 페이지에서 사용하는 판매 상태 변경해주는 메소드
     @Transactional
     public Car updateDealingStatus(Long carId, DealingStatus dealingStatus) {
         Car carEntity = carRepository.findById(carId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));

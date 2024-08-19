@@ -86,6 +86,18 @@ public class ProductService {
                 .toList();
     }
 
+    // 헤더에서 사용하는 검색 결과 불러오는 메소드
+    @Transactional(readOnly = true)
+    public List<Product> readAllByKeyword(String keyword) {
+        List<Product> productList =  productRepository
+                .findAll()
+                .stream()
+                .filter(product -> product.getName().contains(keyword))
+                .collect(Collectors.toList());
+        return productList;
+    }
+
+    // 마이페이지에서 사용하는 모든 필터 한 번에 걸러주는 메소드
     @Transactional(readOnly = true)
     public List<Product> readAllByUserSorted(Long userId, int sortType, String dealingStatus) {
         Sort sort;
@@ -102,6 +114,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    // 중고 물품 상세 페이지에서 사용하는 판매 상태 변경해주는 메소드
     @Transactional
     public Product updateDealingStatus(Long productId, DealingStatus dealingStatus) {
         Product productEntity = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
@@ -157,5 +170,4 @@ public class ProductService {
 
         return priceInfo;
     }
-
 }
