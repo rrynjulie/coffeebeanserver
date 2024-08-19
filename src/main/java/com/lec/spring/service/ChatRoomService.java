@@ -86,6 +86,19 @@ public class ChatRoomService {
         }
     }
 
+    public Long leaveMessage(Long chatRoomId) {
+
+        Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findById(chatRoomId);
+
+        if (optionalChatRoom.isPresent()) {
+            ChatRoom chatRoom = optionalChatRoom.get();
+            updateChatRoomJoin(chatRoom); // 참여 상태 업데이트
+            return chatRoom.getIsJoin(); // 참여 여부 반환
+        } else {
+            throw new RuntimeException("Chat room not found.");
+        }
+    }
+
     private void updateChatRoomJoin(ChatRoom chatRoom) {
         Long buyerId = chatRoom.getBuyerId() != null ? chatRoom.getBuyerId().getUserId() : null;
         Long sellerId = chatRoom.getSellerId() != null ? chatRoom.getSellerId().getUserId() : null;

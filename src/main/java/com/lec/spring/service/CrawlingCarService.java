@@ -37,7 +37,7 @@ public class CrawlingCarService {
     private static final int MAX_RETRIES = 3; // 최대 재시도 횟수
     private static final int TIMEOUT = 10000; // 타임아웃 시간 (밀리초)
     private static final int MAX_PAGE = 1; // 최대 페이지 (필요에 따라 조정)
-    private static final int VIEW_SIZE = 20; // 페이지 당 보기 사이즈
+    private static final int VIEW_SIZE = 70; // 페이지 당 보기 사이즈
 
     private final Random random = new Random();
 

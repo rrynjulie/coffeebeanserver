@@ -128,5 +128,36 @@ public class CarController {
     }
 
     // 추가 기능
-    // TODO
+    @GetMapping("/car/filter")
+    public ResponseEntity<List<Car>> filterCars(
+            @RequestParam(required = false) String category1,
+            @RequestParam(required = false) String category2
+    ) {
+        List<Car> cars = carService.getFilteredCars(category1, category2);
+        return new ResponseEntity<>(cars, HttpStatus.OK);
+    }
+
+    // 헤더에서 사용하는 검색 결과 불러오는 메소드
+    @GetMapping("/car/list/{keyword}")
+    public ResponseEntity<?> readAllByKeyword(@PathVariable String keyword) {
+        return new ResponseEntity<>(carService.readAllByKeyword(keyword), HttpStatus.OK);
+    }
+
+    // 마이페이지에서 사용하는 모든 필터 한 번에 걸러주는 메소드
+    @GetMapping("/car/sortedlist/{userId}/{sortedType}/{dealingStatus}")
+    public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId,
+                                                 @PathVariable int sortedType,
+                                                 @PathVariable String dealingStatus
+    ) {
+        return new ResponseEntity<>(carService.readAllByUserSorted(userId, sortedType, dealingStatus), HttpStatus.OK);
+    }
+
+    // 중고차 상세 페이지에서 사용하는 판매 상태 변경해주는 메소드
+    @PutMapping("/car/update/status/{carId}")
+    public ResponseEntity<?> updateDealingStatus(
+            @RequestParam("dealingStatus") DealingStatus dealingStatus,
+            @PathVariable Long carId
+    ) {
+        return new ResponseEntity<>(carService.updateDealingStatus(carId, dealingStatus), HttpStatus.OK);
+    }
 }

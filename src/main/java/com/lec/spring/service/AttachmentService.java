@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -92,53 +93,26 @@ public class AttachmentService {
     }
 
     public Attachment upload(MultipartFile multipartFile) {
-        Attachment attachment = null;
-
+        // 파일 원본 이름 가져오기
         String originalFilename = multipartFile.getOriginalFilename();
         if (originalFilename == null || originalFilename.isEmpty()) return null;
 
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        // 파일 이름과 소스 URL 생성
+        String fileName = StringUtils.cleanPath(originalFilename);
         String source = endpointUrl + "/" + fileName;
 
-        File file = new File(uploadDir, fileName);
-        if (file.exists()) {
-
-            int pos = fileName.lastIndexOf(".");
-            if (pos > -1) {
-                String name = fileName.substring(0, pos);
-                String ext = fileName.substring(pos + 1);
-
-                fileName = name + "_" + System.currentTimeMillis() + "." + ext;
-
-            } else {
-                fileName += "_" + System.currentTimeMillis();
-            }
-            file = new File(uploadDir, fileName);
-        }
-        System.out.println("fileName: " + fileName);
-
-        Path copyOfLocation = Paths.get(new File(uploadDir, fileName).getAbsolutePath());
-        System.out.println(copyOfLocation);
-
-        try {
-            Files.copy(
-                    multipartFile.getInputStream(),
-                    copyOfLocation,
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-            amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file));
-        file.delete();
+        // S3에 업로드
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            amazonS3.putObject(new PutObjectRequest(bucketName, fileName, inputStream, null));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to upload file to S3", e);
         }
 
-        attachment = Attachment.builder()
+        // Attachment 객체 생성 및 반환
+        return Attachment.builder()
                 .filename(fileName)
                 .source(source)
                 .build();
-
-
-        return attachment;
     }
 
     public void setImage(List<Attachment> fileList) {

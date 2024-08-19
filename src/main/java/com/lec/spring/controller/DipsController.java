@@ -9,28 +9,33 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin
 public class DipsController {
     private final DipsService dipsService;
 
     // 기본적인 CRUD
-    @CrossOrigin
-    @PostMapping("/dips/write/{userId}")
-    public ResponseEntity<?> create(@RequestBody Dips dips, @PathVariable Long userId) {
-        return new ResponseEntity<>(dipsService.create(dips, userId), HttpStatus.CREATED);
+    @PostMapping("/dips/write/{entityType}/{userId}/{entityId}")
+    public ResponseEntity<?> create(
+            @PathVariable String entityType,
+            @PathVariable Long userId,
+            @PathVariable Long entityId
+    ) {
+        Dips dipsEntity = Dips.builder().build();
+        return new ResponseEntity<>(dipsService.create(dipsEntity, entityType, userId, entityId), HttpStatus.CREATED);
     }
 
-    @CrossOrigin
-    @GetMapping("/dips/list")
-    public ResponseEntity<?> readAll() {
-        return new ResponseEntity<>(dipsService.readAll(), HttpStatus.OK);
+    @GetMapping("/dips/{entityType}/sortedlist/{userId}/{sortedType}/{dealingStatus}")
+    public ResponseEntity<?> readByUserId(
+            @PathVariable String entityType,
+            @PathVariable Long userId,
+            @PathVariable int sortedType,
+            @PathVariable String dealingStatus
+    ) {
+        return new ResponseEntity<>(dipsService.readByUserId(userId, entityType, sortedType, dealingStatus), HttpStatus.OK);
     }
 
-    @CrossOrigin
     @DeleteMapping("/dips/delete/{dipsId}")
     public ResponseEntity<?> delete(@PathVariable Long dipsId) {
         return new ResponseEntity<>(dipsService.delete(dipsId), HttpStatus.OK);
     }
-
-    // 추가 기능
-    // TODO
 }
