@@ -2,13 +2,16 @@ package com.lec.spring.controller;
 
 import com.lec.spring.domain.ChatRoom;
 import com.lec.spring.domain.Message;
+import com.lec.spring.domain.User;
 import com.lec.spring.service.ChatRoomService;
 import com.lec.spring.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -26,18 +29,21 @@ public class MessageController {
 
     @MessageMapping("/sendMessage/{chatRoomId}")
     @SendTo("/topic/public/{chatRoomId}")
-    public Message sendMessage(Message message, @DestinationVariable Long chatRoomId) {     // @DestinationVariable ---> url 경로에서 추출한 chatRoomId
-        System.out.println("Received message: " + message);  // 로그 추가
-
-        // ChatRoom 조회
+    @Transactional
+    public Message sendMessage(@DestinationVariable Long chatRoomId, @Payload Message message) {
         ChatRoom chatRoom = chatRoomService.findById(chatRoomId)
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
 
-        message.setSendTime(LocalDateTime.now());   // 메세지 전송 시간
-        message.setIsRead(false);                   // 상대방 메세지 확인 여부
-        message.setChatRoom(chatRoom);              // 메세지가 어느 채팅방에 속하는지 ?
+        if (message.getSender() == null || message.getSender().getUserId() == null) {
+            throw new RuntimeException("Sender information is missing");
+        }
 
-        return messageService.sendMessage(message);
+        message.setSendTime(LocalDateTime.now());
+        message.setIsRead(false);
+        message.setChatRoom(chatRoom);
+
+        System.out.println("Received message: " + message);
+        return messageService.sendMessage(message, message.getSender().getUserId());
     }
 
     @PostMapping("/messages/read/{chatRoomId}/{userId}")
@@ -51,8 +57,8 @@ public class MessageController {
     }
 
     @GetMapping("/user/{userId}")
-    public List<Message> MessageByUserId(@PathVariable Long userId) {
-        return messageService.MessageByUserId(userId);
+    public List<Message> findBySenderId(@PathVariable Long userId) {
+        return messageService.findBySenderId(userId);
     }
 
     @DeleteMapping("/messages/{messageId}")
@@ -65,5 +71,4 @@ public class MessageController {
         Long isJoin = chatRoomService.leaveMessage(chatRoomId);
         return ResponseEntity.ok(isJoin);
     }
-
 }

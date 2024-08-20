@@ -1,47 +1,63 @@
 package com.lec.spring.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
-
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "chat_room")
 public class ChatRoom {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long chatRoomId;
+    private Long chatRoomId;
 
-    Long isJoin;    // 채팅방 참여 여부
+    private Long isJoin;
 
     @ManyToOne
     @JoinColumn(name = "buyerId", referencedColumnName = "userId")
-    private User buyerId; // User 객체 참조
+    @JsonIgnore
+    private User buyerId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "productId", referencedColumnName = "productId")
+    @JsonIgnore
+    private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "sellerId", referencedColumnName = "userId", nullable = true)
-    private User sellerId; // User 객체 참조
+    @JoinColumn(name = "sellerId", referencedColumnName = "userId")
+    @JsonIgnore
+    private User sellerId;
 
-    @Transient      // DB 컬럼 아님
-    private String lastMessage;     // 마지막 메세지
+    @Transient
+    private String lastMessage;
 
     @Transient
     @JsonFormat(pattern = "MM월 dd일 a HH:mm", timezone = "Asia/Seoul")
-    private LocalDateTime lastSendTime;     // 마지막 메세지 보낸 시간
+    private LocalDateTime lastSendTime;
+
+    @Transient
+    private Long unreadMessage;
+
+    @Transient
+    private List<Attachment> attachments;
 
     private boolean dealComplete;
+
+    @OneToMany(mappedBy = "chatRoom")
+    @JsonIgnore
+    private List<Message> messages;
 
     public boolean getDealComplete() {
         return true;
     }
-
-    @Transient
-    private Long unreadMessage;       // 안읽은 메세지 개수
-
 }
