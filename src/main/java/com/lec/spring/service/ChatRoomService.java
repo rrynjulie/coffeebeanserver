@@ -137,6 +137,10 @@ public class ChatRoomService {
         return chatRoomRepository.findByChatRoomId(chatRoomId);
     }
 
+    public ChatRoom findChatRoomByChatRoomId(Long chatRoomId) {
+        return chatRoomRepository.findChatRoomByChatRoomId(chatRoomId);
+    }
+
     // 채팅방 나가면서 참여 여부 조회
     public Long leaveMessage(Long chatRoomId) {
         Optional<ChatRoom> optionalChatRoom = findByChatRoomId(chatRoomId);
@@ -149,5 +153,9 @@ public class ChatRoomService {
         } else {
             throw new RuntimeException("Chat room not found.");
         }
+    }
+
+    public Product findProductByChatRoomId(Long chatRoomId) {
+        return chatRoomRepository.findProductByChatRoomId(chatRoomId);
     }
 }
