@@ -17,10 +17,12 @@ public class ChatRoomController {
 
     // 채팅방 생성 및 저장
     @PostMapping
-    public ResponseEntity<ChatRoom> createChatRoom(@RequestBody ChatRoom chatRoom) {
-        ChatRoom createChatRoom = chatRoomService.createChatRoom(chatRoom);
+    public ResponseEntity<ChatRoom> createChatRoom(@RequestParam Long productId,
+                                                   @RequestParam Long buyerId) {
+        ChatRoom createChatRoom = chatRoomService.createChatRoom(productId, buyerId);
         return ResponseEntity.ok(createChatRoom);
     }
+
 
     // 사용자가 참여하고 있는 모든 채팅방
     @GetMapping("/user/{userId}")

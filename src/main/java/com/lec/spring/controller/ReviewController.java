@@ -84,13 +84,29 @@ public class ReviewController {
         return new ResponseEntity<>(reviewProductList, HttpStatus.OK);
     }
 
-    @GetMapping("/list/recipient/{userId}")
+        @GetMapping("/list/recipient/{userId}")
     public ResponseEntity<?> readRecipientReviewAll(@PathVariable Long userId){
         return new ResponseEntity<>(reviewService.readRecipientReviewAll(userId), HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{reviewId}")
-    public ResponseEntity<?> delete(@PathVariable Long reviewId) {
-        return new ResponseEntity<>(reviewService.delete(reviewId), HttpStatus.OK);
+    @GetMapping("/checkInfo/{chatRoomId}/{writerId}")
+    public ResponseEntity<?> checkChatRoomInfo(@PathVariable Long chatRoomId, @PathVariable Long writerId) {
+        ChatRoom chatRoom = chatRoomService.findByChatRoomId(chatRoomId);
+        User writer = userService.findByUserId(writerId);
+        User recipient;
+        if(writerId == chatRoom.getSellerId().getUserId()){
+            recipient = userService.findByUserId(chatRoom.getBuyerId().getUserId());
+        } else {
+            recipient = userService.findByUserId(chatRoom.getSellerId().getUserId());
+        };
+
+        Product product = reviewService.findProductByChatRoomId(chatRoomId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("writer", writer);
+        response.put("recipient", recipient);
+        response.put("product", product);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

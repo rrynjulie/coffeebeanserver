@@ -50,7 +50,7 @@ public class User {
 
     // 신뢰도
     @Column(nullable = false)
-    @ColumnDefault("500")
+    @ColumnDefault("500.0")
     private int reliability;
 
     // 회원사진

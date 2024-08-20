@@ -8,6 +8,7 @@ import com.lec.spring.repository.ChatRoomRepository;
 import com.lec.spring.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,16 +22,38 @@ public class ChatRoomService {
     private ChatRoomRepository chatRoomRepository;
     @Autowired
     private MessageRepository messageRepository;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private UserService userService;
+
 
     // 새로운 채팅방 생성 및 데이터 베이스 저장
-    public ChatRoom createChatRoom(ChatRoom chatRoom) {
-        chatRoom.setIsJoin(2L);     // 채팅방 생성 시 isJoin 컬럼 기본값 2로 설정
+    @Transactional
+    public ChatRoom createChatRoom(Long productId, Long buyerUserId) {
+        // Product 정보 가져오기
+        Product product = productService.readOne(productId);
+        // buyerId(User) 정보 가져오기
+        User buyer = userService.readOne(buyerUserId);
+        // sellerId(User)는 Product 에서 추출
+        User seller = product.getUser();
+
+        // ChatRoom 객체 생성 및 설정
+        ChatRoom chatRoom = new ChatRoom();
+        chatRoom.setProduct(product);
+        chatRoom.setBuyerId(buyer);
+        chatRoom.setSellerId(seller);
+        chatRoom.setIsJoin(2L);  // isJoin 을 2로 설정
+        chatRoom.setDealComplete(false); // 거래 완료 여부 초기값 설정
+
+        // 채팅방 저장 및 반환
         return chatRoomRepository.save(chatRoom);
     }
 
+
     // 사용자가 참여하고 있는 모든 채팅방 조회
     public List<ChatRoom> findByUserId(Long userId) {
-        return chatRoomRepository.findByBuyerIdUserIdOrSellerIdUserId(userId, userId);
+        return chatRoomRepository.findByUserId(userId);
     }
 
     // ChatRoom ID로 조회
