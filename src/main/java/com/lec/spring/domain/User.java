@@ -38,7 +38,7 @@ public class User {
     private LocalDateTime regDate;
 
     @Column(nullable = false)
-    @ColumnDefault("500")
+    @ColumnDefault("500.0")
     private int reliability;
 
     @OneToMany(mappedBy = "sender", fetch = FetchType.EAGER)

@@ -1,6 +1,7 @@
 package com.lec.spring.repository;
 
 import com.lec.spring.domain.ChatRoom;
+import com.lec.spring.domain.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,4 +17,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     // 채팅방 ID로 조회
     Optional<ChatRoom> findByChatRoomId(Long chatRoomId);
+
+    @Query("SELECT c.product FROM chat_room c WHERE c.chatRoomId = :chatRoomId")
+    Product findProductByChatRoomId(Long chatRoomId);
 }

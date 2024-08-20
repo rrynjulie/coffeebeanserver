@@ -21,12 +21,12 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatRoomId;
 
-    private Long isJoin;
+    private Long isJoin; // 채팅방 참여 여부
 
     @ManyToOne
     @JoinColumn(name = "buyerId", referencedColumnName = "userId")
     @JsonIgnore
-    private User buyerId;
+    private User buyerId; // User 객체 참조
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "productId", referencedColumnName = "productId")
@@ -36,20 +36,20 @@ public class ChatRoom {
     @ManyToOne
     @JoinColumn(name = "sellerId", referencedColumnName = "userId")
     @JsonIgnore
-    private User sellerId;
+    private User sellerId; // 판매자 User 객체 참조
 
     @Transient
-    private String lastMessage;
+    private String lastMessage; // 마지막 메시지
 
     @Transient
     @JsonFormat(pattern = "MM월 dd일 a HH:mm", timezone = "Asia/Seoul")
-    private LocalDateTime lastSendTime;
+    private LocalDateTime lastSendTime; // 마지막 메시지 보낸 시간
 
     @Transient
-    private Long unreadMessage;
+    private Long unreadMessage; // 안 읽은 메시지 개수
 
     @Transient
-    private List<Attachment> attachments;
+    private List<Attachment> attachments; // 첨부파일 리스트 추가
 
     private boolean dealComplete;
 

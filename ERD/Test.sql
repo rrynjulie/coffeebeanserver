@@ -1,5 +1,5 @@
 select
-    userId, userName, password, role, email
+    userId, userName, password, role, email, reliability, nickName
 from user order by userId DESC;
 
 SELECT * FROM attachment ORDER BY attachmentId DESC;

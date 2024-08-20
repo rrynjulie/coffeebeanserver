@@ -1,20 +1,13 @@
 //package com.lec.spring.service;
 //
-//import com.lec.spring.domain.ChatRoom;
-//import com.lec.spring.domain.Review;
-//import com.lec.spring.domain.SampleReview;
-//import com.lec.spring.domain.User;
+//import com.lec.spring.domain.*;
 //import com.lec.spring.repository.ReviewRepository;
-//import com.lec.spring.repository.SampleReviewRepository;
 //import lombok.RequiredArgsConstructor;
-//import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Service;
 //import org.springframework.transaction.annotation.Transactional;
 //
 //import java.time.LocalDateTime;
-//import java.util.ArrayList;
 //import java.util.List;
-//import java.util.stream.Collectors;
 //
 //@RequiredArgsConstructor
 //@Service
@@ -53,12 +46,16 @@
 //        sampleReviewService.create(sampleReview);
 //
 //        return savedReview;
-////        return reviewRepository.save(review);
 //    }
 //
 //    @Transactional(readOnly = true)
-//    public List<Review> readOne(ChatRoom chatRoom, User user) {
-//        return reviewRepository.findByChatRoomAndWriter(chatRoom, user);
+//    public Review findReviewByChatRoomAndWriter(ChatRoom chatRoom, User writer) {
+//        return reviewRepository.findByChatRoomAndWriter(chatRoom, writer);
+//    }
+//
+//    @Transactional(readOnly = true)
+//    public Product findProductByChatRoomId(Long chatRoomId) {
+//        return chatRoomService.findProductByChatRoomId(chatRoomId);
 //    }
 //
 //    @Transactional(readOnly = true)
@@ -70,8 +67,6 @@
 //        return reviewRepository.findByRecipientUserId(recipientId);
 //    }
 //
-//
-//
 //    @Transactional
 //    public String delete(Long reviewId) {
 //        sampleReviewService.delete(reviewId);
@@ -79,6 +74,7 @@
 //        return "ok";
 //    }
 //
-//    // 추가 기능
-//    // TODO
+//    public ChatRoom findChatRoomByReviewId(Long reviewId){
+//        return reviewRepository.findChatRoomByReviewId(reviewId);
+//    }
 //}

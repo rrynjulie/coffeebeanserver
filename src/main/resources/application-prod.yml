@@ -1,0 +1,89 @@
+# 서버 포트번호
+server:
+  port: 8088
+
+spring:
+  application:
+    name: coffeebeanserver
+
+  output:
+    ansi:
+      enabled: always
+
+  upload:
+    path: upload
+
+  # datasource 설정
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${rds.hostname}:${rds.port}/${rds.db.name}?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: ${rds.username}
+    password: ${rds.password}
+
+  # JPA 설정
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # WebSocket 경로 설정
+  websocket:
+    path: /ws
+
+  # email
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${mail.username}
+    password: ${mail.password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+      auth-code-expiration-millis: 1800000  # 30 * 60 * 1000 == 30?
+
+
+  # Redis
+  data:
+    redis:
+      host: ${redis.host}
+      port: ${redis.port}
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+app:
+  upload:
+    path: upload
+
+jwt:
+  secret: ${jwt.secret}
+
+cors:
+  allowed-origins: http://localhost:3000,http://localhost:3001
+
+# 사진 업로드 버킷 설정
+cloud:
+  aws:
+    credentials:
+      accessKey: ${aws.accesskey}
+      secretKey: ${aws.secretkey}
+    s3:
+      bucketName: coffeebean-aws-bucket
+      endpointUrl: https://coffeebean-aws-bucket.s3.ap-northeast-2.amazonaws.com
+    region:
+      static: ap-northeast-2
