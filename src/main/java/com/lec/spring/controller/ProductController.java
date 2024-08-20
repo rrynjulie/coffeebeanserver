@@ -108,7 +108,7 @@ public class ProductController {
     }
 
     // 마이페이지에서 사용하는 모든 필터 한 번에 걸러주는 매소드
-    @GetMapping("/product/sortedlist/{userId}/{sortedType}/{dealingStatus}")
+    @GetMapping("/sell/product/sortedlist/{userId}/{sortedType}/{dealingStatus}")
     public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId,
                                                  @PathVariable int sortedType,
                                                  @PathVariable String dealingStatus) {

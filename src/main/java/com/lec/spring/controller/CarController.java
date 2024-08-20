@@ -144,7 +144,7 @@ public class CarController {
     }
 
     // 마이페이지에서 사용하는 모든 필터 한 번에 걸러주는 메소드
-    @GetMapping("/car/sortedlist/{userId}/{sortedType}/{dealingStatus}")
+    @GetMapping("/sell/car/sortedlist/{userId}/{sortedType}/{dealingStatus}")
     public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId,
                                                  @PathVariable int sortedType,
                                                  @PathVariable String dealingStatus
