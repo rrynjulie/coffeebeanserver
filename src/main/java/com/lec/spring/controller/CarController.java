@@ -1,6 +1,7 @@
 package com.lec.spring.controller;
 
 import com.lec.spring.domain.Car;
+import com.lec.spring.domain.Product;
 import com.lec.spring.domain.enums.DealingStatus;
 import com.lec.spring.domain.enums.Status;
 import com.lec.spring.repository.CarRepository;
@@ -81,6 +82,7 @@ public class CarController {
 
     @PutMapping("/car/update/{carId}")
     public ResponseEntity<Long> update(
+            @PathVariable Long carId,  // PathVariable을 사용하여 carId를 받습니다.
             @RequestParam("name") String name,
             @RequestParam("price") int price,
             @RequestParam("introduce") String introduce,
@@ -97,10 +99,16 @@ public class CarController {
             @RequestParam(value = "insuranceVictim", required = false) Integer insuranceVictim,
             @RequestParam(value = "insuranceInjurer", required = false) Integer insuranceInjurer,
             @RequestParam(value = "ownerChange", required = false) Integer ownerChange,
-            @RequestParam("files") MultipartFile[] files,
-            @RequestParam(value = "delfile", required = false) Long[] delfile,
-            @PathVariable Long carId
+            @RequestParam(value = "files", required = false) MultipartFile[] files,
+            @RequestParam(value = "delfile", required = false) Long[] delfile
     ) {
+        System.out.println("Received carId: " + carId);  // carId 확인
+
+        if (carId == null) {
+            throw new IllegalArgumentException("carId must not be null");
+        }
+
+        // Car 엔티티 생성
         Car carEntity = Car.builder()
                 .name(name)
                 .price(price)
@@ -119,8 +127,10 @@ public class CarController {
                 .insuranceInjurer(insuranceInjurer)
                 .ownerChange(ownerChange)
                 .build();
+
         return new ResponseEntity<>(carService.update(carEntity, carId, files, delfile), HttpStatus.OK);
     }
+
 
     @DeleteMapping("/car/delete/{carId}")
     public ResponseEntity<?> delete(@PathVariable Long carId) {
@@ -159,5 +169,12 @@ public class CarController {
             @PathVariable Long carId
     ) {
         return new ResponseEntity<>(carService.updateDealingStatus(carId, dealingStatus), HttpStatus.OK);
+    }
+
+    //실시간 인기 중고상품(조회수 TOP10)
+    @GetMapping("/car/top10")
+    public ResponseEntity<List<Car>> carTop10() {
+        List<Car> topCar = carService.getTop10ByViewCnt();
+        return new ResponseEntity<>(topCar, HttpStatus.OK);
     }
 }
