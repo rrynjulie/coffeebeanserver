@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -71,11 +72,11 @@ public class AttachmentService {
     }
 
     // 추가 기능
-    public <T> void addFiles(Map<String, MultipartFile> files, T entity) {
+    public <T> void addFiles(MultipartFile[] files, T entity) {
         if (files == null) return;
-        for (Map.Entry<String, MultipartFile> e : files.entrySet()) {
+        for (MultipartFile multipartFile : files) {
 //            if (!e.getKey().startsWith("upfile")) continue;     // name="upfile##" 인 경우에만 첨부파일 등록
-            Attachment file = upload(e.getValue());   // 파일 물리적으로 저장
+            Attachment file = upload(multipartFile);   // 파일 물리적으로 저장
             if (file != null) {
                 if(entity instanceof Car) {
                     file.setCar((Car) entity);
@@ -92,52 +93,26 @@ public class AttachmentService {
     }
 
     public Attachment upload(MultipartFile multipartFile) {
-        Attachment attachment = null;
-
+        // 파일 원본 이름 가져오기
         String originalFilename = multipartFile.getOriginalFilename();
         if (originalFilename == null || originalFilename.isEmpty()) return null;
 
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        // 파일 이름과 소스 URL 생성
+        String fileName = StringUtils.cleanPath(originalFilename);
         String source = endpointUrl + "/" + fileName;
 
-        File file = new File(uploadDir, fileName);
-        if (file.exists()) {
-
-            int pos = fileName.lastIndexOf(".");
-            if (pos > -1) {
-                String name = fileName.substring(0, pos);
-                String ext = fileName.substring(pos + 1);
-
-                fileName = name + "_" + System.currentTimeMillis() + "." + ext;
-
-            } else {
-                fileName += "_" + System.currentTimeMillis();
-            }
-        }
-        System.out.println("fileName: " + fileName);
-
-        Path copyOfLocation = Paths.get(new File(uploadDir, fileName).getAbsolutePath());
-        System.out.println(copyOfLocation);
-
-        try {
-            Files.copy(
-                    multipartFile.getInputStream(),
-                    copyOfLocation,
-                    StandardCopyOption.REPLACE_EXISTING
-            );
+        // S3에 업로드
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            amazonS3.putObject(new PutObjectRequest(bucketName, fileName, inputStream, null));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to upload file to S3", e);
         }
 
-        attachment = Attachment.builder()
+        // Attachment 객체 생성 및 반환
+        return Attachment.builder()
                 .filename(fileName)
                 .source(source)
                 .build();
-
-        amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file));
-        file.delete();
-
-        return attachment;
     }
 
     public void setImage(List<Attachment> fileList) {
