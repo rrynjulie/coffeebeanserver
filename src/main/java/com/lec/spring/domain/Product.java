@@ -74,6 +74,7 @@ public class Product {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     @ToString.Exclude
+    @Builder.Default
     private List<ChatRoom> chatRooms = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
