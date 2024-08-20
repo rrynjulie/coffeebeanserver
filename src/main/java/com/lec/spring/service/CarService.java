@@ -100,9 +100,9 @@ public class CarService {
     @Transactional
     public List<Car> getFilteredCars(String category1, String category2) {
         if(category1 != null && category2 != null) {
-            return carRepository.findCarByCategory1AndCategory2(category1, category2);
+            return carRepository.findCarByCategory1AndCategory2OrderByRegDateDesc(category1, category2);
         } else if (category1 != null) {
-            return carRepository.findCarByCategory1(category1);
+            return carRepository.findCarByCategory1OrderByRegDateDesc(category1);
         }else
             return carRepository.findAll();
     }
