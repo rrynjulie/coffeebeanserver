@@ -7,9 +7,11 @@ import com.lec.spring.service.SampleReviewService;
 import com.lec.spring.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,9 @@ public class UserController {
     private final UserService userService;
     @Autowired
     private SampleReviewService sampleReviewService;
+
+    @Value("${app.oauth2.kakao.user-info-uri}")
+    private String userInfoUri;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -44,4 +49,5 @@ public class UserController {
         Map<String, Integer> counts = sampleReviewService.getSampleReviewCountsByUserId(userId);
         return ResponseEntity.ok(counts);
     }
+
 }

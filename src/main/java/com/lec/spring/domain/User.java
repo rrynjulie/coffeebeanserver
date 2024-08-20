@@ -42,7 +42,7 @@ public class User {
 //     private String phonenum;
 
     //이메일
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String email;
 
     // 가입 날짜
@@ -52,6 +52,11 @@ public class User {
     @Column(nullable = false)
     @ColumnDefault("500")
     private int reliability;
+
+    // OAuth2 Client
+    @Column
+    private String provider;
+    private String providerId;
 
     // 회원사진
     // TODO
