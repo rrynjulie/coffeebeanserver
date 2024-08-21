@@ -58,6 +58,6 @@ public class ChatRoom {
     private List<Message> messages;
 
     public boolean getDealComplete() {
-        return true;
+        return false;
     }
 }

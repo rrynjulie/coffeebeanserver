@@ -28,7 +28,7 @@ public class PostController {
 //    }
 
     @PostMapping("/post/write/{userId}")
-    public ResponseEntity<Integer> create(@RequestParam("type") String type,
+    public ResponseEntity<?> create(@RequestParam("type") String type,
                                        @RequestParam("title") String title,
                                        @RequestParam("content") String content,
                                        @RequestParam("files") MultipartFile[] files,
@@ -38,8 +38,8 @@ public class PostController {
                 .title(title)
                 .content(content)
                 .build();
-        int createdPost = postService.create(post, userId, files);
-        return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
+        Post createdPost = postService.create(post, userId, files);
+        return new ResponseEntity<>(createdPost.getPostId(), HttpStatus.CREATED);
     }
 
     @GetMapping("/post/list")
@@ -51,11 +51,6 @@ public class PostController {
     public ResponseEntity<?> readOne(@PathVariable Long postId) {
         return new ResponseEntity<>(postService.readOne(postId), HttpStatus.OK);
     }
-
-//    @PutMapping("/post/update")
-//    public ResponseEntity<?> update(@RequestBody Post post) {
-//        return new ResponseEntity<>(postService.update(post), HttpStatus.OK);
-//    }
 
     @PutMapping("/post/update/{postId}")
     public ResponseEntity<Integer> update(@RequestParam("type") String type,
