@@ -1,10 +1,12 @@
 package com.lec.spring.controller;
 
+import com.lec.spring.domain.Attachment;
 import com.lec.spring.domain.SampleReview;
 import com.lec.spring.domain.User;
 import com.lec.spring.domain.UserJoinDTO;
 import com.lec.spring.repository.CarRepository;
 import com.lec.spring.repository.UserRepository;
+import com.lec.spring.service.AttachmentService;
 import com.lec.spring.service.SampleReviewService;
 import com.lec.spring.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +30,8 @@ public class UserController {
     private SampleReviewService sampleReviewService;
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private AttachmentService attachmentService;
 
     @Value("${app.oauth2.kakao.user-info-uri}")
     private String userInfoUri;
@@ -71,5 +75,68 @@ public class UserController {
 
         userRepository.save(user);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/profileUpload/{userId}")
+    public ResponseEntity<?> profileUpload(
+            @PathVariable Long userId,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        User user = userService.findByUserId(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저를 찾을 수 없습니다.");
+        }
+
+        if (file != null) {
+            // 기존 파일이 있는지 확인하고 삭제
+            List<Attachment> existingAttachments = attachmentService.findByUser(user);
+            if (!existingAttachments.isEmpty()) {
+                for (Attachment attachment : existingAttachments) {
+                    attachmentService.delete(attachment.getAttachmentId());
+                }
+            }
+            // 새 파일 업로드
+            attachmentService.addFile(file, user);
+        }
+
+        return ResponseEntity.ok("유저 id: " + userId + "에 성공적으로 프로필이 업로드 되었습니다.");
+    }
+
+    // 프로필 이미지 가져오기
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity<?> getProfileImage(@PathVariable Long userId) {
+        User user = userService.findByUserId(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저를 찾을 수 없습니다.");
+        }
+
+        List<Attachment> attachments = attachmentService.findByUser(user);
+        if (attachments.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("프로필 이미지가 없습니다.");
+        }
+
+        String profileImageUrl = attachments.get(0).getSource();
+        return ResponseEntity.ok(profileImageUrl);
+    }
+
+    @DeleteMapping("/profile/{userId}")
+    public ResponseEntity<?> deleteProfileImage(@PathVariable Long userId) {
+        User user = userService.findByUserId(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저를 찾을 수 없습니다.");
+        }
+
+        // 해당 유저의 기존 프로필 이미지를 찾기
+        List<Attachment> attachments = attachmentService.findByUser(user);
+        if (attachments.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("프로필 이미지가 없습니다.");
+        }
+
+        // 이미지 삭제
+        for (Attachment attachment : attachments) {
+            attachmentService.delete(attachment.getAttachmentId());
+        }
+
+        return ResponseEntity.ok("유저 id: " + userId + "의 프로필 이미지가 삭제되었습니다.");
     }
 }

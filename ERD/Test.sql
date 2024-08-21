@@ -37,6 +37,6 @@ VALUES (3, '아이폰15Pro', '상태 좋은 아이폰입니다. 아내 건데 �
 
 SELECT * FROM email ;
 
-delete from user where userId = 56;
+delete from user where userId = 59;
 
 ALTER TABLE user MODIFY COLUMN email VARCHAR(255) NULL;

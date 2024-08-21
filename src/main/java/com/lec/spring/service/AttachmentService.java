@@ -2,10 +2,7 @@ package com.lec.spring.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.lec.spring.domain.Attachment;
-import com.lec.spring.domain.Car;
-import com.lec.spring.domain.Post;
-import com.lec.spring.domain.Product;
+import com.lec.spring.domain.*;
 import com.lec.spring.repository.AttachmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +64,11 @@ public class AttachmentService {
         return "ok";
     }
 
+    @Transactional(readOnly = true)
+    public List<Attachment> findByUser(User user) {
+        return attachmentRepository.findByUser(user);
+    }
+
     public List<Attachment> findByPost(Post post) {
         return attachmentRepository.findByPost(post);
     }
@@ -84,6 +86,8 @@ public class AttachmentService {
                     file.setPost((Post) entity);
                 } else if(entity instanceof Product) {
                     file.setProduct((Product) entity);
+                } else if(entity instanceof User) {
+                    file.setUser((User) entity);
                 } else {
                     throw new IllegalArgumentException("Unsupported entity type");
                 }
@@ -142,6 +146,16 @@ public class AttachmentService {
             }
         } else {
             System.out.println("파일이 존재하지 않습니다.");
+        }
+    }
+
+    public void addFile(MultipartFile file, User user) {
+        if (file == null) return;
+
+        Attachment attachment = upload(file);
+        if (attachment != null) {
+            attachment.setUser(user);
+            attachmentRepository.saveAndFlush(attachment);
         }
     }
 }
