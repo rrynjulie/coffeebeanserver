@@ -139,4 +139,47 @@ public class UserController {
 
         return ResponseEntity.ok("유저 id: " + userId + "의 프로필 이미지가 삭제되었습니다.");
     }
+
+
+    // 사용자 정보 조회
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUserInfo(@PathVariable Long userId) {
+        User user = userService.findByUserId(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저를 찾을 수 없습니다.");
+        }
+        return ResponseEntity.ok(user);
+    }
+
+    // 사용자 정보 수정
+    @PutMapping("/{userId}")
+    public ResponseEntity<?> updateUser(
+            @PathVariable Long userId,
+            @RequestBody User userData
+    ) {
+        User user = userService.findByUserId(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저를 찾을 수 없습니다.");
+        }
+
+        user.setNickName(userData.getNickName());
+        user.setEmail(userData.getEmail());
+        user.setIntroduction(userData.getIntroduction());
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok("유저 정보가 성공적으로 업데이트 되었습니다.");
+    }
+
+    // 사용자 정보 조회
+    @PostMapping("/{userId}")
+    public ResponseEntity<?> postUserInfo(@PathVariable Long userId) {
+        User user = userService.findByUserId(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저를 찾을 수 없습니다.");
+        }
+        return ResponseEntity.ok(user);
+    }
+
+
 }

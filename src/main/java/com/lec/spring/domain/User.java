@@ -32,8 +32,8 @@ public class User {
     @Column(nullable = false)
     private String nickName;
 
-    // 전화번호
-//     private String phonenum;
+    @Column(nullable = true)
+    private String introduction;
 
     //이메일
     @Column(nullable = true)

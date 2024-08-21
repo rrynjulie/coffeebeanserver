@@ -43,6 +43,7 @@ public class UserService {
         User existingUser = userRepository.findById(user.getUserId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
         existingUser.setNickName(user.getNickName());
         existingUser.setEmail(user.getEmail());
+        existingUser.setIntroduction(user.getIntroduction());
         return userRepository.save(existingUser);
     }
 
