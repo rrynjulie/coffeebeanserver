@@ -5,6 +5,8 @@ import com.lec.spring.domain.Product;
 import com.lec.spring.domain.enums.DealingStatus;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -19,4 +21,12 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     List<Car> findByUser_userId(Long userId, Sort sort);
 
     List<Car> findTop10ByDealingStatusOrderByViewCountDesc(DealingStatus dealingStatus);
+
+    @Query("SELECT c FROM car c WHERE "
+            + "(:category1 IS NULL OR c.category1 = :category1) AND "
+            + "(:category2 IS NULL OR c.category2 = :category2)")
+    List<Car> findCarsByCategories(
+            @Param("category1") String category1,
+            @Param("category2") String category2
+    );
 }

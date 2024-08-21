@@ -171,6 +171,14 @@ public class CarController {
         return new ResponseEntity<>(carService.updateDealingStatus(carId, dealingStatus), HttpStatus.OK);
     }
 
+    @GetMapping("/car/carInfo")
+    public Map<String, Object> getPriceInfoCarByCategory(
+            @RequestParam(required = false) String category1,
+            @RequestParam(required = false) String category2) {
+
+        return carService.getPriceInfoCarCategory(category1, category2);
+    }
+
     //실시간 인기 중고상품(조회수 TOP10)
     @GetMapping("/car/top10")
     public ResponseEntity<List<Car>> carTop10() {

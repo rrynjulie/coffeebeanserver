@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -147,5 +146,31 @@ public class CarService {
     @Transactional
     public List<Car> getTop10ByViewCnt() {
         return carRepository.findTop10ByDealingStatusOrderByViewCountDesc(DealingStatus.판매중);
+    }
+
+    public Map<String, Object> getPriceInfoCarCategory(String category1, String category2) {
+        List<Car> cars = carRepository.findCarsByCategories(category1 ,category2);
+
+        // 가격 리스트
+        List<Double> prices = new ArrayList<>();
+        for (Car car : cars) {
+            // 가격을 int에서 Double로 변환
+            prices.add((double) car.getPrice());
+        }
+
+        // 평균, 최소, 최대 가격 계산
+        double averagePrice = prices.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+        double minPrice = prices.stream().mapToDouble(Double::doubleValue).min().orElse(0.0);
+        double maxPrice = prices.stream().mapToDouble(Double::doubleValue).max().orElse(0.0);
+
+        // 결과를 Map으로 반환
+        Map<String, Object> carInfo = new HashMap<>();
+        carInfo.put("prices", prices);
+        carInfo.put("averagePrice", averagePrice);
+        carInfo.put("minPrice", minPrice);
+        carInfo.put("maxPrice", maxPrice);
+        carInfo.put("carCount", cars.size());
+
+        return carInfo;
     }
 }
