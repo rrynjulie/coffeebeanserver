@@ -32,7 +32,11 @@ public class User {
     @Column(nullable = false)
     private String nickName;
 
-    @Column(nullable = false)
+    // 전화번호
+//     private String phonenum;
+
+    //이메일
+    @Column(nullable = true)
     private String email;
 
     private LocalDateTime regDate;
@@ -40,6 +44,11 @@ public class User {
     @Column(nullable = false)
     @ColumnDefault("500.0")
     private int reliability;
+
+    // OAuth2 Client
+    @Column
+    private String provider;
+    private String providerId;
 
     @OneToMany(mappedBy = "sender", fetch = FetchType.EAGER)
     @JsonManagedReference
@@ -55,4 +64,6 @@ public class User {
             this.reliability = 500;
         }
     }
+
+
 }

@@ -37,6 +37,14 @@ public class Attachment {
     @JsonBackReference
     private Car car;
 
+    @OneToOne(optional = true)
+    @JoinColumn(name = "userId", nullable = true)
+    @ToString.Exclude
+    @JsonBackReference
+    private User user;
+
     private String source;
     private String filename;
+
+
 }

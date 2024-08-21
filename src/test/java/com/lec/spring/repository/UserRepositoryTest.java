@@ -23,10 +23,10 @@ class UserRepositoryTest {
     @Test
     void registerTest() {
         User user1 = User.builder()
-                .userName("admin3")
-                .nickName("admin3")
+                .userName("admin1")
+                .nickName("admin1")
                 .password(passwordEncoder.encode("1234"))
-                .email("admin3.@mail.com")
+                .email("admin1.@mail.com")
                 .regDate(LocalDateTime.now())
                 .reliability(500)
                 .role("ROLE_USER,ROLE_ADMIN")
