@@ -10,10 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -75,9 +72,46 @@ public class DipsService {
         }
     }
 
+//    @Transactional(readOnly = true)
+//    public boolean isProductDipped(Long userId, Long productId) {
+//        return dipsRepository.existsByUser_UserIdAndProduct_ProductId(userId, productId);
+//    }
+
+    //찜 상태(product)
+    @Transactional(readOnly = true)
+    public boolean isProductDippedByUser(Long userId, Long productId) {
+        return dipsRepository.existsByUser_UserIdAndProduct_ProductId(userId, productId);
+    }
+
+    //찜 상태(car)
+    @Transactional(readOnly = true)
+    public boolean isCarDippedByUser(Long userId, Long carId) {
+        return dipsRepository.existsByUser_UserIdAndCar_CarId(userId, carId);
+    }
+
     @Transactional
-    public String delete(Long dipsId) {
-        dipsRepository.deleteById(dipsId);
-        return "ok";
+    public boolean delete(Long userId, Long entityId, String entityType) {
+        try {
+            if (entityType.equals("product")) {
+                // 중고 물품인 경우
+                Dips dips = dipsRepository.findByUser_UserIdAndProduct_ProductId(userId, entityId);
+                if (dips != null) {
+                    dipsRepository.delete(dips);
+                    return true;
+                }
+            } else if (entityType.equals("car")) {
+                // 중고차인 경우
+                Dips dips = dipsRepository.findByUser_UserIdAndCar_CarId(userId, entityId);
+                if (dips != null) {
+                    dipsRepository.delete(dips);
+                    return true;
+                }
+            } else {
+                throw new IllegalArgumentException("Invalid entityType: " + entityType);
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
     }
 }

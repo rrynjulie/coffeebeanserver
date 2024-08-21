@@ -3,16 +3,21 @@ package com.lec.spring.config;
 import com.lec.spring.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 // Outh2 있으면 implemets 추가로 해줄것
-public class PrincipalDetails implements UserDetails {
+public class PrincipalDetails implements UserDetails, OAuth2User  {
 
     private User user;
+
+    private Map<String, Object> attributes; // OAuth2User의 속성 저장
+
 
     public User getUser(){
         return this.user;
@@ -22,6 +27,12 @@ public class PrincipalDetails implements UserDetails {
     public PrincipalDetails(User user){
         System.out.println("UserDetails(user) 생성: " + user);
         this.user = user;
+    }
+
+    // OAuth2 로그인 용 생성자
+    public PrincipalDetails(User user, Map<String, Object> attributes) {
+        this.user = user;
+        this.attributes = attributes;
     }
 
     @Override
@@ -94,6 +105,17 @@ public class PrincipalDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    // OAuth2User의 메서드 구현
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public String getName() {
+        return user.getUserName(); // 또는 OAuth2 프로바이더에서 제공하는 유니크한 ID 값
     }
 
 
