@@ -9,4 +9,15 @@ import java.util.List;
 
 public interface DipsRepository extends JpaRepository<Dips, Long> {
     List<Dips> findByUser_userId(Long userId);
+
+    //찜 상태(product)
+    boolean existsByUser_UserIdAndProduct_ProductId(Long userId, Long productId);
+
+    //찜 상태(car)
+    boolean existsByUser_UserIdAndCar_CarId(Long userId, Long carId);
+
+    Dips findByUser_UserIdAndProduct_ProductId(Long userId, Long productId);
+    Dips findByUser_UserIdAndCar_CarId(Long userId, Long carId);
+
+
 }
