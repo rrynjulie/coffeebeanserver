@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +43,33 @@ public class ChatRoomService {
         chatRoom.setIsJoin(2L);  // isJoin 을 2로 설정
         chatRoom.setDealComplete(false); // 거래 완료 여부 초기값 설정
 
-        return chatRoomRepository.save(chatRoom);
+        chatRoom = chatRoomRepository.save(chatRoom);
+
+        // 초기 메세지 생성
+        String productName = chatRoom.getProduct().getName();
+        String initialMessageText = String.format("안녕하세요! [%s] 보고 문의드립니다.", productName);
+
+        Message initialMessage = new Message();
+        initialMessage.setMessageText(initialMessageText);
+        initialMessage.setSendTime(LocalDateTime.now());
+        initialMessage.setIsRead(false);
+        initialMessage.setChatRoom(chatRoom);
+        initialMessage.setSender(buyer);
+
+        // 메세지 저장
+        messageRepository.save(initialMessage);
+
+        return chatRoom;
+    }
+    public ChatRoom findByBuyerAndSeller(Long chatRoomId) {
+        return chatRoomRepository.findByBuyerAndSeller(chatRoomId)
+                .map(chatRoom -> {
+                    // Lazy loading 을 보장하기 위해 엔티티의 User 정보를 강제로 접근.
+                    chatRoom.getBuyerId();
+                    chatRoom.getSellerId();
+                    return chatRoom;
+                })
+                .orElseThrow(() -> new RuntimeException("Chat room not found."));
     }
 
     // 사용자가 참여하고 있는 모든 채팅방 조회
@@ -101,9 +128,9 @@ public class ChatRoomService {
             if (optionalChatRoom.isPresent()) {
                 ChatRoom chatRoom = optionalChatRoom.get();
 
-                if (chatRoom.getSellerId() != null && chatRoom.getSellerId().getUserId().equals(userId)) {
+                if (chatRoom.getSellerId() != null && chatRoom.getSellerId().equals(userId)) {
                     chatRoom.setSellerId(null);
-                } else if (chatRoom.getBuyerId() != null && chatRoom.getBuyerId().getUserId().equals(userId)) {
+                } else if (chatRoom.getBuyerId() != null && chatRoom.getBuyerId().equals(userId)) {
                     chatRoom.setBuyerId(null);
                 }
 
@@ -120,8 +147,8 @@ public class ChatRoomService {
 
     // 채팅방 참여 상태 업데이트
     private void updateChatRoomJoin(ChatRoom chatRoom) {
-        Long buyerId = chatRoom.getBuyerId() != null ? chatRoom.getBuyerId().getUserId() : null;
-        Long sellerId = chatRoom.getSellerId() != null ? chatRoom.getSellerId().getUserId() : null;
+        Long buyerId = chatRoom.getBuyerId() != null ? chatRoom.getBuyerId() : null;
+        Long sellerId = chatRoom.getSellerId() != null ? chatRoom.getSellerId() : null;
 
         if (buyerId != null && sellerId != null) {
             chatRoom.setIsJoin(2L); // 둘 다 참여
