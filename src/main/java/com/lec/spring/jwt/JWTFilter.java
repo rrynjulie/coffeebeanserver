@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class JWTFilter extends OncePerRequestFilter {
-
+    // 요청 URL 및 메소드 출력
     private final JWTUtil jwtUtil;
 
     public JWTFilter(JWTUtil jwtUtil) {
@@ -24,7 +24,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        System.out.println("doFilterInternal() 호출");
+        System.out.println("doFilterInternal() 호출 - 요청 URL: " + request.getRequestURI() + " , 메소드: " + request.getMethod());
 
         // request 에서 Authorization 헤더를 찾음 (JWT 있는지?)
         String authorization = request.getHeader("Authorization");
