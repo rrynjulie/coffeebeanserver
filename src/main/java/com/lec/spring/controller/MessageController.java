@@ -32,23 +32,23 @@ public class MessageController {
     @Transactional
     public Message sendMessage(@DestinationVariable Long chatRoomId, @Payload Message message) {
         ChatRoom chatRoom = chatRoomService.findById(chatRoomId)
-                .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
+                .orElseThrow(() -> new RuntimeException("채팅방을 찾을 수 없습니다."));
 
         if (message.getSender() == null || message.getSender().getUserId() == null) {
-            throw new RuntimeException("Sender information is missing");
+            throw new RuntimeException("발신자 정보가 누락되었습니다.");
         }
 
         message.setSendTime(LocalDateTime.now());
         message.setIsRead(false);
         message.setChatRoom(chatRoom);
 
-        System.out.println("Received message: " + message);
+        System.out.println("수신된 메세지: " + message);
         return messageService.sendMessage(message, message.getSender().getUserId());
     }
 
 
     @PostMapping("/messages/read/{chatRoomId}/{userId}")
-    public void markMessagesAsRead(@PathVariable Long chatRoomId, @PathVariable Long userId) {
+    public void markMessagesAsRead(@PathVariable("chatRoomId") Long chatRoomId, @PathVariable("userId") Long userId) {
         messageService.markMessagesAsRead(chatRoomId, userId);
     }
 
