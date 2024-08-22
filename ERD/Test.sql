@@ -1,5 +1,5 @@
 select
-    userId, userName, password, role, email, reliability, nickName
+    userId, userName, password, role, email, reliability, nickName, memberStatus
 from user order by userId DESC;
 
 SELECT * FROM attachment ORDER BY attachmentId DESC;
@@ -20,7 +20,7 @@ SELECT * FROM message ORDER BY messageId DESC;
 SELECT * FROM post ORDER BY postId DESC;
 
 SELECT * FROM product ORDER BY productId DESC;
-SELECT * FROM product WHERE productId = 7;
+# SELECT * FROM product WHERE productId = 7;
 
 SELECT * FROM property ORDER BY propertyId DESC;
 

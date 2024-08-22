@@ -55,6 +55,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String email = jwtUtil.getEmail(token);
         String regDate = jwtUtil.getRegDate(token);
         Integer reliability = jwtUtil.getReliability(token);
+        Integer memberStatus = jwtUtil.getMemberStatus(token);
         String role = jwtUtil.getRole(token);
 
         // User 생성하여 로그인 진행
@@ -66,6 +67,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 .email(email)
                 .regDate(LocalDateTime.parse(regDate))
                 .reliability(reliability)
+                .memberStatus(memberStatus)
                 .role(role)
                 .build();
 

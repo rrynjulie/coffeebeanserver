@@ -32,8 +32,8 @@ public class User {
     @Column(nullable = false)
     private String nickName;
 
-    // 전화번호
-//     private String phonenum;
+    @Column(nullable = true)
+    private String introduction;
 
     //이메일
     @Column(nullable = true)
@@ -44,6 +44,10 @@ public class User {
     @Column(nullable = false)
     @ColumnDefault("500.0")
     private int reliability;
+
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private int memberStatus;
 
     // OAuth2 Client
     @Column
@@ -62,8 +66,8 @@ public class User {
         this.regDate = LocalDateTime.now();
         if (this.reliability == 0) {
             this.reliability = 500;
+        }if (this.memberStatus == 0) {
+            this.memberStatus = 0;  // 회원가입 시 기본값 설정
         }
     }
-
-
 }
