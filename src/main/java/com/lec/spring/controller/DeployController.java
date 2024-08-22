@@ -11,8 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin
 public class DeployController {
-    @GetMapping("/deploy")
+    @GetMapping("/deploy1")
     public ResponseEntity<?> checkDeploy() {
         return new ResponseEntity<>("Spring Server 배포 정상 가동 중", HttpStatus.OK);
+    }
+
+    @GetMapping("/deploy2")
+    public String checkDeploy2() {
+        return "Spring Server 배포 정상 가동 중";
     }
 }
