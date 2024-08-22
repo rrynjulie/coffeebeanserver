@@ -2,6 +2,7 @@ package com.lec.spring.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -57,6 +58,23 @@ public class ChatRoom {
     @JsonIgnore
     private List<Message> messages;
 
+    private int sellerReliability = 0; // 기본값 설정
+    @JsonProperty("buyerId")
+    public Long getBuyerId() {
+        return buyerId != null ? buyerId.getUserId() : null;
+    }
+    @JsonProperty("sellerId")
+    public Long getSellerId() {
+        return sellerId != null ? sellerId.getUserId() : null;
+    }
+    @JsonProperty("sellerUserName")
+    public String getSellerUserName() {
+        return sellerId != null ? sellerId.getUserName() : null;
+    }
+    @JsonProperty("sellerReliability")
+    public int getSellerReliability() {
+        return sellerId != null ? sellerId.getReliability() : 0; // 또는 다른 기본값
+    }
     public boolean getDealComplete() {
         return true;
     }
