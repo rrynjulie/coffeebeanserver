@@ -45,6 +45,10 @@ public class User {
     @ColumnDefault("500.0")
     private int reliability;
 
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private int memberStatus;
+
     // OAuth2 Client
     @Column
     private String provider;
@@ -62,8 +66,8 @@ public class User {
         this.regDate = LocalDateTime.now();
         if (this.reliability == 0) {
             this.reliability = 500;
+        }if (this.memberStatus == 0) {
+            this.memberStatus = 0;  // 회원가입 시 기본값 설정
         }
     }
-
-
 }

@@ -181,5 +181,11 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    // 해당 유저 아이디 비활성화
+    @PostMapping("/unRegister/{userId}")
+    public ResponseEntity<?> withdrawUser(@PathVariable Long userId) {
+        userService.withdrawUser(userId);
+        return ResponseEntity.ok("회원 탈퇴가 성공적으로 처리되었습니다.");
+    }
 
 }
