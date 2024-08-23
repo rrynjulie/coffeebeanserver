@@ -9,9 +9,11 @@ import com.lec.spring.repository.UserRepository;
 import com.lec.spring.service.AttachmentService;
 import com.lec.spring.service.SampleReviewService;
 import com.lec.spring.service.UserService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -24,6 +26,32 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    // 애플리케이션이 시작될 때 Redis 연결 테스트
+    @PostConstruct
+    public void testRedisConnection() {
+        try {
+            redisTemplate.opsForValue().set("test", "testValue");
+            String value = redisTemplate.opsForValue().get("test");
+            System.out.println("Redis 연결 테스트 성공: " + value);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Redis 연결 테스트 실패: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/testRedis")
+    public String testRedisEndpoint() {
+        try {
+            String value = redisTemplate.opsForValue().get("test");
+            return "Redis에서 가져온 값: " + value;
+        } catch (Exception e) {
+            return "Redis 연결 실패: " + e.getMessage();
+        }
+    }
 
     private final UserService userService;
     @Autowired
