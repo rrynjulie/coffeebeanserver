@@ -84,6 +84,7 @@ public class OAuth2Controller {
                 kakaoUser.getRegDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 kakaoUser.getReliability(),
                 kakaoUser.getRole(),
+                kakaoUser.getMemberStatus(),
                 1000 * 60 * 60 * 10L // 10시간 유효
         );
 

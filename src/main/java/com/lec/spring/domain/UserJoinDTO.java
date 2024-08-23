@@ -12,4 +12,6 @@ public class UserJoinDTO {
     private String password;
     private String nickName;
     private String email;
+    private String introduction;
+    private int memberStatus;
 }
