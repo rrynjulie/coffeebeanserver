@@ -20,27 +20,21 @@ public class ReviewService {
     // 기본적인 CRUD
     @Transactional
     public Review create(Review review, Long chatRoomId, Long writerId, SampleReview sampleReview) {
-        ChatRoom chatRoom = chatRoomService.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 채팅이 존재하지 않습니다."));
+        ChatRoom chatRoom = chatRoomService.findById(chatRoomId).orElseThrow(() -> new IllegalArgumentException("해당 채팅이 존재하지 않습니다."));
 
         if (!chatRoom.getDealComplete()) {
             throw new IllegalArgumentException("거래가 완료되지 않았습니다.");
         }
-
         User writer = userService.findByUserId(writerId);
 
         review.setChatRoom(chatRoom);
         review.setRegDate(LocalDateTime.now());
         review.setWriter(writer);
 
-        // 채팅방의 구매자와 판매자 ID를 가져와서 비교
-        Long buyerId = chatRoom.getBuyerId();
-        Long sellerId = chatRoom.getSellerId();
-
-        if (sellerId != null && sellerId.equals(writerId)) {
-            review.setRecipient(userService.findByUserId(buyerId));
-        } else if (buyerId != null && buyerId.equals(writerId)) {
-            review.setRecipient(userService.findByUserId(sellerId));
+        if (chatRoom.getSellerId().getUserId().equals(writerId)) {
+            review.setRecipient(chatRoom.getBuyerId());
+        } else if (chatRoom.getBuyerId().getUserId().equals(writerId)){
+            review.setRecipient(chatRoom.getSellerId());
         } else {
             throw new IllegalArgumentException("작성자는 채팅방의 구매자 또는 판매자여야 합니다.");
         }
@@ -68,7 +62,6 @@ public class ReviewService {
     public List<Review> readWriterReviewAll(Long writerId) {
         return reviewRepository.findByWriterUserId(writerId);
     }
-
     @Transactional(readOnly = true)
     public List<Review> readRecipientReviewAll(Long recipientId) {
         return reviewRepository.findByRecipientUserId(recipientId);
@@ -81,8 +74,7 @@ public class ReviewService {
         return "ok";
     }
 
-    @Transactional(readOnly = true)
-    public ChatRoom findChatRoomByReviewId(Long reviewId) {
+    public ChatRoom findChatRoomByReviewId(Long reviewId){
         return reviewRepository.findChatRoomByReviewId(reviewId);
     }
 }

@@ -19,10 +19,5 @@ public interface DipsRepository extends JpaRepository<Dips, Long> {
     Dips findByUser_UserIdAndProduct_ProductId(Long userId, Long productId);
     Dips findByUser_UserIdAndCar_CarId(Long userId, Long carId);
 
-    //찜 개수
-    int countByProduct_ProductId(Long productId);
-
-    int countByCar_CarId(Long carId);
-
 
 }

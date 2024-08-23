@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/chatRooms")
@@ -60,15 +59,4 @@ public class ChatRoomController {
             return ResponseEntity.notFound().build();
         }
     }
-    // ChatRoom ID로 채팅방 정보를 조회
-    @GetMapping("/{chatRoomId}")
-    public ResponseEntity<ChatRoom> findByBuyerAndSeller(@PathVariable Long chatRoomId) {
-        try {
-            ChatRoom chatRoom = chatRoomService.findByBuyerAndSeller(chatRoomId);
-            return ResponseEntity.ok(chatRoom);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
 }

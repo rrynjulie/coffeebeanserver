@@ -65,14 +65,5 @@ public class DipsController {
         return new ResponseEntity<>(Collections.singletonMap("isDipped", isDipped), HttpStatus.OK);
     }
 
-    //찜 개수
-    @GetMapping("dips/count/{entityType}/{entityId}")
-    public ResponseEntity<Integer> getDipsCount(
-            @PathVariable String entityType,
-            @PathVariable Long entityId) {
-        int count = dipsService.countByEntityType(entityId, entityType);
-        return ResponseEntity.ok(count);
-    }
-
 
 }

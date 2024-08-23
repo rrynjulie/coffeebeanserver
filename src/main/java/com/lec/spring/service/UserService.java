@@ -43,7 +43,6 @@ public class UserService {
         User existingUser = userRepository.findById(user.getUserId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
         existingUser.setNickName(user.getNickName());
         existingUser.setEmail(user.getEmail());
-        existingUser.setIntroduction(user.getIntroduction());
         return userRepository.save(existingUser);
     }
 
@@ -72,17 +71,7 @@ public class UserService {
         user.setUserName(user.getUserName().toUpperCase());
         user.setPassword(passwordEncoder.encode(password));
         user.setRole("ROLE_USER");
-        user.setMemberStatus(0);
         return userRepository.save(user);
-    }
-
-    //  회원 비활성화 시키기
-    public void withdrawUser(Long userId) {
-        User user = findByUserId(userId);
-        if (user != null) {
-            user.setMemberStatus(1);  // 계정을 비활성화로 설정
-            userRepository.save(user);
-        }
     }
 
 
@@ -120,20 +109,19 @@ public class UserService {
         return user;
     }
 
-
-//    // JWT 생성 및 반환
-//    public String generateJwtToken(User user) {
-//        return jwtUtil.createJwt(
-//                user.getUserId(),
-//                user.getUserName(),
-//                user.getNickName(),
-//                user.getEmail(),
-//                user.getRegDate().toString(),
-//                user.getReliability(),
-//                user.getRole(),
-//                1000L * 60 * 60 // 토큰 유효기간 1시간 설정
-//        );
-//    }
+    // JWT 생성 및 반환
+    public String generateJwtToken(User user) {
+        return jwtUtil.createJwt(
+                user.getUserId(),
+                user.getUserName(),
+                user.getNickName(),
+                user.getEmail(),
+                user.getRegDate().toString(),
+                user.getReliability(),
+                user.getRole(),
+                1000L * 60 * 60 // 토큰 유효기간 1시간 설정
+        );
+    }
 
     //  로그인 끝 ------------------------------------------------
 
