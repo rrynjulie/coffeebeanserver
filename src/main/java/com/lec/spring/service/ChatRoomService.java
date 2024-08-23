@@ -107,6 +107,15 @@ public class ChatRoomService {
                 chatRoom.setAttachments(attachments); // ChatRoom 에 첨부파일 리스트 추가
             }
         }
+
+            // 마지막 메시지의 전송 시간을 기준으로 채팅방 목록 정렬
+            chatRooms.sort((cr1, cr2) -> {
+                LocalDateTime time1 = cr1.getLastSendTime();
+                LocalDateTime time2 = cr2.getLastSendTime();
+                if (time1 == null) return 1;  // 시간이 없는 항목을 뒤로 보냄
+                if (time2 == null) return -1; // 시간이 없는 항목을 뒤로 보냄
+                return time2.compareTo(time1); // 내림차순 정렬
+            });
         return chatRooms;
     }
 

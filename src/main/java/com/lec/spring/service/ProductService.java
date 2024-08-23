@@ -1,8 +1,10 @@
 package com.lec.spring.service;
 
 import com.lec.spring.domain.Attachment;
+import com.lec.spring.domain.ChatRoom;
 import com.lec.spring.domain.Product;
 import com.lec.spring.domain.enums.DealingStatus;
+import com.lec.spring.repository.ChatRoomRepository;
 import com.lec.spring.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -19,6 +21,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserService userService;
     private final AttachmentService attachmentService;
+    private final ChatRoomRepository chatRoomRepository;
 
     // 기본적인 CRUD
     @Transactional
@@ -117,9 +120,17 @@ public class ProductService {
     // 중고 물품 상세 페이지에서 사용하는 판매 상태 변경해주는 메소드
     @Transactional
     public Product updateDealingStatus(Long productId, DealingStatus dealingStatus) {
-        Product productEntity = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        productEntity.setDealingStatus(dealingStatus);
-        return productRepository.saveAndFlush(productEntity);
+        Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
+        product.setDealingStatus(dealingStatus);
+
+        if (dealingStatus == DealingStatus.판매완료) {
+            List<ChatRoom> chatRooms = chatRoomRepository.findByProductId(productId);
+            for (ChatRoom chatRoom : chatRooms) {
+                chatRoom.setDealComplete(true);
+                chatRoomRepository.save(chatRoom);
+            }
+        }
+        return productRepository.saveAndFlush(product);
     }
 
     @Transactional

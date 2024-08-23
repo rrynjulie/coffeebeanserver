@@ -119,6 +119,7 @@ public class CarController {
                 .insuranceInjurer(insuranceInjurer)
                 .ownerChange(ownerChange)
                 .build();
+
         return new ResponseEntity<>(carService.update(carEntity, carId, files, delfile), HttpStatus.OK);
     }
 
@@ -167,5 +168,12 @@ public class CarController {
             @RequestParam(required = false) String category2) {
 
         return carService.getPriceInfoCarCategory(category1, category2);
+    }
+
+    //실시간 인기 중고상품(조회수 TOP10)
+    @GetMapping("/car/top10")
+    public ResponseEntity<List<Car>> carTop10() {
+        List<Car> topCar = carService.getTop10ByViewCnt();
+        return new ResponseEntity<>(topCar, HttpStatus.OK);
     }
 }
