@@ -41,7 +41,7 @@ public class ChatRoomService {
         chatRoom.setBuyerId(buyer); // 올바르게 설정됨
         chatRoom.setSellerId(seller); // 올바르게 설정됨
         chatRoom.setIsJoin(2L);  // isJoin 을 2로 설정
-        chatRoom.setDealComplete(true); // 거래 완료 여부 초기값 설정
+        chatRoom.setDealComplete(false); // 거래 완료 여부 초기값 설정
 
         chatRoom = chatRoomRepository.save(chatRoom);
 

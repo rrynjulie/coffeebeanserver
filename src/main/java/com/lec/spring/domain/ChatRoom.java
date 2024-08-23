@@ -65,7 +65,7 @@ public class ChatRoom {
 //        return this.dealComplete;
 //    }
     public boolean getDealComplete() {
-        return true;
+        return false;
     }
     @JsonProperty("buyerId")
     public Long getBuyerId() {
