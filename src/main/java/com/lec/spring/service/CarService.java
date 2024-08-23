@@ -43,7 +43,7 @@ public class CarService {
 
     @Transactional
     public long update(Car car, Long carId, MultipartFile[] files, Long[] delfile) {
-        Car carEntity = carRepository.findById(car.getCarId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
+        Car carEntity = carRepository.findById(carId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
 
         carEntity.setName(car.getName());
         carEntity.setPrice(car.getPrice());
@@ -97,15 +97,16 @@ public class CarService {
     }
 
     @Transactional
+
     public List<Car> getFilteredCars(String category1, String category2) {
         if(category1 != null && category2 != null) {
-            return carRepository.findCarByCategory1AndCategory2(category1, category2);
+            return carRepository.findCarByCategory1AndCategory2OrderByRegDateDesc(category1, category2);
         } else if (category1 != null) {
-            return carRepository.findCarByCategory1(category1);
+            return carRepository.findCarByCategory1OrderByRegDateDesc(category1);
         }else
             return carRepository.findAll();
-    }
 
+    }
     // 헤더에서 사용하는 검색 결과 불러오는 메소드
     @Transactional(readOnly = true)
     public List<Car> readAllByKeyword(String keyword) {
@@ -132,6 +133,11 @@ public class CarService {
                 .stream()
                 .filter(car -> car.getDealingStatus().equals(tempDS))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<Car> getTop10ByViewCnt() {
+        return carRepository.findTop10ByDealingStatusOrderByRegDateDesc(DealingStatus.판매중);
     }
 
     // 중고차 상세 페이지에서 사용하는 판매 상태 변경해주는 메소드
