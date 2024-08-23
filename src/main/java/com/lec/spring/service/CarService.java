@@ -43,7 +43,7 @@ public class CarService {
 
     @Transactional
     public long update(Car car, Long carId, MultipartFile[] files, Long[] delfile) {
-        Car carEntity = carRepository.findById(car.getCarId()).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
+        Car carEntity = carRepository.findById(carId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
 
         carEntity.setName(car.getName());
         carEntity.setPrice(car.getPrice());
