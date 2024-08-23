@@ -62,9 +62,9 @@ public class ChatRoom {
     private int sellerReliability = 0; // 기본값 설정
 
 
-//    public boolean getDealComplete() {
-//        return this.dealComplete;
-//    }
+    public boolean getDealComplete() {
+        return this.dealComplete;
+    }
 //    public boolean getDealComplete() {
 //        return true;
 //    }
