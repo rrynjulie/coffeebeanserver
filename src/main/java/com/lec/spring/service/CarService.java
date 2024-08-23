@@ -2,6 +2,7 @@ package com.lec.spring.service;
 
 import com.lec.spring.domain.Attachment;
 import com.lec.spring.domain.Car;
+import com.lec.spring.domain.Product;
 import com.lec.spring.domain.enums.DealingStatus;
 import com.lec.spring.repository.CarRepository;
 import lombok.RequiredArgsConstructor;
@@ -146,6 +147,11 @@ public class CarService {
         Car carEntity = carRepository.findById(carId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
         carEntity.setDealingStatus(dealingStatus);
         return carRepository.saveAndFlush(carEntity);
+    }
+
+    @Transactional
+    public List<Car> getTop10ByViewCnt() {
+        return carRepository.findTop10ByDealingStatusOrderByViewCountDesc(DealingStatus.판매중);
     }
 
     public Map<String, Object> getPriceInfoCarCategory(String category1, String category2) {
