@@ -117,22 +117,6 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public List<Product> readAllBuysByUserSorted(Long userId, int sortType, String dealingStatus) {
-        Sort sort;
-        if(sortType == 1) sort = Sort.by(Sort.Order.desc("regDate"));
-        else if(sortType == 2) sort = Sort.by(Sort.Order.asc("price"));
-        else sort = Sort.by(Sort.Order.desc("price"));
-        List<Product> productList = productRepository.findByUser_userId(userId, sort);
-
-        if(dealingStatus.equals("전체")) return productList;
-        DealingStatus tempDS = DealingStatus.valueOf(dealingStatus);
-        return productList
-                .stream()
-                .filter(product -> product.getDealingStatus().equals(tempDS))
-                .collect(Collectors.toList());
-    }
-
     // 중고 물품 상세 페이지에서 사용하는 판매 상태 변경해주는 메소드
     @Transactional
     public Product updateDealingStatus(Long productId, DealingStatus dealingStatus) {

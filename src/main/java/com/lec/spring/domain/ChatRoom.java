@@ -35,6 +35,11 @@ public class ChatRoom {
     @JsonIgnore
     private Product product;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "carId", referencedColumnName = "carId")
+    @JsonIgnore
+    private Car car;
+
     @ManyToOne
     @JoinColumn(name = "sellerId", referencedColumnName = "userId")
     @JsonIgnore
