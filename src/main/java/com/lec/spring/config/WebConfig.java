@@ -13,7 +13,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {    // addCorsMappings 메소드를 오버라이딩하여 CORS 설정 추가.
                 registry.addMapping("/**")      // 모든 경로에 CORS 설정 적용
-                        .allowedOrigins("http://localhost:3000")    // 3000포트에 대한 요청 허용
+                        .allowedOrigins("http://localhost:3000", "http://43.202.202.236:3000")    // 3000포트에 대한 요청 허용
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // 허용 HTTP 메소드 지정
                         .allowedHeaders("*")    // 모든 헤더 허용
                         .allowCredentials(true);    // 쿠키, HTTP 등 인증정보 요청 허용

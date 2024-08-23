@@ -59,6 +59,14 @@ public class ChatRoom {
     private List<Message> messages;
 
     private int sellerReliability = 0; // 기본값 설정
+
+
+//    public boolean getDealComplete() {
+//        return this.dealComplete;
+//    }
+    public boolean getDealComplete() {
+        return true;
+    }
     @JsonProperty("buyerId")
     public Long getBuyerId() {
         return buyerId != null ? buyerId.getUserId() : null;
@@ -69,13 +77,18 @@ public class ChatRoom {
     }
     @JsonProperty("sellerUserName")
     public String getSellerUserName() {
-        return sellerId != null ? sellerId.getUserName() : null;
+        return sellerId != null ? sellerId.getNickName() : null;
+    }
+    @JsonProperty("buyerUserName")
+    public String getBuyerUserName() {
+        return buyerId != null ? buyerId.getNickName() : null;
     }
     @JsonProperty("sellerReliability")
     public int getSellerReliability() {
         return sellerId != null ? sellerId.getReliability() : 0; // 또는 다른 기본값
     }
-    public boolean getDealComplete() {
-        return true;
+    @JsonProperty("buyerReliability")
+    public int getBuyerReliability() {
+        return buyerId != null ? buyerId.getReliability() : 0;
     }
 }
