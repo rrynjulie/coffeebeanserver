@@ -45,16 +45,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Authentication token = new UsernamePasswordAuthenticationToken(username.toUpperCase(), password, null);
 
         // 위 token 을 AuthenticationManager 에 전달하여, 로그인 검증을 받는다
-        Authentication authentication = authenticationManager.authenticate(token);
-
-        // memberStatus 확인
-        PrincipalDetails userDetails = (PrincipalDetails) authentication.getPrincipal();
-        if (userDetails.getUser().getMemberStatus() == 1) {
-            throw new AuthenticationException("회원 탈퇴된 계정입니다.") {
-            };
-        }
-
-        return authentication;
+        return authenticationManager.authenticate(token);
     }
 
     // 로그인(인증) 성공시 실행되는 메소드 (JWT 를 발급)
@@ -85,25 +76,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         // 유저 신뢰도
         Integer reliability = userDetails.getReliability();
 
-        // 유저 탈퇴여부
-        Integer memberStatus = userDetails.getMemberStatus();
-
         // 권한
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         String role = authorities.stream()
                 .map(grantedAuthority -> grantedAuthority.getAuthority())
                 .collect(Collectors.joining(","));
 
-        String token = jwtUtil.createJwt(
-                userId,
-                userName,
-                nickName,
-                email,
-                regDate2,
-                reliability,
-                role,
-                memberStatus,
-                30 * 60 * 1000L );
+        String token = jwtUtil.createJwt(userId, userName, nickName, email, regDate2, reliability, role, 30 * 60 * 1000L );
 
         response.addHeader("Authorization", "Bearer " + token);
     }
@@ -115,16 +94,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         System.out.println("LoginFilter.unsuccessfulAuthentication() 호출: 인증 실패");
         //super.unsuccessfulAuthentication(request, response, failed);
 
-        // 기본 메시지 설정
-        String errorMessage = "Invalid credentials";
-
-        // 특정 예외 메시지에 따라 오류 메시지를 설정
-        if ("회원 탈퇴된 계정입니다.".equals(failed.getMessage())) {
-            errorMessage = "Account is deactivated";
-        }
-
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write(errorMessage);
+        // 로그인 실패시 401 응답 코드 리턴
+        response.setStatus(401);
 
     }
 }

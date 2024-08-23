@@ -75,9 +75,14 @@ public class AttachmentService {
 
     // 추가 기능
     public <T> void addFiles(MultipartFile[] files, T entity) {
-        if (files == null) return;
+        System.out.println(files);
+        if (files == null || files.length == 0) return;
         for (MultipartFile multipartFile : files) {
 //            if (!e.getKey().startsWith("upfile")) continue;     // name="upfile##" 인 경우에만 첨부파일 등록
+            if (multipartFile.isEmpty()) {
+                continue; // 파일이 비어있는 경우(Blob) 처리하지 않고 건너뜀
+            }
+
             Attachment file = upload(multipartFile);   // 파일 물리적으로 저장
             if (file != null) {
                 if(entity instanceof Car) {
@@ -127,9 +132,14 @@ public class AttachmentService {
             File f = new File(realPath, attachment.getFilename());
 
             try {
+                if (!f.exists()) {
+                    System.out.println("로컬 파일이 존재하지 않습니다. S3에서 이미지를 로드합니다.");
+                    continue;
+                }
+
                 imgData = ImageIO.read(f);
             } catch (IOException e) {
-                System.out.println("파일이 존재하지 않습니다.");
+                System.out.println("이미지를 읽는 도중 오류가 발생했습니다: " + e.getMessage());
             }
         }
     }

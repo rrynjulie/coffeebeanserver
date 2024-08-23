@@ -89,7 +89,6 @@ public class DipsService {
         return dipsRepository.existsByUser_UserIdAndCar_CarId(userId, carId);
     }
 
-    //찜 해제
     @Transactional
     public boolean delete(Long userId, Long entityId, String entityType) {
         try {
@@ -115,22 +114,4 @@ public class DipsService {
         }
         return false;
     }
-
-    //찜 개수
-    @Transactional(readOnly = true)
-    public int countByEntityType(Long entityId, String entityType) {
-        try {
-            if ("product".equalsIgnoreCase(entityType)) {
-                return dipsRepository.countByProduct_ProductId(entityId);
-            } else if ("car".equalsIgnoreCase(entityType)) {
-                return dipsRepository.countByCar_CarId(entityId);
-            } else {
-                throw new IllegalArgumentException("Invalid entityType: " + entityType);
-            }
-        } catch (Exception e) {
-            // Log the error or handle it as needed
-            throw new RuntimeException("Failed to count dips", e);
-        }
-    }
-
 }

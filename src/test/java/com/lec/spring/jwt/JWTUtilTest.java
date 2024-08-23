@@ -25,7 +25,6 @@ class JWTUtilTest {
                 "2024-08-02 17:35:28.031913",
                 500,
                 "ROLE_USER",
-                0,
                 5000L
         );
         System.out.println(jwtToken);
@@ -38,7 +37,6 @@ class JWTUtilTest {
            regDate: %s
            reliability: %d
            role: %s
-           memberStatus: %s
            isExpired: %s
        """.formatted(
                 jwtUtil.getId(jwtToken),
@@ -48,7 +46,6 @@ class JWTUtilTest {
                 jwtUtil.getRegDate(jwtToken),
                 jwtUtil.getReliability(jwtToken),
                 jwtUtil.getRole(jwtToken),
-                jwtUtil.getMemberStatus(jwtToken),
                 jwtUtil.isExpired(jwtToken)));
     }
 }

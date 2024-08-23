@@ -81,7 +81,7 @@ jwt:
   secret: ${jwt.secret}
 
 cors:
-  allowed-origins: http://localhost:3000,http://localhost:3001
+  allowed-origins: http://43.202.202.236:3000
 
 # 사진 업로드 버킷 설정
 cloud:

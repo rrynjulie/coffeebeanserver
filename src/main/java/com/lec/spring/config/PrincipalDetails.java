@@ -86,7 +86,6 @@ public class PrincipalDetails implements UserDetails, OAuth2User  {
     public Integer getReliability() {
         return user.getReliability();
     }
-    public Integer getMemberStatus() {return user.getMemberStatus(); }
 
     @Override
     public boolean isAccountNonExpired() {

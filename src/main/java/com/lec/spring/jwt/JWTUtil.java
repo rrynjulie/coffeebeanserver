@@ -46,7 +46,6 @@ public class JWTUtil {
             String regDate,
             Integer reliability,
             String role,
-            Integer memberStatus,
             Long expiredMs
     ){
         return Jwts.builder()
@@ -57,7 +56,6 @@ public class JWTUtil {
                 .claim("regDate", regDate)
                 .claim("reliability",reliability)
                 .claim("role", role)
-                .claim("memberStatus", memberStatus)
                 .issuedAt(new Date(System.currentTimeMillis())) // 생성일
                 .expiration(new Date(System.currentTimeMillis() + expiredMs)) // 만료일시
                 .signWith(secretKey)
@@ -122,15 +120,6 @@ public class JWTUtil {
                 .parseSignedClaims(token)
                 .getPayload()
                 .get("reliability", Integer.class);
-    }
-
-    public Integer getMemberStatus(String token){
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .get("memberStatus", Integer.class);
     }
 
     // role

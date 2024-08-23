@@ -2,26 +2,13 @@ package com.lec.spring.service;
 
 import com.lec.spring.domain.Attachment;
 import com.lec.spring.domain.Post;
-import com.lec.spring.domain.User;
-import com.lec.spring.repository.AttachmentRepository;
 import com.lec.spring.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -32,11 +19,11 @@ public class PostService {
 
     // 기본적인 CRUD
     @Transactional
-    public int create(Post post, Long userId, MultipartFile[] files) {
+    public Post create(Post post, Long userId, MultipartFile[] files) {
         post.setUser(userService.readOne(userId));
         post = postRepository.saveAndFlush(post);
         attachmentService.addFiles(files, post);
-        return 1;
+        return post;
     }
 
     @Transactional(readOnly = true)
@@ -52,12 +39,12 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public List<Post> readAll() {
-        return postRepository.findAll();
+        return postRepository.findAllByOrderByRegDateDesc();
     }
 
     @Transactional
     public int update(Post post, Long postId, MultipartFile[] files, Long[] delfile) {
-//    public int update(Post post, Long postId, Map<String, MultipartFile> files) {
+//    public int update(Post post, Long postId, MultipartFile[] files) {
         int result = 0;
 
         Post p = postRepository.findByPostId(postId);
