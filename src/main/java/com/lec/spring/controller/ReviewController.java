@@ -86,7 +86,21 @@ public class ReviewController {
 
         @GetMapping("/list/recipient/{userId}")
     public ResponseEntity<?> readRecipientReviewAll(@PathVariable Long userId){
-        return new ResponseEntity<>(reviewService.readRecipientReviewAll(userId), HttpStatus.OK);
+            List<Review> reviews = reviewService.readRecipientReviewAll(userId);
+            List<Map<String, Object>> reviewProductList = new ArrayList<>();
+
+            for (Review review : reviews) {
+                ChatRoom chatRoom = reviewService.findChatRoomByReviewId(review.getReviewId());
+                Product product = reviewService.findProductByChatRoomId(chatRoom.getChatRoomId());
+
+                Map<String, Object> reviewProductMap = new HashMap<>();
+                reviewProductMap.put("review", review);
+                reviewProductMap.put("product", product);
+
+                reviewProductList.add(reviewProductMap);
+            }
+
+            return new ResponseEntity<>(reviewProductList, HttpStatus.OK);
     }
 
     @GetMapping("/checkInfo/{chatRoomId}/{writerId}")

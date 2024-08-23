@@ -32,11 +32,11 @@ public class PostService {
 
     // 기본적인 CRUD
     @Transactional
-    public int create(Post post, Long userId, MultipartFile[] files) {
+    public Post create(Post post, Long userId, MultipartFile[] files) {
         post.setUser(userService.readOne(userId));
         post = postRepository.saveAndFlush(post);
         attachmentService.addFiles(files, post);
-        return 1;
+        return post;
     }
 
     @Transactional(readOnly = true)
@@ -52,12 +52,12 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public List<Post> readAll() {
-        return postRepository.findAll();
+        return postRepository.findAllByOrderByRegDateDesc();
     }
 
     @Transactional
     public int update(Post post, Long postId, MultipartFile[] files, Long[] delfile) {
-//    public int update(Post post, Long postId, Map<String, MultipartFile> files) {
+//    public int update(Post post, Long postId, MultipartFile[] files) {
         int result = 0;
 
         Post p = postRepository.findByPostId(postId);
