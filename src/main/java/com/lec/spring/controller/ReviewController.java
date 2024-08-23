@@ -108,10 +108,10 @@ public class ReviewController {
         ChatRoom chatRoom = chatRoomService.findChatRoomByChatRoomId(chatRoomId);
         User writer = userService.findByUserId(writerId);
         User recipient;
-        if(writerId == chatRoom.getSellerId().getUserId()){
-            recipient = userService.findByUserId(chatRoom.getBuyerId().getUserId());
+        if(writerId == chatRoom.getSellerId()){
+            recipient = userService.findByUserId(chatRoom.getBuyerId());
         } else {
-            recipient = userService.findByUserId(chatRoom.getSellerId().getUserId());
+            recipient = userService.findByUserId(chatRoom.getSellerId());
         };
 
         Product product = reviewService.findProductByChatRoomId(chatRoomId);
