@@ -63,6 +63,6 @@ public class ChatRoom {
         return sellerId != null ? sellerId.getReliability() : 0; // 또는 다른 기본값
     }
     public boolean getDealComplete() {
-        return true;
+        return false;
     }
 }
