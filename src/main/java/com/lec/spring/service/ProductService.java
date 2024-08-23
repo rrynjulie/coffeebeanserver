@@ -102,7 +102,23 @@ public class ProductService {
 
     // 마이페이지에서 사용하는 모든 필터 한 번에 걸러주는 메소드
     @Transactional(readOnly = true)
-    public List<Product> readAllByUserSorted(Long userId, int sortType, String dealingStatus) {
+    public List<Product> readAllSellsByUserSorted(Long userId, int sortType, String dealingStatus) {
+        Sort sort;
+        if(sortType == 1) sort = Sort.by(Sort.Order.desc("regDate"));
+        else if(sortType == 2) sort = Sort.by(Sort.Order.asc("price"));
+        else sort = Sort.by(Sort.Order.desc("price"));
+        List<Product> productList = productRepository.findByUser_userId(userId, sort);
+
+        if(dealingStatus.equals("전체")) return productList;
+        DealingStatus tempDS = DealingStatus.valueOf(dealingStatus);
+        return productList
+                .stream()
+                .filter(product -> product.getDealingStatus().equals(tempDS))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Product> readAllBuysByUserSorted(Long userId, int sortType, String dealingStatus) {
         Sort sort;
         if(sortType == 1) sort = Sort.by(Sort.Order.desc("regDate"));
         else if(sortType == 2) sort = Sort.by(Sort.Order.asc("price"));
