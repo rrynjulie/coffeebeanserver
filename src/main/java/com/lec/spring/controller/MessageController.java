@@ -39,7 +39,7 @@ public class MessageController {
         }
 
         message.setSendTime(LocalDateTime.now());
-        message.setIsRead(false);
+        message.setIsRead(true);
         message.setChatRoom(chatRoom);
 
         System.out.println("Received message: " + message);

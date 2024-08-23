@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,12 +62,12 @@ public class ChatRoom {
     private int sellerReliability = 0; // 기본값 설정
 
 
-//    public boolean getDealComplete() {
-//        return this.dealComplete;
-//    }
     public boolean getDealComplete() {
-        return true;
+        return this.dealComplete;
     }
+//    public boolean getDealComplete() {
+//        return true;
+//    }
     @JsonProperty("buyerId")
     public Long getBuyerId() {
         return buyerId != null ? buyerId.getUserId() : null;

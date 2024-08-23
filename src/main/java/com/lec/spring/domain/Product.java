@@ -90,4 +90,7 @@ public class Product {
     public void addFiles(Attachment... files) {
         Collections.addAll(fileList, files);
     }
+
+    @Column(nullable = false)
+    private boolean inWishlist = false;
 }
