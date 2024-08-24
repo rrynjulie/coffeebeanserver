@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @RestController
@@ -38,14 +40,20 @@ public class MessageController {
             throw new RuntimeException("Sender information is missing");
         }
 
-        message.setSendTime(LocalDateTime.now());
-        message.setIsRead(true);
+        // Set the time in Korea timezone
+        ZonedDateTime koreaTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        message.setSendTime(koreaTime.toLocalDateTime());
+        message.setIsRead(false);
         message.setChatRoom(chatRoom);
 
-        System.out.println("Received message: " + message);
-        return messageService.sendMessage(message, message.getSender().getUserId());
-    }
+        Message savedMessage = messageService.sendMessage(message, message.getSender().getUserId());
 
+        // 메시지 읽음 상태 업데이트
+        markMessagesAsRead(chatRoomId, message.getSender().getUserId());
+
+        // 읽음 상태 업데이트를 위한 메시지 전송
+        return savedMessage;
+    }
     @PostMapping("/messages/read/{chatRoomId}/{userId}")
     public void markMessagesAsRead(@PathVariable Long chatRoomId, @PathVariable Long userId) {
         messageService.markMessagesAsRead(chatRoomId, userId);
