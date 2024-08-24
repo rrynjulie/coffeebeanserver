@@ -58,7 +58,21 @@ public class MessageService {
         return messageRepository.findBySenderId(userId);
     }
 
-    public void deleteMessage(Long messageId) {
-        messageRepository.deleteById(messageId);
+    public void deleteMessage(Long messageId, LocalDateTime messageSendTime) {
+        LocalDateTime currentTime = LocalDateTime.now();
+
+        // 시간 차이를 계산
+        long minutesBetween = java.time.Duration.between(messageSendTime, currentTime).toMinutes();
+
+        // 5분 이내면 삭제 가능
+        if (minutesBetween <= 5) {
+            messageRepository.deleteById(messageId);
+        } else {
+            throw new RuntimeException("메시지를 작성한 지 1분 이상 경과하였습니다.");
+        }
+    }
+    // 서버 시간 제공 API
+    public LocalDateTime getCurrentTime() {
+        return LocalDateTime.now();
     }
 }

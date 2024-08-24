@@ -61,14 +61,19 @@ public class MessageController {
         return messageService.findBySenderId(userId);
     }
 
-    @DeleteMapping("/messages/{messageId}")
-    public void deleteMessage(@PathVariable Long messageId) {
-        messageService.deleteMessage(messageId);
-    }
 
     @GetMapping("/leave/{chatRoomId}")
     public ResponseEntity<Long> leaveMessage(@PathVariable Long chatRoomId) {
         Long isJoin = chatRoomService.leaveMessage(chatRoomId);
         return ResponseEntity.ok(isJoin);
+    }
+    @DeleteMapping("/{messageId}")
+    public void deleteMessage(@PathVariable Long messageId, @RequestParam LocalDateTime sendTime) {
+        messageService.deleteMessage(messageId, sendTime);
+    }
+
+    @GetMapping("/current-time")
+    public LocalDateTime getCurrentTime() {
+        return messageService.getCurrentTime();
     }
 }
