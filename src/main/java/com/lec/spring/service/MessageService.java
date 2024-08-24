@@ -41,7 +41,6 @@ public class MessageService {
         message.setSendTime(LocalDateTime.now());
         message.setIsRead(false);
 
-        System.out.println("메세지: " + message);
         Message savedMessage = messageRepository.save(message);
 
         // 여기에서 실시간으로 메시지 읽음 상태를 업데이트
@@ -68,11 +67,8 @@ public class MessageService {
         if (minutesBetween <= 5) {
             messageRepository.deleteById(messageId);
         } else {
-            throw new RuntimeException("메시지를 작성한 지 1분 이상 경과하였습니다.");
+            throw new RuntimeException("메시지를 작성한 지 5분 이상 경과하였습니다.");
         }
     }
-    // 서버 시간 제공 API
-    public LocalDateTime getCurrentTime() {
-        return LocalDateTime.now();
-    }
+
 }

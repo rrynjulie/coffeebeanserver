@@ -71,9 +71,4 @@ public class MessageController {
     public void deleteMessage(@PathVariable Long messageId, @RequestParam LocalDateTime sendTime) {
         messageService.deleteMessage(messageId, sendTime);
     }
-
-    @GetMapping("/current-time")
-    public LocalDateTime getCurrentTime() {
-        return messageService.getCurrentTime();
-    }
 }
