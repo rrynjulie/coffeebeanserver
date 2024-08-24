@@ -1,6 +1,7 @@
 package com.lec.spring.service;
 
 import com.lec.spring.domain.*;
+import com.lec.spring.domain.enums.DealingStatus;
 import com.lec.spring.repository.ChatRoomRepository;
 import com.lec.spring.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -193,5 +197,47 @@ public class ChatRoomService {
 
     public Product findProductByChatRoomId(Long chatRoomId) {
         return chatRoomRepository.findProductByChatRoomId(chatRoomId);
+    }
+
+    // 마이페이지의 구매목록을 반환하는 메소드
+    @Transactional(readOnly = true)
+    public List<?> readByUserId(Long userId, String entityType, int sortType, String dealingStatus) {
+        List<ChatRoom> chatRoomList = chatRoomRepository.findByBuyerId_UserId(userId);
+        List<Product> productList = new ArrayList<>();
+        List<Car> carList = new ArrayList<>();
+
+        if(entityType.equals("product")) {  // 중고 물품일때
+            chatRoomList.forEach(chatRoom -> {
+                if(chatRoom.getDealComplete()) productList.add(chatRoom.getProduct());
+            });
+            if(sortType == 1) productList.sort(Comparator.comparing(Product::getRegDate).reversed());  // 등록일시 내림차순
+            else if(sortType == 2) productList.sort(Comparator.comparing(Product::getPrice));  // 가격 오름차순
+            else productList.sort(Comparator.comparing(Product::getPrice).reversed());  // 가격 내림차순
+
+            if(dealingStatus.equals("전체")) return productList;
+            DealingStatus tempDS = DealingStatus.valueOf(dealingStatus);
+
+            return productList
+                    .stream()
+                    .filter(product -> product.getDealingStatus().equals(tempDS))
+                    .collect(Collectors.toList());
+        } else if(entityType.equals("car")) {  // 중고차일때
+            chatRoomList.forEach(chatRoom -> {
+                if(chatRoom.getDealComplete()) carList.add(chatRoom.getCar());
+            });
+            if(sortType == 1) carList.sort(Comparator.comparing(Car::getRegDate).reversed());  // 등록일시 내림차순
+            else if(sortType == 2) carList.sort(Comparator.comparing(Car::getPrice));  // 가격 오름차순
+            else carList.sort(Comparator.comparing(Car::getPrice).reversed());  // 가격 내림차순
+
+            if(dealingStatus.equals("전체")) return carList;
+            DealingStatus tempDS = DealingStatus.valueOf(dealingStatus);
+
+            return carList
+                    .stream()
+                    .filter(car -> car.getDealingStatus().equals(tempDS))
+                    .collect(Collectors.toList());
+        } else {
+            throw new IllegalArgumentException("Invalid entityType: " + entityType);
+        }
     }
 }

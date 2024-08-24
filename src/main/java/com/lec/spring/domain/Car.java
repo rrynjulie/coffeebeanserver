@@ -102,4 +102,7 @@ public class Car {
     public void addFiles(Attachment... files) {  // 첨부파일 추가
         Collections.addAll(fileList, files);
     }
+
+    @Column(nullable = false)
+    private boolean inWishlist = false;
 }

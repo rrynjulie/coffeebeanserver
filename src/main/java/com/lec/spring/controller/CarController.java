@@ -40,7 +40,7 @@ public class CarController {
             @RequestParam(value = "insuranceVictim", required = false) Integer insuranceVictim,
             @RequestParam(value = "insuranceInjurer", required = false) Integer insuranceInjurer,
             @RequestParam(value = "ownerChange", required = false) Integer ownerChange,
-            @RequestParam("files") MultipartFile[] files,
+            @RequestParam(value = "files", required = false) MultipartFile[] files,
             @PathVariable Long userId
     ) {
         Car carEntity = Car.builder()

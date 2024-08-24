@@ -112,7 +112,7 @@ public class ProductController {
     public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId,
                                                  @PathVariable int sortedType,
                                                  @PathVariable String dealingStatus) {
-        return new ResponseEntity<>(productService.readAllByUserSorted(userId, sortedType, dealingStatus), HttpStatus.OK);
+        return new ResponseEntity<>(productService.readAllSellsByUserSorted(userId, sortedType, dealingStatus), HttpStatus.OK);
     }
 
     // 중고 물품 상세 페이지에서 사용하는 판매 상태 변경해주는 메소드

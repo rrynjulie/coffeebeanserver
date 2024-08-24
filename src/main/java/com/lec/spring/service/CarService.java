@@ -149,10 +149,10 @@ public class CarService {
         return carRepository.saveAndFlush(carEntity);
     }
 
-    @Transactional
-    public List<Car> getTop10ByViewCnt() {
-        return carRepository.findTop10ByDealingStatusOrderByViewCountDesc(DealingStatus.판매중);
-    }
+//    @Transactional
+//    public List<Car> getTop10ByViewCnt() {
+//        return carRepository.findTop10ByDealingStatusOrderByViewCountDesc(DealingStatus.판매중);
+//    }
 
     public Map<String, Object> getPriceInfoCarCategory(String category1, String category2) {
         List<Car> cars = carRepository.findCarsByCategories(category1 ,category2);
