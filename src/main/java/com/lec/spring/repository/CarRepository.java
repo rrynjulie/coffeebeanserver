@@ -19,7 +19,7 @@ public interface CarRepository extends JpaRepository<Car, Long> {
 
     List<Car> findByUser_userId(Long userId, Sort sort);
 
-    List<Car> findTop10ByDealingStatusOrderByRegDateDesc(DealingStatus dealingStatus);
+    List<Car> findTop10ByDealingStatusOrderByViewCountDesc(DealingStatus dealingStatus);
 
     @Query("SELECT c FROM car c WHERE "
             + "(:category1 IS NULL OR c.category1 = :category1) AND "
