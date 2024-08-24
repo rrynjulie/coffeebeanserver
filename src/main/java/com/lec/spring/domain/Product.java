@@ -84,7 +84,9 @@ public class Product {
 
     @PrePersist
     protected void onCreate() {
-        this.regDate = LocalDateTime.now();
+        if(this.regDate == null){
+            this.regDate = LocalDateTime.now();
+        }
     }
 
     public void addFiles(Attachment... files) {

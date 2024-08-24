@@ -136,10 +136,10 @@ public class CarService {
                 .collect(Collectors.toList());
     }
 
-//    @Transactional
-//    public List<Car> getTop10ByViewCnt() {
-//        return carRepository.findTop10ByDealingStatusOrderByRegDateDesc(DealingStatus.판매중);
-//    }
+    @Transactional
+    public List<Car> getTop10ByDate() {
+        return carRepository.findTop10ByDealingStatusOrderByRegDateDesc(DealingStatus.판매중);
+    }
 
     // 중고차 상세 페이지에서 사용하는 판매 상태 변경해주는 메소드
     @Transactional
