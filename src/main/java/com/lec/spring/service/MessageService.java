@@ -42,7 +42,12 @@ public class MessageService {
         message.setIsRead(false);
 
         System.out.println("메세지: " + message);
-        return messageRepository.save(message);
+        Message savedMessage = messageRepository.save(message);
+
+        // 여기에서 실시간으로 메시지 읽음 상태를 업데이트
+        markMessagesAsRead(message.getChatRoom().getChatRoomId(), senderId);
+
+        return savedMessage;
     }
 
     public List<Message> MessageByRoomId(Long chatRoomId) {
