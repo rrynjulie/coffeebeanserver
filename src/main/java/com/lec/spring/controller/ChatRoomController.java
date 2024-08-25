@@ -4,6 +4,7 @@ import com.lec.spring.domain.ChatRoom;
 import com.lec.spring.domain.Product;
 import com.lec.spring.service.ChatRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,4 +72,14 @@ public class ChatRoomController {
         }
     }
 
+    // 마이페이지 구매목록
+    @GetMapping("/buy/{entityType}/sortedlist/{userId}/{sortedType}/{dealingStatus}")
+    public ResponseEntity<?> readByUserId(
+            @PathVariable String entityType,
+            @PathVariable Long userId,
+            @PathVariable int sortedType,
+            @PathVariable String dealingStatus
+    ) {
+        return new ResponseEntity<>(chatRoomService.readByUserId(userId, entityType, sortedType, dealingStatus), HttpStatus.OK);
+    }
 }

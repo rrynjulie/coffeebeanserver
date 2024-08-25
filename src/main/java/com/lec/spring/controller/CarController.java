@@ -173,7 +173,7 @@ public class CarController {
     //실시간 인기 중고상품(조회수 TOP10)
     @GetMapping("/car/top10")
     public ResponseEntity<List<Car>> carTop10() {
-        List<Car> topCar = carService.getTop10ByViewCnt();
+        List<Car> topCar = carService.getTop10ByDate();
         return new ResponseEntity<>(topCar, HttpStatus.OK);
     }
 }

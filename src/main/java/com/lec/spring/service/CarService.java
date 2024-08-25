@@ -137,7 +137,7 @@ public class CarService {
     }
 
     @Transactional
-    public List<Car> getTop10ByViewCnt() {
+    public List<Car> getTop10ByDate() {
         return carRepository.findTop10ByDealingStatusOrderByRegDateDesc(DealingStatus.판매중);
     }
 

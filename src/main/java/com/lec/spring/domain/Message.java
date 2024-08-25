@@ -23,7 +23,7 @@ public class Message {
 
     private String messageText;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "Asia/Seoul")
     private LocalDateTime sendTime;
 
     @Column(nullable = false)

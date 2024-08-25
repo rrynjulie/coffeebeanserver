@@ -20,8 +20,10 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.SocketException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static java.lang.Integer.parseInt;
 
@@ -222,7 +224,7 @@ public class CrawlingService {
                 product.setName(name);
                 product.setDescription(description);
                 product.setPrice(price);
-                product.setRegDate(LocalDateTime.now());
+                product.setRegDate(DateUtil.getRandomDateWithinLastWeek()); // 랜덤 날짜 설정
                 product.setDealingStatus(DealingStatus.valueOf("판매중"));
                 product.setCategory1(category1);
                 product.setCategory2(category2);
@@ -248,7 +250,6 @@ public class CrawlingService {
                         attachment.setFilename(productMediaSeq);
                         attachment.setSource(mediaUrl);
 
-
                         attachmentRepository.save(attachment);
 
                         System.out.println("Attachment 저장 " + attachment);
@@ -260,6 +261,24 @@ public class CrawlingService {
         }catch (IOException e){
             System.out.println("저장실패");
             throw e;
+        }
+    }
+
+    // 새로운 DateUtil 클래스 추가
+    public static class DateUtil {
+
+        public static LocalDateTime getRandomDateWithinLastWeek() {
+            // 현재 시간
+            LocalDateTime now = LocalDateTime.now();
+
+            // 7일 전의 시간
+            LocalDateTime weekAgo = now.minusDays(7);
+
+            // weekAgo부터 now까지의 난수 생성
+            long randomSeconds = ThreadLocalRandom.current().nextLong(ChronoUnit.SECONDS.between(weekAgo, now));
+
+            // 생성된 난수를 기반으로 랜덤 시간 생성
+            return weekAgo.plusSeconds(randomSeconds);
         }
     }
 }
