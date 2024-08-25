@@ -95,8 +95,10 @@ public class Car {
     private List<Attachment> fileList = new ArrayList<>();  // 첨부 파일
 
     @PrePersist
-    protected void onCreate() {  // 등록 날짜 초기화
-        this.regDate = LocalDateTime.now();
+    protected void onCreate() {
+        if(this.regDate == null){
+            this.regDate = LocalDateTime.now();
+        }
     }
 
     public void addFiles(Attachment... files) {  // 첨부파일 추가

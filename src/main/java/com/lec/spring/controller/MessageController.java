@@ -6,6 +6,7 @@ import com.lec.spring.domain.User;
 import com.lec.spring.service.ChatRoomService;
 import com.lec.spring.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -15,6 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @RestController
@@ -38,14 +43,20 @@ public class MessageController {
             throw new RuntimeException("Sender information is missing");
         }
 
-        message.setSendTime(LocalDateTime.now());
-        message.setIsRead(true);
+        // Set the time in Korea timezone
+        ZonedDateTime koreaTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        message.setSendTime(koreaTime.toLocalDateTime());
+        message.setIsRead(false);
         message.setChatRoom(chatRoom);
 
-        System.out.println("Received message: " + message);
-        return messageService.sendMessage(message, message.getSender().getUserId());
-    }
+        Message savedMessage = messageService.sendMessage(message, message.getSender().getUserId());
 
+        // 메시지 읽음 상태 업데이트
+        markMessagesAsRead(chatRoomId, message.getSender().getUserId());
+
+        // 읽음 상태 업데이트를 위한 메시지 전송
+        return savedMessage;
+    }
     @PostMapping("/messages/read/{chatRoomId}/{userId}")
     public void markMessagesAsRead(@PathVariable Long chatRoomId, @PathVariable Long userId) {
         messageService.markMessagesAsRead(chatRoomId, userId);
@@ -61,14 +72,23 @@ public class MessageController {
         return messageService.findBySenderId(userId);
     }
 
-    @DeleteMapping("/messages/{messageId}")
-    public void deleteMessage(@PathVariable Long messageId) {
-        messageService.deleteMessage(messageId);
-    }
 
     @GetMapping("/leave/{chatRoomId}")
     public ResponseEntity<Long> leaveMessage(@PathVariable Long chatRoomId) {
         Long isJoin = chatRoomService.leaveMessage(chatRoomId);
         return ResponseEntity.ok(isJoin);
+    }
+    @DeleteMapping("/{messageId}")
+    public ResponseEntity<String> deleteMessage(@PathVariable Long messageId, @RequestParam String sendTime) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+            LocalDateTime parsedSendTime = LocalDateTime.parse(sendTime, formatter);
+
+            messageService.deleteMessage(messageId, parsedSendTime);
+
+            return ResponseEntity.ok("Message deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error deleting message: " + e.getMessage());
+        }
     }
 }

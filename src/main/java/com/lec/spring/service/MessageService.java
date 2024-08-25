@@ -5,6 +5,7 @@ import com.lec.spring.domain.User;
 import com.lec.spring.repository.MessageRepository;
 import com.lec.spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,13 +19,18 @@ public class MessageService {
     private MessageRepository messageRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate; // Spring 에서 메시지를 웹소켓으로 보낼 수 있는 클래스\
 
     public void markMessagesAsRead(Long chatRoomId, Long userId) {
         List<Message> messages = messageRepository.findByChatRoomChatRoomId(chatRoomId);
+
         for (Message message : messages) {
             if (message.getSender() != null && !message.getSender().getUserId().equals(userId)) { // 상대방의 메시지만 업데이트
                 message.setIsRead(true);
                 messageRepository.save(message); // 업데이트된 메시지 저장
+                // 메시지를 웹소켓으로 전송
+                messagingTemplate.convertAndSend("/topic/public/" + chatRoomId, message);
             }
         }
     }
@@ -41,8 +47,15 @@ public class MessageService {
         message.setSendTime(LocalDateTime.now());
         message.setIsRead(false);
 
-        System.out.println("메세지: " + message);
-        return messageRepository.save(message);
+        Message savedMessage = messageRepository.save(message);
+
+        // 메시지를 웹소켓으로 전송
+        messagingTemplate.convertAndSend("/topic/public/" + message.getChatRoom().getChatRoomId(), savedMessage);
+
+        // 여기에서 실시간으로 메시지 읽음 상태를 업데이트
+        markMessagesAsRead(message.getChatRoom().getChatRoomId(), senderId);
+
+        return savedMessage;
     }
 
     public List<Message> MessageByRoomId(Long chatRoomId) {
@@ -53,7 +66,14 @@ public class MessageService {
         return messageRepository.findBySenderId(userId);
     }
 
-    public void deleteMessage(Long messageId) {
-        messageRepository.deleteById(messageId);
+    public void deleteMessage(Long messageId, LocalDateTime sendTime) {
+        LocalDateTime currentTime = LocalDateTime.now();
+        long minutesBetween = java.time.Duration.between(sendTime, currentTime).toMinutes();
+        if (minutesBetween <= 5) {
+            messageRepository.deleteById(messageId);
+        } else {
+            throw new RuntimeException("메시지를 작성한 지 5분 이상 경과하였습니다.");
+        }
     }
+
 }
