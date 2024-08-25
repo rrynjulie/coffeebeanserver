@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -55,7 +56,7 @@ public class ChatRoomService {
 
         Message initialMessage = new Message();
         initialMessage.setMessageText(initialMessageText);
-        initialMessage.setSendTime(LocalDateTime.now());
+        initialMessage.setSendTime(LocalDateTime.now(ZoneId.of("Asia/Seoul"))); // 한국 시간으로 설정
         initialMessage.setIsRead(false);
         initialMessage.setChatRoom(chatRoom);
         initialMessage.setSender(buyer);
@@ -97,7 +98,7 @@ public class ChatRoomService {
             if (!lastMessages.isEmpty()) {
                 Message lastMessage = lastMessages.get(0);
                 chatRoom.setLastMessage(lastMessage.getMessageText());
-                chatRoom.setLastSendTime(lastMessage.getSendTime());
+                chatRoom.setLastSendTime(lastMessage.getSendTime().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime()); // 한국 시간 설정
             } else {
                 chatRoom.setLastMessage("대화 내용이 없습니다.");
                 chatRoom.setLastSendTime(null);
