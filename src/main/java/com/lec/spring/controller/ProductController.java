@@ -3,6 +3,7 @@ package com.lec.spring.controller;
 import com.lec.spring.domain.Product;
 import com.lec.spring.domain.enums.DealingStatus;
 import com.lec.spring.domain.enums.Status;
+import com.lec.spring.service.ChatRoomService;
 import com.lec.spring.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.util.Map;
 @CrossOrigin
 public class ProductController {
     private final ProductService productService;
+    private final ChatRoomService chatRoomService;
 
     // 기본적인 CRUD
 //    @PostMapping("/product/write/{userId}")
@@ -107,12 +109,23 @@ public class ProductController {
         return new ResponseEntity<>(productService.readAllByKeyword(keyword), HttpStatus.OK);
     }
 
-    // 마이페이지에서 사용하는 모든 필터 한 번에 걸러주는 매소드
+    // 마이페이지 판매목록
     @GetMapping("/sell/product/sortedlist/{userId}/{sortedType}/{dealingStatus}")
-    public ResponseEntity<?> readAllByUserSorted(@PathVariable Long userId,
+    public ResponseEntity<?> readSellsByUserSorted(@PathVariable Long userId,
                                                  @PathVariable int sortedType,
                                                  @PathVariable String dealingStatus) {
         return new ResponseEntity<>(productService.readAllSellsByUserSorted(userId, sortedType, dealingStatus), HttpStatus.OK);
+    }
+
+    // 마이페이지 구매목록
+    @GetMapping("/buy/{entityType}/sortedlist/{userId}/{sortedType}/{dealingStatus}")
+    public ResponseEntity<?> readBuysByUserSorted(
+            @PathVariable String entityType,
+            @PathVariable Long userId,
+            @PathVariable int sortedType,
+            @PathVariable String dealingStatus
+    ) {
+        return new ResponseEntity<>(chatRoomService.readByUserId(userId, entityType, sortedType, dealingStatus), HttpStatus.OK);
     }
 
     // 중고 물품 상세 페이지에서 사용하는 판매 상태 변경해주는 메소드
@@ -131,6 +144,11 @@ public class ProductController {
             @RequestParam(required = false) String category3) {
 
         return productService.getPriceInfoCategory(category1, category2, category3);
+    }
+
+    @GetMapping("/product/priceInfo/{keyword}")
+    public Map<String, Object> getPriceInfoBySearch(@PathVariable String keyword) {
+        return productService.getPriceInfoSearch(keyword);
     }
 
 //    @GetMapping("/product/priceInfo")
@@ -167,8 +185,4 @@ public class ProductController {
         List<Product> top10regDate = productService.getTop10ByRegDate();
         return new ResponseEntity<>(top10regDate, HttpStatus.OK);
     }
-
-
-
-
 }

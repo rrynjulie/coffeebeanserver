@@ -71,15 +71,4 @@ public class ChatRoomController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    // 마이페이지 구매목록
-    @GetMapping("/buy/{entityType}/sortedlist/{userId}/{sortedType}/{dealingStatus}")
-    public ResponseEntity<?> readByUserId(
-            @PathVariable String entityType,
-            @PathVariable Long userId,
-            @PathVariable int sortedType,
-            @PathVariable String dealingStatus
-    ) {
-        return new ResponseEntity<>(chatRoomService.readByUserId(userId, entityType, sortedType, dealingStatus), HttpStatus.OK);
-    }
 }
