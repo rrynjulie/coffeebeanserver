@@ -5,6 +5,7 @@ import com.lec.spring.domain.User;
 import com.lec.spring.repository.MessageRepository;
 import com.lec.spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,13 +19,18 @@ public class MessageService {
     private MessageRepository messageRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate; // Spring 에서 메시지를 웹소켓으로 보낼 수 있는 클래스\
 
     public void markMessagesAsRead(Long chatRoomId, Long userId) {
         List<Message> messages = messageRepository.findByChatRoomChatRoomId(chatRoomId);
+
         for (Message message : messages) {
             if (message.getSender() != null && !message.getSender().getUserId().equals(userId)) { // 상대방의 메시지만 업데이트
                 message.setIsRead(true);
                 messageRepository.save(message); // 업데이트된 메시지 저장
+                // 메시지를 웹소켓으로 전송
+                messagingTemplate.convertAndSend("/topic/public/" + chatRoomId, message);
             }
         }
     }
@@ -42,6 +48,9 @@ public class MessageService {
         message.setIsRead(false);
 
         Message savedMessage = messageRepository.save(message);
+
+        // 메시지를 웹소켓으로 전송
+        messagingTemplate.convertAndSend("/topic/public/" + message.getChatRoom().getChatRoomId(), savedMessage);
 
         // 여기에서 실시간으로 메시지 읽음 상태를 업데이트
         markMessagesAsRead(message.getChatRoom().getChatRoomId(), senderId);
