@@ -6,6 +6,7 @@ import com.lec.spring.domain.User;
 import com.lec.spring.service.ChatRoomService;
 import com.lec.spring.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @RestController
@@ -76,7 +79,16 @@ public class MessageController {
         return ResponseEntity.ok(isJoin);
     }
     @DeleteMapping("/{messageId}")
-    public void deleteMessage(@PathVariable Long messageId, @RequestParam LocalDateTime sendTime) {
-        messageService.deleteMessage(messageId, sendTime);
+    public ResponseEntity<String> deleteMessage(@PathVariable Long messageId, @RequestParam String sendTime) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+            LocalDateTime parsedSendTime = LocalDateTime.parse(sendTime, formatter);
+
+            messageService.deleteMessage(messageId, parsedSendTime);
+
+            return ResponseEntity.ok("Message deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error deleting message: " + e.getMessage());
+        }
     }
 }

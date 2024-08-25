@@ -164,11 +164,11 @@ public class ChatRoomService {
         Long sellerId = chatRoom.getSellerId() != null ? chatRoom.getSellerId() : null;
 
         if (buyerId != null && sellerId != null) {
-            chatRoom.setIsJoin(2L); // 둘 다 참여
+            chatRoom.setIsJoin(2L);
         } else if (buyerId != null || sellerId != null) {
-            chatRoom.setIsJoin(1L); // 한 명만 나감
+            chatRoom.setIsJoin(1L);
         } else {
-            chatRoom.setIsJoin(0L); // 둘 다 나감
+            chatRoom.setIsJoin(0L);
         }
     }
 
