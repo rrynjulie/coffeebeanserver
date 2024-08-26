@@ -23,9 +23,9 @@ public class ReviewService {
         ChatRoom chatRoom = chatRoomService.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 채팅이 존재하지 않습니다."));
 
-        if (!chatRoom.getDealComplete()) {
-            throw new IllegalArgumentException("거래가 완료되지 않았습니다.");
-        }
+//        if (!chatRoom.getDealComplete()) {
+//            throw new IllegalArgumentException("거래가 완료되지 않았습니다.");
+//        }
 
         User writer = userService.findByUserId(writerId);
 
@@ -66,12 +66,12 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public List<Review> readWriterReviewAll(Long writerId) {
-        return reviewRepository.findByWriterUserId(writerId);
+        return reviewRepository.findByWriterUserIdOrderByRegDateDesc(writerId);
     }
 
     @Transactional(readOnly = true)
     public List<Review> readRecipientReviewAll(Long recipientId) {
-        return reviewRepository.findByRecipientUserId(recipientId);
+        return reviewRepository.findByRecipientUserIdOrderByRegDateDesc(recipientId);
     }
 
     @Transactional
