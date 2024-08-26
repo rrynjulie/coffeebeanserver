@@ -40,3 +40,9 @@ SELECT * FROM email ;
 delete from user where userId = 59;
 
 ALTER TABLE user MODIFY COLUMN email VARCHAR(255) NULL;
+
+DELETE from sample_review where sampleReviewId = 10;
+DELETE from review where reviewId = 10;
+
+DELETE from chat_room where chatRoomId = 39;
+DELETE from message where messageId = 960;

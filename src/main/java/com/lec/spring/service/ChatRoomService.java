@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -55,7 +56,7 @@ public class ChatRoomService {
 
         Message initialMessage = new Message();
         initialMessage.setMessageText(initialMessageText);
-        initialMessage.setSendTime(LocalDateTime.now());
+        initialMessage.setSendTime(LocalDateTime.now(ZoneId.of("Asia/Seoul"))); // 한국 시간으로 설정
         initialMessage.setIsRead(false);
         initialMessage.setChatRoom(chatRoom);
         initialMessage.setSender(buyer);
@@ -92,18 +93,19 @@ public class ChatRoomService {
         List<ChatRoom> chatRooms = findByUserId(userId);
 
         for (ChatRoom chatRoom : chatRooms) {
-            List<Message> lastMessages = messageRepository.findLastMessageByChatRoomId(chatRoom.getChatRoomId(), PageRequest.of(0, 1));
+            List<Message> lastMessages = messageRepository.findLastMessageByChatRoomId(
+                    chatRoom.getChatRoomId(), PageRequest.of(0, 1));
             if (!lastMessages.isEmpty()) {
                 Message lastMessage = lastMessages.get(0);
                 chatRoom.setLastMessage(lastMessage.getMessageText());
-                chatRoom.setLastSendTime(lastMessage.getSendTime());
+                chatRoom.setLastSendTime(lastMessage.getSendTime().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime()); // 한국 시간 설정
             } else {
                 chatRoom.setLastMessage("대화 내용이 없습니다.");
                 chatRoom.setLastSendTime(null);
             }
 
-            Long unreadMessage = messageRepository.unreadMessage(chatRoom.getChatRoomId(), userId);
-            chatRoom.setUnreadMessage(unreadMessage != null ? unreadMessage : 0L);
+            Long unreadMessageCount = messageRepository.unreadMessage(chatRoom.getChatRoomId(), userId);
+            chatRoom.setUnreadMessage(unreadMessageCount != null ? unreadMessageCount : 0L);
 
             Product product = chatRoom.getProduct();
             if (product != null) {
@@ -112,14 +114,14 @@ public class ChatRoomService {
             }
         }
 
-            // 마지막 메시지의 전송 시간을 기준으로 채팅방 목록 정렬
-            chatRooms.sort((cr1, cr2) -> {
-                LocalDateTime time1 = cr1.getLastSendTime();
-                LocalDateTime time2 = cr2.getLastSendTime();
-                if (time1 == null) return 1;  // 시간이 없는 항목을 뒤로 보냄
-                if (time2 == null) return -1; // 시간이 없는 항목을 뒤로 보냄
-                return time2.compareTo(time1); // 내림차순 정렬
-            });
+        // 마지막 메시지의 전송 시간을 기준으로 채팅방 목록 정렬
+        chatRooms.sort((cr1, cr2) -> {
+            LocalDateTime time1 = cr1.getLastSendTime();
+            LocalDateTime time2 = cr2.getLastSendTime();
+            if (time1 == null) return 1;  // 시간이 없는 항목을 뒤로 보냄
+            if (time2 == null) return -1; // 시간이 없는 항목을 뒤로 보냄
+            return time2.compareTo(time1); // 내림차순 정렬
+        });
         return chatRooms;
     }
 

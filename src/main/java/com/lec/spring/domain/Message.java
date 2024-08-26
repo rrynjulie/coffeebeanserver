@@ -23,11 +23,11 @@ public class Message {
 
     private String messageText;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime sendTime;
 
     @Column(nullable = false)
-    private boolean IsRead;
+    private Boolean isRead;
 
     @ManyToOne
     @JoinColumn(name = "chat_room_id")

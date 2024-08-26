@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -20,42 +22,47 @@ public class MessageService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private SimpMessagingTemplate messagingTemplate; // Spring 에서 메시지를 웹소켓으로 보낼 수 있는 클래스\
-
-    public void markMessagesAsRead(Long chatRoomId, Long userId) {
-        List<Message> messages = messageRepository.findByChatRoomChatRoomId(chatRoomId);
-
-        for (Message message : messages) {
-            if (message.getSender() != null && !message.getSender().getUserId().equals(userId)) { // 상대방의 메시지만 업데이트
-                message.setIsRead(true);
-                messageRepository.save(message); // 업데이트된 메시지 저장
-                // 메시지를 웹소켓으로 전송
-                messagingTemplate.convertAndSend("/topic/public/" + chatRoomId, message);
-            }
-        }
-    }
+    private SimpMessagingTemplate messagingTemplate;
 
     @Transactional
     public Message sendMessage(Message message, Long senderId) {
         if (senderId != null) {
             User sender = userRepository.findById(senderId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
-            message.setSender(sender); // sender 설정
+            message.setSender(sender);
         } else {
             throw new RuntimeException("Sender ID is required but not provided");
         }
-        message.setSendTime(LocalDateTime.now());
-        message.setIsRead(false);
+
+        // 한국 표준시(KST)로 현재 시간 설정
+        ZonedDateTime koreaTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        message.setSendTime(koreaTime.toLocalDateTime());
+        message.setIsRead(false);  // 처음에 메시지를 보낼 때 isRead는 false로 설정
 
         Message savedMessage = messageRepository.save(message);
 
-        // 메시지를 웹소켓으로 전송
         messagingTemplate.convertAndSend("/topic/public/" + message.getChatRoom().getChatRoomId(), savedMessage);
 
-        // 여기에서 실시간으로 메시지 읽음 상태를 업데이트
-        markMessagesAsRead(message.getChatRoom().getChatRoomId(), senderId);
-
         return savedMessage;
+    }
+
+    @Transactional
+    public void markMessagesAsRead(Long chatRoomId, Long userId) {
+        List<Message> messages = messageRepository.findByChatRoomChatRoomId(chatRoomId);
+
+        for (Message message : messages) {
+            if (message.getSender() != null && message.getSender().getUserId() != null &&
+                    !message.getSender().getUserId().equals(userId)) {
+                // 메시지가 읽히지 않았고, 다른 사용자가 보낸 메시지일 때만 읽음으로 표시
+                if (!message.getIsRead()) {
+                    message.setIsRead(true);
+                    messageRepository.save(message);
+                }
+            }
+        }
+
+        // Notify clients that the messages have been read
+        messagingTemplate.convertAndSend("/topic/public/" + chatRoomId, "messagesRead");
     }
 
     public List<Message> MessageByRoomId(Long chatRoomId) {
@@ -66,14 +73,15 @@ public class MessageService {
         return messageRepository.findBySenderId(userId);
     }
 
+    @Transactional
     public void deleteMessage(Long messageId, LocalDateTime sendTime) {
-        LocalDateTime currentTime = LocalDateTime.now();
+        ZonedDateTime koreaTimeNow = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        LocalDateTime currentTime = koreaTimeNow.toLocalDateTime();
         long minutesBetween = java.time.Duration.between(sendTime, currentTime).toMinutes();
         if (minutesBetween <= 5) {
             messageRepository.deleteById(messageId);
         } else {
-            throw new RuntimeException("메시지를 작성한 지 5분 이상 경과하였습니다.");
+            throw new RuntimeException("Message can only be deleted within 5 minutes of creation.");
         }
     }
-
 }

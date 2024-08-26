@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     Review findByChatRoomAndWriter(ChatRoom chatRoom, User writer);
-    List<Review> findByWriterUserId(Long writerId);
-    List<Review> findByRecipientUserId(Long recipientId);
+    List<Review> findByWriterUserIdOrderByRegDateDesc(Long writerId);
+    List<Review> findByRecipientUserIdOrderByRegDateDesc(Long recipientId);
     @Query("SELECT r.chatRoom FROM review r WHERE r.reviewId = :reviewId")
     ChatRoom findChatRoomByReviewId(@Param("reviewId") Long reviewId);
 
