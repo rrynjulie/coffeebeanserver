@@ -1,6 +1,7 @@
 package com.lec.spring.service;
 
 import com.lec.spring.domain.*;
+import com.lec.spring.domain.enums.DealingStatus;
 import com.lec.spring.repository.ChatRoomRepository;
 import com.lec.spring.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -51,7 +56,7 @@ public class ChatRoomService {
 
         Message initialMessage = new Message();
         initialMessage.setMessageText(initialMessageText);
-        initialMessage.setSendTime(LocalDateTime.now());
+        initialMessage.setSendTime(LocalDateTime.now(ZoneId.of("Asia/Seoul"))); // 한국 시간으로 설정
         initialMessage.setIsRead(false);
         initialMessage.setChatRoom(chatRoom);
         initialMessage.setSender(buyer);
@@ -88,18 +93,19 @@ public class ChatRoomService {
         List<ChatRoom> chatRooms = findByUserId(userId);
 
         for (ChatRoom chatRoom : chatRooms) {
-            List<Message> lastMessages = messageRepository.findLastMessageByChatRoomId(chatRoom.getChatRoomId(), PageRequest.of(0, 1));
+            List<Message> lastMessages = messageRepository.findLastMessageByChatRoomId(
+                    chatRoom.getChatRoomId(), PageRequest.of(0, 1));
             if (!lastMessages.isEmpty()) {
                 Message lastMessage = lastMessages.get(0);
                 chatRoom.setLastMessage(lastMessage.getMessageText());
-                chatRoom.setLastSendTime(lastMessage.getSendTime());
+                chatRoom.setLastSendTime(lastMessage.getSendTime().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime()); // 한국 시간 설정
             } else {
                 chatRoom.setLastMessage("대화 내용이 없습니다.");
                 chatRoom.setLastSendTime(null);
             }
 
-            Long unreadMessage = messageRepository.unreadMessage(chatRoom.getChatRoomId(), userId);
-            chatRoom.setUnreadMessage(unreadMessage != null ? unreadMessage : 0L);
+            Long unreadMessageCount = messageRepository.unreadMessage(chatRoom.getChatRoomId(), userId);
+            chatRoom.setUnreadMessage(unreadMessageCount != null ? unreadMessageCount : 0L);
 
             Product product = chatRoom.getProduct();
             if (product != null) {
@@ -107,6 +113,15 @@ public class ChatRoomService {
                 chatRoom.setAttachments(attachments); // ChatRoom 에 첨부파일 리스트 추가
             }
         }
+
+        // 마지막 메시지의 전송 시간을 기준으로 채팅방 목록 정렬
+        chatRooms.sort((cr1, cr2) -> {
+            LocalDateTime time1 = cr1.getLastSendTime();
+            LocalDateTime time2 = cr2.getLastSendTime();
+            if (time1 == null) return 1;  // 시간이 없는 항목을 뒤로 보냄
+            if (time2 == null) return -1; // 시간이 없는 항목을 뒤로 보냄
+            return time2.compareTo(time1); // 내림차순 정렬
+        });
         return chatRooms;
     }
 
@@ -151,11 +166,11 @@ public class ChatRoomService {
         Long sellerId = chatRoom.getSellerId() != null ? chatRoom.getSellerId() : null;
 
         if (buyerId != null && sellerId != null) {
-            chatRoom.setIsJoin(2L); // 둘 다 참여
+            chatRoom.setIsJoin(2L);
         } else if (buyerId != null || sellerId != null) {
-            chatRoom.setIsJoin(1L); // 한 명만 나감
+            chatRoom.setIsJoin(1L);
         } else {
-            chatRoom.setIsJoin(0L); // 둘 다 나감
+            chatRoom.setIsJoin(0L);
         }
     }
 
@@ -184,5 +199,47 @@ public class ChatRoomService {
 
     public Product findProductByChatRoomId(Long chatRoomId) {
         return chatRoomRepository.findProductByChatRoomId(chatRoomId);
+    }
+
+    // 마이페이지의 구매목록을 반환하는 메소드
+    @Transactional(readOnly = true)
+    public List<?> readByUserId(Long userId, String entityType, int sortType, String dealingStatus) {
+        List<ChatRoom> chatRoomList = chatRoomRepository.findByBuyerId_UserId(userId);
+        List<Product> productList = new ArrayList<>();
+        List<Car> carList = new ArrayList<>();
+
+        if(entityType.equals("product")) {  // 중고 물품일때
+            chatRoomList.forEach(chatRoom -> {
+                if(chatRoom.getDealComplete()) productList.add(chatRoom.getProduct());
+            });
+            if(sortType == 1) productList.sort(Comparator.comparing(Product::getRegDate).reversed());  // 등록일시 내림차순
+            else if(sortType == 2) productList.sort(Comparator.comparing(Product::getPrice));  // 가격 오름차순
+            else productList.sort(Comparator.comparing(Product::getPrice).reversed());  // 가격 내림차순
+
+            if(dealingStatus.equals("전체")) return productList;
+            DealingStatus tempDS = DealingStatus.valueOf(dealingStatus);
+
+            return productList
+                    .stream()
+                    .filter(product -> product.getDealingStatus().equals(tempDS))
+                    .collect(Collectors.toList());
+        } else if(entityType.equals("car")) {  // 중고차일때
+            chatRoomList.forEach(chatRoom -> {
+                if(chatRoom.getDealComplete()) carList.add(chatRoom.getCar());
+            });
+            if(sortType == 1) carList.sort(Comparator.comparing(Car::getRegDate).reversed());  // 등록일시 내림차순
+            else if(sortType == 2) carList.sort(Comparator.comparing(Car::getPrice));  // 가격 오름차순
+            else carList.sort(Comparator.comparing(Car::getPrice).reversed());  // 가격 내림차순
+
+            if(dealingStatus.equals("전체")) return carList;
+            DealingStatus tempDS = DealingStatus.valueOf(dealingStatus);
+
+            return carList
+                    .stream()
+                    .filter(car -> car.getDealingStatus().equals(tempDS))
+                    .collect(Collectors.toList());
+        } else {
+            throw new IllegalArgumentException("Invalid entityType: " + entityType);
+        }
     }
 }

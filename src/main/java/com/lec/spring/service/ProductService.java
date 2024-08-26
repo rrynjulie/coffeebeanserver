@@ -1,8 +1,10 @@
 package com.lec.spring.service;
 
 import com.lec.spring.domain.Attachment;
+import com.lec.spring.domain.ChatRoom;
 import com.lec.spring.domain.Product;
 import com.lec.spring.domain.enums.DealingStatus;
+import com.lec.spring.repository.ChatRoomRepository;
 import com.lec.spring.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -19,6 +21,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserService userService;
     private final AttachmentService attachmentService;
+    private final ChatRoomRepository chatRoomRepository;
 
     // 기본적인 CRUD
     @Transactional
@@ -99,7 +102,7 @@ public class ProductService {
 
     // 마이페이지에서 사용하는 모든 필터 한 번에 걸러주는 메소드
     @Transactional(readOnly = true)
-    public List<Product> readAllByUserSorted(Long userId, int sortType, String dealingStatus) {
+    public List<Product> readAllSellsByUserSorted(Long userId, int sortType, String dealingStatus) {
         Sort sort;
         if(sortType == 1) sort = Sort.by(Sort.Order.desc("regDate"));
         else if(sortType == 2) sort = Sort.by(Sort.Order.asc("price"));
@@ -117,9 +120,17 @@ public class ProductService {
     // 중고 물품 상세 페이지에서 사용하는 판매 상태 변경해주는 메소드
     @Transactional
     public Product updateDealingStatus(Long productId, DealingStatus dealingStatus) {
-        Product productEntity = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
-        productEntity.setDealingStatus(dealingStatus);
-        return productRepository.saveAndFlush(productEntity);
+        Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("ID를 확인해주세요."));
+        product.setDealingStatus(dealingStatus);
+
+        if (dealingStatus == DealingStatus.판매완료) {
+            List<ChatRoom> chatRooms = chatRoomRepository.findByProductId(productId);
+            for (ChatRoom chatRoom : chatRooms) {
+                chatRoom.setDealComplete(true);
+                chatRoomRepository.save(chatRoom);
+            }
+        }
+        return productRepository.saveAndFlush(product);
     }
 
     @Transactional
@@ -135,6 +146,32 @@ public class ProductService {
 
     public Map<String, Object> getPriceInfoCategory(String category1, String category2, String category3) {
         List<Product> products = productRepository.findProductsByCategories(category1 ,category2, category3);
+
+        // 가격 리스트
+        List<Double> prices = new ArrayList<>();
+        for (Product product : products) {
+            // 가격을 int에서 Double로 변환
+            prices.add((double) product.getPrice());
+        }
+
+        // 평균, 최소, 최대 가격 계산
+        double averagePrice = prices.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+        double minPrice = prices.stream().mapToDouble(Double::doubleValue).min().orElse(0.0);
+        double maxPrice = prices.stream().mapToDouble(Double::doubleValue).max().orElse(0.0);
+
+        // 결과를 Map으로 반환
+        Map<String, Object> priceInfo = new HashMap<>();
+        priceInfo.put("prices", prices);
+        priceInfo.put("averagePrice", averagePrice);
+        priceInfo.put("minPrice", minPrice);
+        priceInfo.put("maxPrice", maxPrice);
+        priceInfo.put("productCount", products.size());
+
+        return priceInfo;
+    }
+
+    public Map<String, Object> getPriceInfoSearch(String keyword) {
+        List<Product> products = this.readAllByKeyword(keyword);
 
         // 가격 리스트
         List<Double> prices = new ArrayList<>();

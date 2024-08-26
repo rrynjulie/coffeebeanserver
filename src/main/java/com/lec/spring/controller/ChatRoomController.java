@@ -4,6 +4,7 @@ import com.lec.spring.domain.ChatRoom;
 import com.lec.spring.domain.Product;
 import com.lec.spring.service.ChatRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,5 +71,4 @@ public class ChatRoomController {
             return ResponseEntity.notFound().build();
         }
     }
-
 }
