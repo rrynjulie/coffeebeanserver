@@ -23,10 +23,10 @@ class UserRepositoryTest {
     @Test
     void registerTest() {
         User user1 = User.builder()
-                .userName("admin1")
-                .nickName("admin1")
+                .userName("admin")
+                .nickName("Iam관리자")
                 .password(passwordEncoder.encode("1234"))
-                .email("admin1.@mail.com")
+                .email("admin@gmail.com")
                 .regDate(LocalDateTime.now())
                 .reliability(500)
                 .role("ROLE_USER,ROLE_ADMIN")
@@ -67,10 +67,10 @@ class UserRepositoryTest {
     void registerTest2() {
         List<User> users = new ArrayList<>();
 
-        for (int i = 10; i < 60; i++) {
+        for (int i = 1; i < 51; i++) {
             User user = User.builder()
                     .userName("user" + i)
-                    .nickName("nickname" + i)
+                    .nickName("유저" + i)
                     .password(passwordEncoder.encode("1234"))
                     .email("user" + i + "@gmail.com")
                     .regDate(LocalDateTime.now())
