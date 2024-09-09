@@ -3,7 +3,7 @@
 > **개발 기간 : 2024.08 (3주)**
 
 <div align="center">
-<img width="400" alt="커피빈 로고" src="https://i.postimg.cc/QxR6XP27/MainLogo.png">
+<img width="400" alt="커피빈 로고" src="https://i.postimg.cc/sx3R411K/MainLogo.png">
 </div>
 
 ## 🚀 프로젝트 소개
