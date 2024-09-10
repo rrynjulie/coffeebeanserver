@@ -49,7 +49,7 @@ CoffeeBean은 이용자는 상호 간 중고 물품 및 중고차 거래가 가�
 | 임예나 | - 🎨 <br>- 🧪 <br>- 💾 |
 | 정준영 | - Ⓜ️ Redis 데이터베이스를 통한 이메일 인증 구현 <br>- 🔐 Oauth2 와 JWT 토큰을 결합한 안전한 사용자 정보관리 <br>- 🛡️ User 권한에 따른 사용자 분류  <br>- 🪪 User CRUD 구축 <br>- 📊 ERD 설계|
 | 최민혁 | - 🎨 <br>- 🧪 <br>- 💾 |
-| 최영재 | - 🎨 <br>- 🧪 <br>- 💾 |
+| 최영재 | - 🚀 WebSocket 과 STOMP 프로토콜을 활용한 실시간 채팅 구현 <br>- 🗃️ 채팅방 리스트 CRUD 구축 <br>- 📊 ERD 설계|
 | 최은정 | - 🎨 전체적인 UI 디자인 <br>- 🧪 <br>- 💾 |
 
 ## 📊 ERD (Entity-Relationship Diagram)
